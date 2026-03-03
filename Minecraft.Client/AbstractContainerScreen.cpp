@@ -33,7 +33,7 @@ void AbstractContainerScreen::init()
 void AbstractContainerScreen::render(int xm, int ym, float a)
 {
 	// 4J Stu - Not used
-#if 0
+//#if 0
     renderBackground();
     int xo = (width - imageWidth) / 2;
     int yo = (height - imageHeight) / 2;
@@ -53,8 +53,8 @@ void AbstractContainerScreen::render(int xm, int ym, float a)
 
     Slot *hoveredSlot = NULL;
 	
-	AUTO_VAR(itEnd, menu->slots->end());
-	for (AUTO_VAR(it, menu->slots->begin()); it != itEnd; it++)
+	AUTO_VAR(itEnd, menu->slots.end());
+	for (AUTO_VAR(it, menu->slots.begin()); it != itEnd; it++)
 	{
         Slot *slot = *it; //menu->slots->at(i);
 
@@ -96,17 +96,17 @@ void AbstractContainerScreen::render(int xm, int ym, float a)
     if (inventory->getCarried() == NULL && hoveredSlot != NULL && hoveredSlot->hasItem())
 	{
 
-        wstring elementName = trimString(Language::getInstance()->getElementName(hoveredSlot->getItem()->getDescriptionId()));
-
-        if (elementName.length() > 0)
-		{
-            int x = xm - xo + 12;
-            int y = ym - yo - 12;
-            int width = font->width(elementName);
-            fillGradient(x - 3, y - 3, x + width + 3, y + 8 + 3, 0xc0000000, 0xc0000000);
-
-            font->drawShadow(elementName, x, y, 0xffffffff);
-        }
+        //wstring elementName = trimString(Language::getInstance()->getElementName(hoveredSlot->getItem()->getDescriptionId()));
+        //
+        //if (elementName.length() > 0)
+		//{
+        //    int x = xm - xo + 12;
+        //    int y = ym - yo - 12;
+        //    int width = font->width(elementName);
+        //    fillGradient(x - 3, y - 3, x + width + 3, y + 8 + 3, 0xc0000000, 0xc0000000);
+        //
+        //    font->drawShadow(elementName, x, y, 0xffffffff);
+        //}
 
     }
 
@@ -115,7 +115,7 @@ void AbstractContainerScreen::render(int xm, int ym, float a)
     Screen::render(xm, ym, a);
     glEnable(GL_LIGHTING);
     glEnable(GL_DEPTH_TEST);
-#endif
+//#endif
 }
 
 void AbstractContainerScreen::renderLabels()
@@ -125,33 +125,33 @@ void AbstractContainerScreen::renderLabels()
 void AbstractContainerScreen::renderSlot(Slot *slot)
 {
 	// 4J Unused
-#if 0
+//#if 0
     int x = slot->x;
     int y = slot->y;
     shared_ptr<ItemInstance> item = slot->getItem();
 
     if (item == NULL)
 	{
-        int icon = slot->getNoItemIcon();
-        if (icon >= 0)
-		{
-            glDisable(GL_LIGHTING);
-            minecraft->textures->bind(minecraft->textures->loadTexture(TN_GUI_ITEMS));//L"/gui/items.png"));
-            blit(x, y, icon % 16 * 16, icon / 16 * 16, 16, 16);
-            glEnable(GL_LIGHTING);
-            return;
-        }
+        //int icon = slot->getNoItemIcon();
+        //if (icon >= 0)
+		//{
+        //    glDisable(GL_LIGHTING);
+        //    minecraft->textures->bind(minecraft->textures->loadTexture(TN_GUI_ITEMS));//L"/gui/items.png"));
+        //    blit(x, y, icon % 16 * 16, icon / 16 * 16, 16, 16);
+        //    glEnable(GL_LIGHTING);
+        //    return;
+        //}
     }
 
     itemRenderer->renderGuiItem(font, minecraft->textures, item, x, y);
     itemRenderer->renderGuiItemDecorations(font, minecraft->textures, item, x, y);
-#endif
+//#endif
 }
 
 Slot *AbstractContainerScreen::findSlot(int x, int y)
 {
-	AUTO_VAR(itEnd, menu->slots->end());
-	for (AUTO_VAR(it, menu->slots->begin()); it != itEnd; it++)
+	AUTO_VAR(itEnd, menu->slots.end());
+	for (AUTO_VAR(it, menu->slots.begin()); it != itEnd; it++)
 	{
         Slot *slot = *it; //menu->slots->at(i);
         if (isHovering(slot, x, y)) return slot;
@@ -186,12 +186,12 @@ void AbstractContainerScreen::mouseClicked(int x, int y, int buttonNum)
 
         if (clickedOutside)
 		{
-            slotId = AbstractContainerMenu::CLICKED_OUTSIDE;
+            slotId = AbstractContainerMenu::SLOT_CLICKED_OUTSIDE;
         }
 
         if (slotId != -1)
 		{
-            bool quickKey = slotId != AbstractContainerMenu::CLICKED_OUTSIDE && (Keyboard::isKeyDown(Keyboard::KEY_LSHIFT) || Keyboard::isKeyDown(Keyboard::KEY_RSHIFT));
+            bool quickKey = slotId != AbstractContainerMenu::SLOT_CLICKED_OUTSIDE && (Keyboard::isKeyDown(Keyboard::KEY_LSHIFT) || Keyboard::isKeyDown(Keyboard::KEY_RSHIFT));
             minecraft->gameMode->handleInventoryMouseClick(menu->containerId, slotId, buttonNum, quickKey, minecraft->player);
         }
     }

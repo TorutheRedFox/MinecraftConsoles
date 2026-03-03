@@ -37,6 +37,7 @@ wchar_t *Textures::preLoaded[TN_COUNT] =
 	L"gui/gui",
 	L"gui/background",
 	L"gui/icons",
+	L"gui/inventory",
 	L"title/mclogo",
 	L"item/arrows",
 	L"item/boat",

@@ -501,6 +501,7 @@ void Minecraft::setScreen(Screen *screen)
 	if (this->screen != NULL)
 	{
 		this->screen->removed();
+		delete this->screen;
 	}
 
 	//4J Gordon: Do not force a stats save here
@@ -2293,7 +2294,7 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 		}
 	}
 
-	if (screen == NULL && (player && !ui.GetMenuDisplayed(iPad)) )
+	if ((screen == NULL || screen->passEvents) && (player && !ui.GetMenuDisplayed(iPad)) )
 	{
 		// 4J-PB - add some tooltips if required
 		int iA=-1, iB=-1, iX, iY=IDS_CONTROLS_INVENTORY, iLT=-1, iRT=-1, iLB=-1, iRB=-1, iLS=-1, iRS=-1;
@@ -3688,7 +3689,18 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 			}
 			else
 			{
-				app.LoadInventoryMenu(iPad,player);
+				static bool inventoryOpen = false;
+				//app.LoadInventoryMenu(iPad,player);
+				if (!inventoryOpen)
+				{
+					setScreen(new InventoryScreen(player));
+					inventoryOpen = true;
+				}
+				else
+				{
+					setScreen(NULL);
+					inventoryOpen = false;
+				}
 			}
 		}
 
@@ -3776,8 +3788,9 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 	}
 	else
 	{
+		InputManager.SetMenuDisplayed(iPad, false);
 		// 4J-PB
-		if (gameMode && InputManager.GetValue(iPad, ACTION_MENU_CANCEL) > 0 && gameMode->isInputAllowed(ACTION_MENU_CANCEL))
+		if (InputManager.GetValue(iPad, ACTION_MENU_CANCEL) > 0)// && gameMode->isInputAllowed(ACTION_MENU_CANCEL))
 		{
 			setScreen(NULL);
 		}

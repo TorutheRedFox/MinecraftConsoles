@@ -38,8 +38,8 @@ void InventoryScreen::render(int xm, int ym, float a)
 void InventoryScreen::renderBg(float a)
 {
 	// 4J Unused
-#if 0
-    int tex = minecraft->textures->loadTexture(L"/gui/inventory.png");
+//#if 0
+    int tex = minecraft->textures->loadTexture(TN_GUI_INVENTORY);
     glColor4f(1, 1, 1, 1);
     minecraft->textures->bind(tex);
     int xo = (width - imageWidth) / 2;
@@ -80,7 +80,7 @@ void InventoryScreen::renderBg(float a)
     glPopMatrix();
     Lighting::turnOff();
     glDisable(GL_RESCALE_NORMAL);
-#endif
+//#endif
 }
 
 void InventoryScreen::buttonClicked(Button *button)
