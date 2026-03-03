@@ -864,7 +864,7 @@ void UIScene_HUD::handleGameTick()
 			m_parentLayer->showComponent(m_iPad, eUIScene_HUD,false);
 			return;
 		}
-		m_parentLayer->showComponent(m_iPad, eUIScene_HUD,true);
+		m_parentLayer->showComponent(m_iPad, eUIScene_HUD, false);
 
 		updateFrameTick();
 	}

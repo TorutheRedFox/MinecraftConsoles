@@ -91,28 +91,28 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 	bool bTwoPlayerSplitscreen=false;
 	currentGuiScaleFactor = (float) guiScale;		// Keep static copy of scale so we know how gui coordinates map to physical pixels - this is also affected by the viewport
 
-	switch(guiScale)
-	{
-	case 3:
-		splitYOffset = 0;
-		break;
-	case 4:
-		splitYOffset = -5;
-		break;
-	default: // 2
-		splitYOffset = 10;
-		break;
-	}  	
+	//switch(guiScale)
+	//{
+	//case 3:
+	//	splitYOffset = 0;
+	//	break;
+	//case 4:
+	//	splitYOffset = -5;
+	//	break;
+	//default: // 2
+	//	splitYOffset = 10;
+	//	break;
+	//}  	
 
 	// Check which screen section this player is in
 	switch(minecraft->player->m_iScreenSection)
 	{
 	case C4JRender::VIEWPORT_TYPE_FULLSCREEN:
 		// single player
-		iSafezoneXHalf = screenWidth/20; // 5%
-		iSafezoneYHalf = screenHeight/20; // 5%
-		iSafezoneTopYHalf = iSafezoneYHalf;
-		iTooltipsYOffset=40+splitYOffset;
+		iSafezoneXHalf = 0;//screenWidth/20; // 5%
+		iSafezoneYHalf = 0;//screenHeight/20; // 5%
+		iSafezoneTopYHalf = 0;// iSafezoneYHalf;
+		iTooltipsYOffset = 40 + splitYOffset;
 		break;
 	case C4JRender::VIEWPORT_TYPE_SPLIT_TOP:
 		iSafezoneXHalf = screenWidth/10; // 5%  (need to treat the whole screen is 2x this screen)
@@ -303,7 +303,7 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 		RenderManager.StateSetBlendFactor(0xffffff |(((unsigned int)fVal)<<24));
 		currentGuiBlendFactor = fVal / 255.0f;
 	//	RenderManager.StateSetBlendFactor(0x40ffffff);
-		glBlendFunc(GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA);
+		//glBlendFunc(GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA); // this breaks the semi-transparent background for quickselect
 
 		blitOffset = -90;
 
@@ -341,8 +341,8 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 			MemSect(0);
 			glEnable(GL_BLEND);
 			RenderManager.StateSetBlendFactor(0xffffff |(((unsigned int)fVal)<<24));
-			glBlendFunc(GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA);
-			//glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_COLOR);
+			//glBlendFunc(GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA); // this is the legacy console blend func
+			glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_COLOR); // this is the java blend func
 			// 4J Stu - We don't want to adjust the cursor by the safezone, we want it centred
 			if(bTwoPlayerSplitscreen)
 			{
@@ -573,36 +573,36 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 				{
 					// Render mount health
 
-					//int riderCurrentHealth = (int) ceil(living.get()->GetHealth());
-					//float maxRiderHealth = living->GetMaxHealth();
-					//int hearts = (int) (maxRiderHealth + .5f) / 2;
-					//if (hearts > 30)
-					//{
-					//	hearts = 30;
-					//}
-					//
-					//int yo = yLine1;
-					//int baseHealth = 0;
-					//
-					//while (hearts > 0)
-					//{
-					//	int rowHearts = min(hearts, 10);
-					//	hearts -= rowHearts;
-					//
-					//	for (int i = 0; i < rowHearts; i++)
-					//	{
-					//		int texBaseX = 52;
-					//		int bg = 0;
-					//
-					//		if (foodBlink) bg = 1;
-					//		int xo = xRight - i * 8 - 9;
-					//		blit(xo, yo, texBaseX + bg * 9, 9 * 1, 9, 9);
-					//		if (i * 2 + 1 + baseHealth < riderCurrentHealth) blit(xo, yo, texBaseX + 4 * 9, 9 * 1, 9, 9);
-					//		if (i * 2 + 1 + baseHealth == riderCurrentHealth) blit(xo, yo, texBaseX + 5 * 9, 9 * 1, 9, 9);
-					//	}
-					//	yo -= 10;
-					//	baseHealth += 20;
-					//}
+					int riderCurrentHealth = (int) ceil(living.get()->getHealth());
+					float maxRiderHealth = living->getMaxHealth();
+					int hearts = (int) (maxRiderHealth + .5f) / 2;
+					if (hearts > 30)
+					{
+						hearts = 30;
+					}
+					
+					int yo = yLine1;
+					int baseHealth = 0;
+					
+					while (hearts > 0)
+					{
+						int rowHearts = min(hearts, 10);
+						hearts -= rowHearts;
+					
+						for (int i = 0; i < rowHearts; i++)
+						{
+							int texBaseX = 52;
+							int bg = 0;
+					
+							if (foodBlink) bg = 1;
+							int xo = xRight - i * 8 - 9;
+							blit(xo, yo, texBaseX + bg * 9, 9 * 1, 9, 9);
+							if (i * 2 + 1 + baseHealth < riderCurrentHealth) blit(xo, yo, texBaseX + 4 * 9, 9 * 1, 9, 9);
+							if (i * 2 + 1 + baseHealth == riderCurrentHealth) blit(xo, yo, texBaseX + 5 * 9, 9 * 1, 9, 9);
+						}
+						yo -= 10;
+						baseHealth += 20;
+					}
 				}
 
 				// render air bubbles
@@ -932,7 +932,7 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 
 	lastTickA = a;
 	// 4J Stu - This is now displayed in a xui scene
-#if 0
+//#if 0
 	// Jukebox CD message
     if (overlayMessageTime > 0)
 	{
@@ -965,7 +965,7 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
             glPopMatrix();
         }
     }
-#endif
+//#endif
 	
     unsigned int max = 10;
     bool isChatting = false;
@@ -980,7 +980,7 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
     glDisable(GL_ALPHA_TEST);
 
 // 4J Stu - We have moved the chat text to a xui
-#if 0
+//#if 0
     glPushMatrix();
 	// 4J-PB we need to move this up a bit because we've moved the quick select
 	//glTranslatef(0, ((float)screenHeight) - 48, 0);
@@ -1024,7 +1024,7 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 		}
 	}
     glPopMatrix();
-#endif
+//#endif
 
 	// 4J Stu - Copied over but not used
 #if 0
@@ -1162,7 +1162,7 @@ void Gui::renderVignette(float br, int w, int h)
     if (br > 1) br = 1;
     tbr += (br - tbr) * 0.01f;
 
-#if 0  // 4J - removed - TODO put back when we have blend functions implemented
+//#if 0  // 4J - removed - TODO put back when we have blend functions implemented
     glDisable(GL_DEPTH_TEST);
     glDepthMask(false);
     glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
@@ -1179,7 +1179,7 @@ void Gui::renderVignette(float br, int w, int h)
     glEnable(GL_DEPTH_TEST);
     glColor4f(1, 1, 1, 1);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-#endif
+//#endif
 }
 
 void Gui::renderTp(float br, int w, int h)

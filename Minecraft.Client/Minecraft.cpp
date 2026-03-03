@@ -1994,9 +1994,9 @@ void Minecraft::run_middle()
 			checkGlError(L"Post render");
 			MemSect(0);
 			frames++;
-			pause = !isClientSide() && screen != NULL && screen->isPauseScreen();
-			//pause = g_NetworkManager.IsLocalGame() && g_NetworkManager.GetPlayerCount() == 1 && app.IsPauseMenuDisplayed(ProfileManager.GetPrimaryPad());
-			pause = app.IsAppPaused();
+			//pause = !isClientSide() && screen != NULL && screen->isPauseScreen();
+			pause = g_NetworkManager.IsLocalGame() && g_NetworkManager.GetPlayerCount() == 1 && screen != NULL && screen->isPauseScreen();//app.IsPauseMenuDisplayed(ProfileManager.GetPrimaryPad());
+			//pause = app.IsAppPaused();
 
 #ifndef _CONTENT_PACKAGE
 			while (System::nanoTime() >= lastTime + 1000000000)
@@ -2274,9 +2274,9 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 			//            setScreen(new InBedChatScreen());		// 4J - TODO put back in
 		}
 
-		player->missTime = 10000;
-		player->lastClickTick[0] = ticks + 10000;
-		player->lastClickTick[1] = ticks + 10000;
+		//layer->missTime = 10000;
+		//layer->lastClickTick[0] = ticks + 10000;
+		//layer->lastClickTick[1] = ticks + 10000;
 	}
 	else if (screen != NULL && (dynamic_cast<InBedChatScreen *>(screen)!=NULL) && !player->isSleeping())
 	{
