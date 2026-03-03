@@ -28,13 +28,15 @@
 #include "..\Minecraft.World\net.minecraft.world.h"
 #include "..\Minecraft.World\LevelChunk.h"
 #include "..\Minecraft.World\Biome.h"
+#include "../Minecraft.World/SharedMonsterAttributes.h"
+#include "../Minecraft.World/AttributeInstance.h"
 
 ResourceLocation Gui::PUMPKIN_BLUR_LOCATION = ResourceLocation(TN__BLUR__MISC_PUMPKINBLUR);
 
-#define RENDER_HUD 0
+//#define RENDER_HUD 0
 //#ifndef _XBOX
 //#undef RENDER_HUD
-//#define RENDER_HUD 1
+#define RENDER_HUD 1
 //#endif
 
 float Gui::currentGuiBlendFactor = 1.0f;	// 4J added
@@ -311,7 +313,7 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 		if(bDisplayGui)
 		{
 			MemSect(31);
-			minecraft->textures->bindTexture(TN_GUI_GUI);	// 4J was L"/gui/gui.png"
+			glBindTexture(GL_TEXTURE_2D, minecraft->textures->loadTexture(TN_GUI_GUI));	// 4J was L"/gui/gui.png"
 			MemSect(0);
 
 			shared_ptr<Inventory> inventory = minecraft->player->inventory;
@@ -335,7 +337,7 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 
 
 			MemSect(31);
-			minecraft->textures->bindTexture(TN_GUI_ICONS);//L"/gui/icons.png"));
+			minecraft->textures->bindTexture(&ResourceLocation(TN_GUI_ICONS));//L"/gui/icons.png"));
 			MemSect(0);
 			glEnable(GL_BLEND);
 			RenderManager.StateSetBlendFactor(0xffffff |(((unsigned int)fVal)<<24));
@@ -433,12 +435,18 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 					yLine2 = yLine1 - 10;
 				}
 
-				double maxHealth = minecraft->localplayers[iPad]->getAttribute(SharedMonsterAttributes.MAX_HEALTH);
+				const int NUM_HEARTS_PER_ROW = 10;
+				double maxHealth = minecraft->localplayers[iPad]->getAttribute(SharedMonsterAttributes::MAX_HEALTH)->getValue();
+				
 
+
+				double oldHealth = minecraft->localplayers[iPad]->lastHealth;
+				double currentHealth = minecraft->localplayers[iPad]->getHealth();
+				double absorption;
 				double totalAbsorption = minecraft->localplayers[iPad]->getAbsorptionAmount();
-				int numHealthRows = Mth.ceil((maxHealth + totalAbsorption) / 2 / (float) NUM_HEARTS_PER_ROW);
-				int healthRowHeight = Math.max(10 - (numHealthRows - 2), 3);
-				int yLine2 = yLine1 - (numHealthRows - 1) * healthRowHeight - 10;
+				int numHealthRows = Mth::ceil((maxHealth + totalAbsorption) / 2 / (float) NUM_HEARTS_PER_ROW);
+				int healthRowHeight = max(10 - (numHealthRows - 2), 3);
+				//int yLine2 = yLine1 - (numHealthRows - 1) * healthRowHeight - 10;
 				absorption = totalAbsorption;
 
 				int armor = minecraft->player->getArmorValue();
@@ -462,51 +470,51 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 				}
 
 				//minecraft.profiler.popPush("health");
-				for (int i = Mth.ceil((maxHealth + totalAbsorption) / 2) - 1; i >= 0; i--)
+				for (int i = Mth::ceil((maxHealth + totalAbsorption) / 2) - 1; i >= 0; i--)
 				{
 					int healthTexBaseX = 16;
-					if (minecraft.player.hasEffect(MobEffect.poison))
+					if (minecraft->player->hasEffect(MobEffect::poison))
 					{
 						healthTexBaseX += 4 * 9;
 					}
-					else if (minecraft.player.hasEffect(MobEffect.wither))
+					else if (minecraft->player->hasEffect(MobEffect::wither))
 					{
 						healthTexBaseX += 8 * 9;
 					}
-
+				
 					int bg = 0;
 					if (blink) bg = 1;
-					int rowIndex = Mth.ceil((i + 1)  / (float) NUM_HEARTS_PER_ROW) - 1;
+					int rowIndex = Mth::ceil((i + 1)  / (float) NUM_HEARTS_PER_ROW) - 1;
 					int xo = xLeft + (i % NUM_HEARTS_PER_ROW) * 8;
 					int yo = yLine1 - rowIndex * healthRowHeight;
 					if (currentHealth <= 4)
 					{
-						yo += random.nextInt(2);
+						yo += random->nextInt(2);
 					}
-
+				
 					if (i == heartOffsetIndex)
 					{
 						yo -= 2;
 					}
-
+				
 					int y0 = 0;
-
+				
 					// No hardcore on console
 					/*if (minecraft->level.getLevelData().isHardcore())
 					{
 						y0 = 5;
 					}*/
-
+				
 					blit(xo, yo, 16 + bg * 9, 9 * y0, 9, 9);
 					if (blink)
 					{
 						if (i * 2 + 1 < oldHealth) blit(xo, yo, healthTexBaseX + 6 * 9, 9 * y0, 9, 9);
 						if (i * 2 + 1 == oldHealth) blit(xo, yo, healthTexBaseX + 7 * 9, 9 * y0, 9, 9);
 					}
-
+				
 					if (absorption > 0)
 					{
-						if (absorption == totalAbsorption && totalAbsorption % 2 == 1)
+						if (absorption == totalAbsorption && fmodf(totalAbsorption, 2) == 1)
 						{
 							blit(xo, yo, healthTexBaseX + 17 * 9, 9 * y0, 9, 9);
 						}
@@ -565,36 +573,36 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 				{
 					// Render mount health
 
-					int riderCurrentHealth = (int) ceil(living.get()->GetHealth());
-					float maxRiderHealth = living->GetMaxHealth();
-					int hearts = (int) (maxRiderHealth + .5f) / 2;
-					if (hearts > 30)
-					{
-						hearts = 30;
-					}
-
-					int yo = yLine1;
-					int baseHealth = 0;
-
-					while (hearts > 0)
-					{
-						int rowHearts = min(hearts, 10);
-						hearts -= rowHearts;
-
-						for (int i = 0; i < rowHearts; i++)
-						{
-							int texBaseX = 52;
-							int bg = 0;
-
-							if (foodBlink) bg = 1;
-							int xo = xRight - i * 8 - 9;
-							blit(xo, yo, texBaseX + bg * 9, 9 * 1, 9, 9);
-							if (i * 2 + 1 + baseHealth < riderCurrentHealth) blit(xo, yo, texBaseX + 4 * 9, 9 * 1, 9, 9);
-							if (i * 2 + 1 + baseHealth == riderCurrentHealth) blit(xo, yo, texBaseX + 5 * 9, 9 * 1, 9, 9);
-						}
-						yo -= 10;
-						baseHealth += 20;
-					}
+					//int riderCurrentHealth = (int) ceil(living.get()->GetHealth());
+					//float maxRiderHealth = living->GetMaxHealth();
+					//int hearts = (int) (maxRiderHealth + .5f) / 2;
+					//if (hearts > 30)
+					//{
+					//	hearts = 30;
+					//}
+					//
+					//int yo = yLine1;
+					//int baseHealth = 0;
+					//
+					//while (hearts > 0)
+					//{
+					//	int rowHearts = min(hearts, 10);
+					//	hearts -= rowHearts;
+					//
+					//	for (int i = 0; i < rowHearts; i++)
+					//	{
+					//		int texBaseX = 52;
+					//		int bg = 0;
+					//
+					//		if (foodBlink) bg = 1;
+					//		int xo = xRight - i * 8 - 9;
+					//		blit(xo, yo, texBaseX + bg * 9, 9 * 1, 9, 9);
+					//		if (i * 2 + 1 + baseHealth < riderCurrentHealth) blit(xo, yo, texBaseX + 4 * 9, 9 * 1, 9, 9);
+					//		if (i * 2 + 1 + baseHealth == riderCurrentHealth) blit(xo, yo, texBaseX + 5 * 9, 9 * 1, 9, 9);
+					//	}
+					//	yo -= 10;
+					//	baseHealth += 20;
+					//}
 				}
 
 				// render air bubbles

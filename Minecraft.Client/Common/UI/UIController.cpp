@@ -307,7 +307,7 @@ void UIController::postInit()
 	IggyInstallPerfmon(iggy_perfmon);
 #endif
 
-	NavigateToScene(0, eUIScene_Intro);
+	//NavigateToScene(0, eUIScene_Intro);
 }
 
 

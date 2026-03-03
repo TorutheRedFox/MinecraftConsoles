@@ -21,27 +21,30 @@ TitleScreen::TitleScreen()
 	multiplayerButton = NULL;
 
     splash = L"missingno";
-//    try {	// 4J - removed try/catch
+//   try {	// 4J - removed try/catch
     vector<wstring> splashes;
 
-	/*
-    BufferedReader *br = new BufferedReader(new InputStreamReader(InputStream::getResourceAsStream(L"res\\title\\splashes.txt"))); //, Charset.forName("UTF-8")
-		
-    wstring line = L"";
-    while ( !(line = br->readLine()).empty() )
-	{
-        line = trimString( line );
-        if (line.length() > 0)
-		{
-            splashes.push_back(line);
-        }
-    }
 	
-    br->close();
-	delete br;
-	*/
-
-    splash = L""; //splashes.at(random->nextInt(splashes.size()));
+    BufferedReader *br = new BufferedReader(new InputStreamReader(InputStream::getResourceAsStream(L"Common\\res\\title\\splashes.txt"))); //, Charset.forName("UTF-8")
+	
+    if (br)
+    {
+        wstring line = L"";
+        while (!(line = br->readLine()).empty())
+        {
+            line = trimString(line);
+            if (line.length() > 0)
+            {
+                splashes.push_back(line);
+            }
+        }
+    
+        br->close();
+        delete br;
+    }
+    
+    
+    splash = splashes.at(random->nextInt(splashes.size()));
 
 //    } catch (Exception e) {
 //    }
@@ -108,7 +111,8 @@ void TitleScreen::buttonClicked(Button *button)
     }
     if (button->id == 1)
 	{
-        minecraft->setScreen(new SelectWorldScreen(this));
+        //minecraft->setScreen(new SelectWorldScreen(this));
+        ui.NavigateToScene(0, eUIScene_MainMenu);
     }
     if (button->id == 2)
 	{
@@ -127,7 +131,7 @@ void TitleScreen::buttonClicked(Button *button)
 void TitleScreen::render(int xm, int ym, float a)
 {
 	// 4J Unused
-#if 0
+//#if 0
     renderBackground();
     Tesselator *t = Tesselator::getInstance();
 
@@ -135,7 +139,8 @@ void TitleScreen::render(int xm, int ym, float a)
     int logoX = width / 2 - logoWidth / 2;
     int logoY = 30;
 
-    glBindTexture(GL_TEXTURE_2D, minecraft->textures->loadTexture(L"/title/mclogo.png"));
+    //glBindTexture(GL_TEXTURE_2D, minecraft->textures->loadTexture(L"/title/mclogo.png"));
+    glBindTexture(GL_TEXTURE_2D, minecraft->textures->loadTexture(TN_TITLE_MCLOGO));
     glColor4f(1, 1, 1, 1);
     blit(logoX + 0, logoY + 0, 0, 0, 155, 44);
     blit(logoX + 155, logoY + 0, 0, 45, 155, 44);
@@ -156,5 +161,5 @@ void TitleScreen::render(int xm, int ym, float a)
     drawString(font, msg, width - font->width(msg) - 2, height - 10, 0xffffff);
 
     Screen::render(xm, ym, a);
-#endif
+//#endif
 }

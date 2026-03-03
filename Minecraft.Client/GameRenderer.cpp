@@ -739,7 +739,8 @@ void GameRenderer::renderItemInHand(float a, int eye)
 			{
 				turnOnLightLayer(a);
 				PIXBeginNamedEvent(0,"Item in hand render");
-				itemInHandRenderer->render(a);
+				if (itemInHandRenderer)
+					itemInHandRenderer->render(a);
 				PIXEndNamedEvent();
 				turnOffLightLayer(a);
 			}
@@ -751,7 +752,8 @@ void GameRenderer::renderItemInHand(float a, int eye)
 	//if (!mc->options->thirdPersonView && !mc->cameraTargetPlayer->isSleeping())
 	if (!localplayer->ThirdPersonView() && !mc->cameraTargetPlayer->isSleeping())
 	{
-		itemInHandRenderer->renderScreenEffect(a);
+		if (itemInHandRenderer)
+			itemInHandRenderer->renderScreenEffect(a);
 		bobHurt(a);
 	}
 

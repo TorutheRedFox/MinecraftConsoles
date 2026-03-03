@@ -65,6 +65,7 @@ void Screen::mouseClicked(int x, int y, int buttonNum)
                 clickedButton = button;
                 minecraft->soundEngine->playUI(eSoundType_RANDOM_CLICK, 1, 1);
                 buttonClicked(button);
+				break; // we don't want this loop to continue
             }
         }
     }
@@ -226,11 +227,12 @@ void Screen::renderBackground(int vo)
 void Screen::renderDirtBackground(int vo)
 {
 	// 4J Unused
-#if 0
+//#if 0
     glDisable(GL_LIGHTING);
     glDisable(GL_FOG);
     Tesselator *t = Tesselator::getInstance();
-    glBindTexture(GL_TEXTURE_2D, minecraft->textures->loadTexture(L"/gui/background.png"));
+    //glBindTexture(GL_TEXTURE_2D, minecraft->textures->loadTexture(L"/gui/background.png"));
+	glBindTexture(GL_TEXTURE_2D, minecraft->textures->loadTexture(TN_GUI_BACKGROUND));
     glColor4f(1, 1, 1, 1);
     float s = 32;
     t->begin();
@@ -240,7 +242,7 @@ void Screen::renderDirtBackground(int vo)
     t->vertexUV((float)(width), (float)( 0), (float)( 0), (float)( width / s), (float)( 0 + vo));
     t->vertexUV((float)(0), (float)( 0), (float)( 0), (float)( 0), (float)( 0 + vo));
     t->end();
-#endif
+//#endif
 }
 
 bool Screen::isPauseScreen()

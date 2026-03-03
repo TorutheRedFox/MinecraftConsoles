@@ -396,8 +396,11 @@ void LevelRenderer::AddDLCSkinsToMemTextures()
 
 void LevelRenderer::allChanged()
 {
-	int playerIndex = mc->player->GetXboxPad();	// 4J added
-	allChanged(playerIndex);
+	if (mc->player)
+	{
+		int playerIndex = mc->player->GetXboxPad();	// 4J added
+		allChanged(playerIndex);
+	}
 }
 
 int LevelRenderer::activePlayers()

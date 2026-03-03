@@ -1151,24 +1151,24 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
 		//		LeaderboardManager::Instance()->Tick();
 		// Render game graphics.
-		if(app.GetGameStarted())
-		{
+		//if(app.GetGameStarted())
+		//{
 			pMinecraft->applyFrameMouseLook();  // Per-frame mouse look (before ticks + render)
 			pMinecraft->run_middle();
 			app.SetAppPaused( g_NetworkManager.IsLocalGame() && g_NetworkManager.GetPlayerCount() == 1 && ui.IsPauseMenuDisplayed(ProfileManager.GetPrimaryPad()) );
-		}
-		else
-		{
-			MemSect(28);
-			pMinecraft->soundEngine->tick(NULL, 0.0f);
-			MemSect(0);
-			pMinecraft->textures->tick(true,false);
-			IntCache::Reset();
-			if( app.GetReallyChangingSessionType() )
-			{
-				pMinecraft->tickAllConnections();		// Added to stop timing out when we are waiting after converting to an offline game
-			}
-		}
+		//}
+		//else
+		//{
+		//	MemSect(28);
+		//	pMinecraft->soundEngine->tick(NULL, 0.0f);
+		//	MemSect(0);
+		//	pMinecraft->textures->tick(true,false);
+		//	IntCache::Reset();
+		//	if( app.GetReallyChangingSessionType() )
+		//	{
+		//		pMinecraft->tickAllConnections();		// Added to stop timing out when we are waiting after converting to an offline game
+		//	}
+		//}
 
 		pMinecraft->soundEngine->playMusicTick();
 

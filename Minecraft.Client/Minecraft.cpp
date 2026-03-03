@@ -27,6 +27,7 @@
 #include "DeathScreen.h"
 #include "ErrorScreen.h"
 #include "TitleScreen.h"
+#include "PauseScreen.h"
 #include "InventoryScreen.h"
 #include "InBedChatScreen.h"
 #include "AchievementPopup.h"
@@ -363,7 +364,7 @@ void Minecraft::init()
 	// 4J-PB - We'll do this in a xui intro
 	//renderLoadingScreen();
 
-	//Keyboard::create();
+	Keyboard::create();
 	Mouse::create();
 #if 0	// 4J - removed
 	mouseHandler = new MouseHandler(parent);
@@ -515,19 +516,19 @@ void Minecraft::setScreen(Screen *screen)
 	}
 	else if (player != NULL && !ui.GetMenuDisplayed(player->GetXboxPad()) && player->getHealth() <= 0)
 	{
-		//screen = new DeathScreen();
+		screen = new DeathScreen();
 
 		// 4J Stu - If we exit from the death screen then we are saved as being dead. In the Java
 		// game when you load the game you are still dead, but this is silly so only show the dead
 		// screen if we have died during gameplay
-		if(ticks==0)
-		{
-			player->respawn();
-		}
-		else
-		{
-			ui.NavigateToScene(player->GetXboxPad(),eUIScene_DeathMenu,NULL);
-		}
+		//if(ticks==0)
+		//{
+		//	player->respawn();
+		//}
+		//else
+		//{
+		//	ui.NavigateToScene(player->GetXboxPad(),eUIScene_DeathMenu,NULL);
+		//}
 	}
 
 	if (dynamic_cast<TitleScreen *>(screen)!=NULL)
@@ -1757,6 +1758,7 @@ void Minecraft::run_middle()
 				ticks++;
 				//            try {		// 4J - try/catch removed
 				bool bFirst = true;
+				bool bSet = false;
 				for( int idx = 0; idx < XUSER_MAX_COUNT; idx++ )
 				{
 					// 4J - If we are waiting for this connection to do something, then tick it here.
@@ -1799,11 +1801,18 @@ void Minecraft::run_middle()
 
 					if( setLocalPlayerIdx(idx) )
 					{
+						bSet = true;
 						tick(bFirst, bLastTimerTick);
 						bFirst = false;
 						// clear the stored button downs since the tick for this player will now have actioned them
-						player->ullButtonsPressed=0LL;
+						if (player)
+							player->ullButtonsPressed=0LL;
 					}
+				}
+
+				if (!bSet) // tick anyway
+				{
+					tick(bFirst, bLastTimerTick);
 				}
 
 				ui.HandleGameTick();
@@ -1858,10 +1867,12 @@ void Minecraft::run_middle()
 			{
 				bool bFirst = true;
 				int iPrimaryPad=ProfileManager.GetPrimaryPad();
+				bool bSet = false;
 				for( int i = 0; i < XUSER_MAX_COUNT; i++ )
 				{
 					if( setLocalPlayerIdx(i) )
 					{
+						bSet = true;
 						PIXBeginNamedEvent(0,"Game render player idx %d",i);
 						RenderManager.StateSetViewport((C4JRender::eViewportType)player->m_iScreenSection);
 						gameRenderer->render(timer->a, bFirst);
@@ -1887,6 +1898,10 @@ void Minecraft::run_middle()
 						}
 					}
 				}
+
+				if (!bSet)
+					gameRenderer->render(timer->a, bFirst); // render anyway
+
 				// If there's an unoccupied quadrant, then clear that to black
 				if( unoccupiedQuadrant > -1 )
 				{
@@ -1979,7 +1994,7 @@ void Minecraft::run_middle()
 			checkGlError(L"Post render");
 			MemSect(0);
 			frames++;
-			//pause = !isClientSide() && screen != NULL && screen->isPauseScreen();
+			pause = !isClientSide() && screen != NULL && screen->isPauseScreen();
 			//pause = g_NetworkManager.IsLocalGame() && g_NetworkManager.GetPlayerCount() == 1 && app.IsPauseMenuDisplayed(ProfileManager.GetPrimaryPad());
 			pause = app.IsAppPaused();
 
@@ -2132,7 +2147,7 @@ void Minecraft::pauseGame()
 {
 	if (screen != NULL) return;
 
-	//    setScreen(new PauseScreen());	// 4J - TODO put back in
+	setScreen(new PauseScreen());	// 4J - TODO put back in
 }
 
 void Minecraft::resize(int width, int height)
@@ -2193,14 +2208,18 @@ void Minecraft::levelTickThreadInitFunc()
 // 4J - added bUpdateTextures, which is true if the actual renderer textures are to be updated - this will be true for the last time this tick runs with bFirst true
 void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 {
-	int iPad=player->GetXboxPad();
-	//OutputDebugString("Minecraft::tick\n");
+	int iPad = -1;
+	if (player)
+	{
+		iPad = player->GetXboxPad();
+		//OutputDebugString("Minecraft::tick\n");
 
-	//4J-PB - only tick this player's stats
-	stats[iPad]->tick(iPad);
+		//4J-PB - only tick this player's stats
+		stats[iPad]->tick(iPad);
 
-	// Tick the opacity timer (to display the interface at default opacity for a certain time if the user has been navigating it)
-	app.TickOpacityTimer(iPad);
+		// Tick the opacity timer (to display the interface at default opacity for a certain time if the user has been navigating it)
+		app.TickOpacityTimer(iPad);
+	}
 
 	// 4J added
 	if( bFirst ) levelRenderer->destroyedTileManager->tick();
@@ -2254,17 +2273,14 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 		{
 			//            setScreen(new InBedChatScreen());		// 4J - TODO put back in
 		}
+
+		player->missTime = 10000;
+		player->lastClickTick[0] = ticks + 10000;
+		player->lastClickTick[1] = ticks + 10000;
 	}
 	else if (screen != NULL && (dynamic_cast<InBedChatScreen *>(screen)!=NULL) && !player->isSleeping())
 	{
 		setScreen(NULL);
-	}
-
-	if (screen != NULL)
-	{
-		player->missTime = 10000;
-		player->lastClickTick[0] = ticks + 10000;
-		player->lastClickTick[1] = ticks + 10000;
 	}
 
 	if (screen != NULL)
@@ -2277,7 +2293,7 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 		}
 	}
 
-	if (screen == NULL && !ui.GetMenuDisplayed(iPad) )
+	if (screen == NULL && (player && !ui.GetMenuDisplayed(iPad)) )
 	{
 		// 4J-PB - add some tooltips if required
 		int iA=-1, iB=-1, iX, iY=IDS_CONTROLS_INVENTORY, iLT=-1, iRT=-1, iLB=-1, iRB=-1, iLS=-1, iRS=-1;
@@ -3710,9 +3726,12 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 #endif
 			)
 		{
-			app.DebugPrintf("PAUSE PRESS PROCESSING - ipad = %d, NavigateToScene\n",player->GetXboxPad());
-			ui.PlayUISFX(eSFX_Press);
-			ui.NavigateToScene(iPad, eUIScene_PauseMenu, NULL, eUILayer_Scene);
+			//app.DebugPrintf("PAUSE PRESS PROCESSING - ipad = %d, NavigateToScene\n",player->GetXboxPad());
+			//ui.PlayUISFX(eSFX_Press);
+			//ui.NavigateToScene(iPad, eUIScene_PauseMenu, NULL, eUILayer_Scene);
+			ui.CloseUIScenes(iPad);
+			ui.CloseAllPlayersScenes();
+			pauseGame();
 		}
 
 		if((player->ullButtonsPressed&(1LL<<MINECRAFT_ACTION_DROP)) && gameMode->isInputAllowed(MINECRAFT_ACTION_DROP))
@@ -3758,7 +3777,7 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 	else
 	{
 		// 4J-PB
-		if (InputManager.GetValue(iPad, ACTION_MENU_CANCEL) > 0 && gameMode->isInputAllowed(ACTION_MENU_CANCEL))
+		if (gameMode && InputManager.GetValue(iPad, ACTION_MENU_CANCEL) > 0 && gameMode->isInputAllowed(ACTION_MENU_CANCEL))
 		{
 			setScreen(NULL);
 		}
