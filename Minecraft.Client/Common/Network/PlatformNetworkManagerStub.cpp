@@ -7,6 +7,7 @@
 #include "..\..\Windows64\Network\WinsockNetLayer.h"
 #include "..\..\Minecraft.h"
 #include "..\..\User.h"
+#include <iostream>
 #endif
 
 CPlatformNetworkManagerStub *g_pPlatformNetworkManager;
@@ -362,12 +363,23 @@ void CPlatformNetworkManagerStub::HostGame(int localUsersMask, bool bOnlineGame,
 
 #ifdef _WINDOWS64
 	int port = WIN64_NET_DEFAULT_PORT;
+	const char* bindIp = NULL;
+	if (g_Win64DedicatedServer)
+	{
+		if (g_Win64DedicatedServerPort > 0)
+			port = g_Win64DedicatedServerPort;
+		if (g_Win64DedicatedServerBindIP[0] != 0)
+			bindIp = g_Win64DedicatedServerBindIP;
+	}
 	if (!WinsockNetLayer::IsActive())
-		WinsockNetLayer::HostGame(port);
+		WinsockNetLayer::HostGame(port, bindIp);
 
-	const wchar_t* hostName = IQNet::m_player[0].m_gamertag;
-	unsigned int settings = app.GetGameHostOption(eGameHostOption_All);
-	WinsockNetLayer::StartAdvertising(port, hostName, settings, 0, 0, MINECRAFT_NET_VERSION);
+	if (WinsockNetLayer::IsActive())
+	{
+		const wchar_t* hostName = IQNet::m_player[0].m_gamertag;
+		unsigned int settings = app.GetGameHostOption(eGameHostOption_All);
+		WinsockNetLayer::StartAdvertising(port, hostName, settings, 0, 0, MINECRAFT_NET_VERSION);
+	}
 #endif
 //#endif
 }
@@ -689,6 +701,7 @@ void CPlatformNetworkManagerStub::SearchForGames()
 #ifdef _WINDOWS64
 	std::vector<Win64LANSession> lanSessions = WinsockNetLayer::GetDiscoveredSessions();
 
+	//THEY GET DELETED HERE DAMMIT
 	for (size_t i = 0; i < friendsSessions[0].size(); i++)
 		delete friendsSessions[0][i];
 	friendsSessions[0].clear();
@@ -717,6 +730,53 @@ void CPlatformNetworkManagerStub::SearchForGames()
 		info->sessionId = (SessionID)((unsigned __int64)inet_addr(lanSessions[i].hostIP) | ((unsigned __int64)lanSessions[i].hostPort << 32));
 
 		friendsSessions[0].push_back(info);
+	}
+
+	std::FILE* file = std::fopen("servers.txt", "r");
+
+	if (file) {
+		wstring wline;
+		int phase = 0;
+
+		string ip;
+		wstring port;
+		wstring name;
+
+		char buffer[512];
+		while (std::fgets(buffer, sizeof(buffer), file)) {
+			if (phase == 0) {
+				ip = buffer;
+				phase = 1;
+			}
+			else if (phase == 1) {
+				wline = convStringToWstring(buffer);
+				port = wline;
+				phase = 2;
+			}
+			else if (phase == 2) {
+				wline = convStringToWstring(buffer);
+				name = wline;
+				phase = 0;
+
+				//THEY GET DELETED AFTER USE LIKE 30 LINES UP!!
+				FriendSessionInfo* info = new FriendSessionInfo();
+				wchar_t label[128];
+				wcsncpy_s(label, sizeof(label)/sizeof(wchar_t), name.c_str(), _TRUNCATE);
+				size_t nameLen = wcslen(label);
+				info->displayLabel = new wchar_t[nameLen+1];
+				wcscpy_s(info->displayLabel, nameLen + 1, label);
+				info->displayLabelLength = (unsigned char)nameLen;
+				info->displayLabelViewableStartIndex = 0;
+				info->data.isReadyToJoin = true;
+				info->data.isJoinable = true;
+				strncpy_s(info->data.hostIP, sizeof(info->data.hostIP), ip.c_str(), _TRUNCATE);
+				info->data.hostPort = stoi(port);
+				info->sessionId = (SessionID)(static_cast<uint64_t>(inet_addr(ip.c_str())) | (static_cast<uint64_t>(stoi(port)) << 32));
+				friendsSessions[0].push_back(info);
+			}
+		}
+
+		std::fclose(file);
 	}
 
 	m_searchResultsCount[0] = (int)friendsSessions[0].size();
