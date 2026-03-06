@@ -255,7 +255,8 @@ void UIScene_FullscreenProgress::tick()
 					break;
 				case e_ProgressCompletion_NavigateToHomeMenu:
 					app.DebugPrintf("e_ProgressCompletion_NavigateToHomeMenu\n");
-					ui.NavigateToHomeMenu();
+					//ui.NavigateToHomeMenu();
+					ui.CloseAllPlayersScenes();
 					ui.UpdatePlayerBasePositions();
 					break;
 				default:

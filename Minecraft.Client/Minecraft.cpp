@@ -331,7 +331,7 @@ void Minecraft::init()
 	skins = new TexturePackRepository(workingDirectory, this);
 	skins->addDebugPacks();
 	textures = new Textures(skins, options);
-	//renderLoadingScreen();
+	renderLoadingScreen();
 
 	font = new Font(options, L"font/Default.png", textures, false, &DEFAULT_FONT_LOCATION, 23, 20, 8, 8, SFontData::Codepoints);
 	altFont = new Font(options, L"font/alternate.png", textures, false, &ALT_FONT_LOCATION, 16, 16, 8, 8);
@@ -433,7 +433,7 @@ void Minecraft::renderLoadingScreen()
 {
 	// 4J Unused
 	// testing stuff on vita just now
-#ifdef __PSVITA__
+//#ifdef __PSVITA__
 	ScreenSizeCalculator ssc(options, width, height);
 
 	// xxx
@@ -454,7 +454,7 @@ void Minecraft::renderLoadingScreen()
 	glEnable(GL_TEXTURE_2D);
 	glDisable(GL_FOG);
 	// xxx
-	glBindTexture(GL_TEXTURE_2D, textures->loadTexture(TN_MOB_PIG));
+	glBindTexture(GL_TEXTURE_2D, textures->loadTexture(TN_TITLE_MOJANG));
 	t->begin();
 	t->color(0xffffff);
 	t->vertexUV((float)(0), (float)( height), (float)( 0), (float)( 0), (float)( 0));
@@ -477,7 +477,7 @@ void Minecraft::renderLoadingScreen()
 	Display::swapBuffers();
 	// xxx
 	RenderManager.Present();
-#endif
+//#endif
 }
 
 void Minecraft::blit(int x, int y, int sx, int sy, int w, int h)
@@ -3772,7 +3772,7 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 			}
 		}
 
-		if ( (player->ullButtonsPressed&(1LL<<MINECRAFT_ACTION_PAUSEMENU))
+		if ( (player->ullButtonsPressed&(1LL<<MINECRAFT_ACTION_PAUSEMENU) && !pause)
 #ifdef _DURANGO
 			|| (player->ullButtonsPressed&(1LL<<ACTION_MENU_GTC_PAUSE))
 #endif
@@ -3830,10 +3830,10 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 	{
 		InputManager.SetMenuDisplayed(iPad, false);
 		// 4J-PB
-		if (gameMode && InputManager.GetValue(iPad, ACTION_MENU_CANCEL) > 0 && gameMode->isInputAllowed(ACTION_MENU_CANCEL))
-		{
-			setScreen(NULL);
-		}
+		//if (gameMode && InputManager.GetValue(iPad, ACTION_MENU_CANCEL) > 0 && gameMode->isInputAllowed(ACTION_MENU_CANCEL))
+		//{
+		//	setScreen(NULL);
+		//}
 	}
 
 	// monitor for keyboard input

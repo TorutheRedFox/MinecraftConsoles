@@ -53,12 +53,12 @@ void DeathScreen::render(int xm, int ym, float a)
     Screen::render(xm, ym, a);
 
 	// 4J - debug code - remove
-	static int count = 0;
-	if( count++ == 100 )
-	{
-		count = 0;
-		buttonClicked(buttons[0]);
-	}
+	//static int count = 0; 
+	//if( count++ == 100 )
+	//{
+	//	count = 0;
+	//	buttonClicked(buttons[0]);
+	//}
 }
 
 bool DeathScreen::isPauseScreen()

@@ -90,8 +90,8 @@ DWORD dwProfileSettingsA[NUM_PROFILE_VALUES]=
 
 BOOL g_bWidescreen = TRUE;
 
-int g_iScreenWidth = 1920;
-int g_iScreenHeight = 1080;
+int g_iScreenWidth = 854;//1920;
+int g_iScreenHeight = 480;//1080;
 
 float g_iAspectRatio = static_cast<float>(g_iScreenWidth) / g_iScreenHeight;
 
@@ -840,6 +840,7 @@ HRESULT InitDevice()
 	sd.SampleDesc.Count = 1;
 	sd.SampleDesc.Quality = 0;
 	sd.Windowed = TRUE;
+	sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
 	for( UINT driverTypeIndex = 0; driverTypeIndex < numDriverTypes; driverTypeIndex++ )
 	{
@@ -903,6 +904,85 @@ HRESULT InitDevice()
 	RenderManager.Initialise(g_pd3dDevice, g_pSwapChain);
 
 	PostProcesser::GetInstance().Init();
+
+	return S_OK;
+}
+
+//--------------------------------------------------------------------------------------
+// Change resolution
+//--------------------------------------------------------------------------------------
+HRESULT ChangeDeviceResolution()
+{
+	HRESULT hr = S_OK;
+
+	RECT rc;
+	GetClientRect(g_hWnd, &rc);
+	UINT width = rc.right - rc.left;
+	UINT height = rc.bottom - rc.top;
+	//app.DebugPrintf("width: %d, height: %d\n", width, height);
+	width = g_iScreenWidth;
+	height = g_iScreenHeight;
+	//app.DebugPrintf("width: %d, height: %d\n", width, height);
+
+	// release current targets
+	ID3D11RenderTargetView* nullViews[D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT] = { 0 };
+	g_pImmediateContext->OMSetRenderTargets(ARRAYSIZE(nullViews), nullViews, nullptr);
+	g_pRenderTargetView->Release();
+	g_pDepthStencilView->Release();
+	g_pImmediateContext->Flush();
+
+	// create new ones
+	
+	// resize the buffers
+	hr = g_pSwapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
+	
+	// Create a render target view
+	ID3D11Texture2D* pBackBuffer = NULL;
+	hr = g_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
+	if (FAILED(hr))
+		return hr;
+
+	// Create a depth stencil buffer
+	D3D11_TEXTURE2D_DESC descDepth;
+	ZeroMemory(&descDepth, sizeof(descDepth));
+
+	descDepth.Width = width;
+	descDepth.Height = height;
+	descDepth.MipLevels = 1;
+	descDepth.ArraySize = 1;
+	descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	descDepth.SampleDesc.Count = 1;
+	descDepth.SampleDesc.Quality = 0;
+	descDepth.Usage = D3D11_USAGE_DEFAULT;
+	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	descDepth.CPUAccessFlags = 0;
+	descDepth.MiscFlags = 0;
+	hr = g_pd3dDevice->CreateTexture2D(&descDepth, NULL, &g_pDepthStencilBuffer);
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC descDSView;
+	ZeroMemory(&descDSView, sizeof(descDSView));
+	descDSView.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	descDSView.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	descDSView.Texture2D.MipSlice = 0;
+
+	hr = g_pd3dDevice->CreateDepthStencilView(g_pDepthStencilBuffer, &descDSView, &g_pDepthStencilView);
+
+	hr = g_pd3dDevice->CreateRenderTargetView(pBackBuffer, NULL, &g_pRenderTargetView);
+	pBackBuffer->Release();
+	if (FAILED(hr))
+		return hr;
+
+	g_pImmediateContext->OMSetRenderTargets(1, &g_pRenderTargetView, g_pDepthStencilView);
+
+	// Setup the viewport
+	D3D11_VIEWPORT vp;
+	vp.Width = (FLOAT)width;
+	vp.Height = (FLOAT)height;
+	vp.MinDepth = 0.0f;
+	vp.MaxDepth = 1.0f;
+	vp.TopLeftX = 0;
+	vp.TopLeftY = 0;
+	g_pImmediateContext->RSSetViewports(1, &vp);
 
 	return S_OK;
 }
@@ -1398,6 +1478,39 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		// 			bPlay=false;
 		// 			app.audio.PlaySound();
 		// 		}
+
+		int prevWidth = g_iScreenWidth;
+		int prevHeight = g_iScreenHeight;
+
+		if (g_isFullscreen)
+		{
+			g_iScreenWidth = GetSystemMetrics(SM_CXSCREEN);
+			g_iScreenHeight = GetSystemMetrics(SM_CYSCREEN);
+		}
+		else
+		{
+			RECT rect;
+			GetClientRect(g_hWnd, &rect);
+			g_iScreenWidth = rect.right;
+			g_iScreenHeight = rect.bottom;
+		}
+
+		// prevent division by zero when minimizing
+		if (g_iScreenWidth <= 0)
+			g_iScreenWidth = 1;
+
+		if (g_iScreenHeight <= 0)
+			g_iScreenHeight = 1;
+
+		Minecraft::GetInstance()->width = Minecraft::GetInstance()->width_phys = g_iScreenWidth;
+		Minecraft::GetInstance()->height = Minecraft::GetInstance()->height_phys = g_iScreenHeight;
+		g_iAspectRatio = ((float)Minecraft::GetInstance()->width_phys / (float)Minecraft::GetInstance()->height_phys);
+		g_bWidescreen = g_iAspectRatio > (16.0 / 9.0);
+
+		if (prevWidth != g_iScreenWidth || prevHeight != g_iScreenHeight)
+		{
+			ChangeDeviceResolution();
+		}
 
 		app.UpdateTime();
 		PIXBeginNamedEvent(0,"Input manager tick");

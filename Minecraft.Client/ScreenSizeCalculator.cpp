@@ -6,8 +6,8 @@ ScreenSizeCalculator::ScreenSizeCalculator(Options *options, int width, int heig
 {
     w = width;
     h = height;
-	if( forceScale == -1 )
-	{
+	//if( forceScale == -1 )
+	//{
 		scale = 1;
 
 		int maxScale = options->guiScale;
@@ -16,11 +16,11 @@ ScreenSizeCalculator::ScreenSizeCalculator(Options *options, int width, int heig
 		{
 			scale++;
 		}
-	}
-	else
-	{
-		scale = forceScale;
-	}
+	//}
+	//else
+	//{
+	//	scale = forceScale;
+	//}
     rawWidth = w / (double) scale;
     rawHeight = h / (double) scale;
     w = (int) ceil(rawWidth);

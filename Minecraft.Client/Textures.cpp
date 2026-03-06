@@ -254,7 +254,9 @@ wchar_t *Textures::preLoaded[TN_COUNT] =
 	L"title/bg/panorama2",	
 	L"title/bg/panorama3",	
 	L"title/bg/panorama4",	
-	L"title/bg/panorama5",	
+	L"title/bg/panorama5",
+
+	L"title/mojang",	
 	
 	L"gui/items",
 	L"terrain",
