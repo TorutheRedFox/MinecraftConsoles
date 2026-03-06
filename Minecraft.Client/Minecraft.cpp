@@ -53,6 +53,7 @@
 #include "..\Minecraft.World\net.minecraft.world.level.dimension.h"
 #include "..\Minecraft.World\net.minecraft.world.item.h"
 #include "..\Minecraft.World\Minecraft.World.h"
+#include "Windows64\Windows64_Xuid.h"
 #include "ClientConnection.h"
 #include "..\Minecraft.World\HellRandomLevelSource.h"
 #include "..\Minecraft.World\net.minecraft.world.entity.animal.h"
@@ -80,7 +81,7 @@
 //#define DEBUG_RENDER_SHOWS_PACKETS 1
 //#define SPLITSCREEN_TEST
 
-// If not disabled, this creates an event queue on a seperate thread so that the Level::tick calls can be offloaded 
+// If not disabled, this creates an event queue on a seperate thread so that the Level::tick calls can be offloaded
 // from the main thread, and have longer to run, since it's called at 20Hz instead of 60
 #define DISABLE_LEVELTICK_THREAD
 
@@ -97,7 +98,7 @@ TOUCHSCREENRECT QuickSelectRect[3]=
 {
 	{ 560, 890, 1360, 980 },
 	{ 450, 840, 1449, 960 },
-	{ 320, 840, 1600, 970 },		
+	{ 320, 840, 1600, 970 },
 };
 
 int QuickSelectBoxWidth[3]=
@@ -743,7 +744,7 @@ void Minecraft::run()
 
 		while (System::currentTimeMillis() >= lastTime + 1000)
 		{
-			fpsString = _toString<int>(frames) + L" fps, " + _toString<int>(Chunk::updates) + L" chunk updates";
+			fpsString = std::to_wstring(frames) + L" fps, " + std::to_wstring(Chunk::updates) + L" chunk updates";
 			Chunk::updates = 0;
 			lastTime += 1000;
 			frames = 0;
@@ -1040,6 +1041,19 @@ shared_ptr<MultiplayerLocalPlayer> Minecraft::createExtraLocalPlayer(int idx, co
 		PlayerUID playerXUIDOnline = INVALID_XUID;
 		ProfileManager.GetXUID(idx,&playerXUIDOffline,false);
 		ProfileManager.GetXUID(idx,&playerXUIDOnline,true);
+#ifdef _WINDOWS64
+		// Compatibility rule for Win64 id migration
+		// host keeps legacy host XUID, non-host uses persistent uid.dat XUID.
+		INetworkPlayer *localNetworkPlayer = g_NetworkManager.GetLocalPlayerByUserIndex(idx);
+		if(localNetworkPlayer != NULL && localNetworkPlayer->IsHost())
+		{
+			playerXUIDOffline = Win64Xuid::GetLegacyEmbeddedHostXuid();
+		}
+		else
+		{
+			playerXUIDOffline = Win64Xuid::ResolvePersistentXuid();
+		}
+#endif
 		localplayers[idx]->setXuid(playerXUIDOffline);
 		localplayers[idx]->setOnlineXuid(playerXUIDOnline);
 		localplayers[idx]->setIsGuest(ProfileManager.IsGuest(idx));
@@ -1288,7 +1302,7 @@ void Minecraft::run_middle()
 								if( pDLCPack )
 								{
 									if(!pDLCPack->hasPurchasedFile( DLCManager::e_DLCType_Texture, L"" ))
-									{			
+									{
 										bTrialTexturepack=true;
 									}
 								}
@@ -1410,7 +1424,7 @@ void Minecraft::run_middle()
 				{
 					delete m_pPsPlusUpsell;
 					m_pPsPlusUpsell = NULL;
-								
+
 					if ( ProfileManager.HasPlayStationPlus(i) )
 					{
 						app.DebugPrintf("<Minecraft.cpp> Player_%i is now authorised for PsPlus.\n", i);
@@ -2051,7 +2065,7 @@ void Minecraft::run_middle()
 			while (System::nanoTime() >= lastTime + 1000000000)
 			{
 				MemSect(31);
-				fpsString = _toString<int>(frames) + L" fps, " + _toString<int>(Chunk::updates) + L" chunk updates";
+				fpsString = std::to_wstring(frames) + L" fps, " + std::to_wstring(Chunk::updates) + L" chunk updates";
 				MemSect(0);
 				Chunk::updates = 0;
 				lastTime += 1000000000;
@@ -2248,7 +2262,7 @@ void Minecraft::levelTickThreadInitFunc()
 {
 	AABB::CreateNewThreadStorage();
 	Vec3::CreateNewThreadStorage();
-	IntCache::CreateNewThreadStorage();	
+	IntCache::CreateNewThreadStorage();
 	Compression::UseDefaultThreadStorage();
 }
 
@@ -2879,10 +2893,10 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 					shared_ptr<ItemInstance> heldItem = nullptr;
 					if (player->inventory->IsHeldItem())
 					{
-						heldItem = player->inventory->getSelected();		
+						heldItem = player->inventory->getSelected();
 					}
 					int heldItemId = heldItem != NULL ? heldItem->getItem()->id : -1;
-					
+
 					switch(entityType)
 					{
 					case eTYPE_CHICKEN:
@@ -2924,7 +2938,7 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 					case eTYPE_COW:
 						{
 							if(player->isAllowedToAttackAnimals()) *piAction=IDS_TOOLTIPS_HIT;
-						
+
 							shared_ptr<Animal> animal = dynamic_pointer_cast<Animal>(hitResult->entity);
 
 							if (animal->isLeashed() && animal->getLeashHolder() == player)
@@ -2988,7 +3002,7 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 									*piUse=IDS_TOOLTIPS_MILK;
 									break;
 								case Item::shears_Id:
-									{								
+									{
 										if(player->isAllowedToAttackAnimals()) *piAction=IDS_TOOLTIPS_HIT;
 										if(!animal->isBaby()) *piUse=IDS_TOOLTIPS_SHEAR;
 									}
@@ -3016,10 +3030,10 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 						*piAction = IDS_TOOLTIPS_MINE;
 						*piUse = IDS_TOOLTIPS_RIDE; // are we in the minecart already? - 4J-JEV: Doesn't matter anymore.
 						break;
-						
+
 					case eTYPE_MINECART_FURNACE:
 						*piAction = IDS_TOOLTIPS_MINE;
-						
+
 						// if you have coal, it'll go. Is there an object in hand?
 						if (heldItemId == Item::coal_Id) *piUse=IDS_TOOLTIPS_USE;
 						break;
@@ -3100,7 +3114,7 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 							if(player->isAllowedToAttackAnimals()) *piAction=IDS_TOOLTIPS_HIT;
 
 							shared_ptr<Pig> pig = dynamic_pointer_cast<Pig>(hitResult->entity);
-							
+
 							if (pig->isLeashed() && pig->getLeashHolder() == player)
 							{
 								*piUse=IDS_TOOLTIPS_UNLEASH;
@@ -3243,7 +3257,7 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 							shared_ptr<Ocelot> ocelot = dynamic_pointer_cast<Ocelot>(hitResult->entity);
 
 							if(player->isAllowedToAttackAnimals()) *piAction=IDS_TOOLTIPS_HIT;
-						
+
 							if (ocelot->isLeashed() && ocelot->getLeashHolder() == player)
 							{
 								*piUse = IDS_TOOLTIPS_UNLEASH;
@@ -3272,7 +3286,7 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 										}
 										else
 										{
-											*piUse=IDS_TOOLTIPS_FEED;									
+											*piUse=IDS_TOOLTIPS_FEED;
 										}
 									}
 
@@ -3295,7 +3309,7 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 							}
 						}
 						break;
-						
+
 					case eTYPE_PLAYER:
 						{
 							// Fix for #58576 - TU6: Content: Gameplay: Hit button prompt is available when attacking a host who has "Invisible" option turned on
@@ -3361,9 +3375,9 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 					case eTYPE_HORSE:
 						{
 							shared_ptr<EntityHorse> horse = dynamic_pointer_cast<EntityHorse>(hitResult->entity);
-							
+
 							bool heldItemIsFood = false, heldItemIsLove = false, heldItemIsArmour = false;
-							
+
 							switch( heldItemId )
 							{
 								case Item::wheat_Id:
@@ -3418,7 +3432,7 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 									*piUse = IDS_TOOLTIPS_FEED;
 								}
 							}
-							else if (	player->isSneaking() 
+							else if (	player->isSneaking()
 									||	(heldItemId == Item::saddle_Id)
 									||	(horse->canWearArmor() && heldItemIsArmour)
 									)
@@ -3427,7 +3441,7 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 								if (*piUse == -1) *piUse = IDS_TOOLTIPS_OPEN;
 							}
 							else if (	horse->canWearBags()
-									&&	!horse->isChestedHorse() 
+									&&	!horse->isChestedHorse()
 									&&	(heldItemId == Tile::chest_Id) )
 							{
 								// 4j - Attach saddle-bags (chest) to donkey or mule.
@@ -3449,7 +3463,7 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 								// 4j - Ride tamed horse.
 								*piUse = IDS_TOOLTIPS_MOUNT;
 							}
-							
+
 							if (player->isAllowedToAttackAnimals()) *piAction=IDS_TOOLTIPS_HIT;
 						}
 						break;
@@ -3489,7 +3503,7 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 							}
 						}
 						*piAction=IDS_TOOLTIPS_HIT;
-						break;	
+						break;
 					}
 					break;
 				}
@@ -3548,11 +3562,14 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 			}
 
 #ifdef _WINDOWS64
+			bool actionPressed = InputManager.ButtonPressed(iPad, MINECRAFT_ACTION_ACTION) || (iPad == 0 && g_KBMInput.IsKBMActive() && g_KBMInput.IsMouseButtonPressed(KeyboardMouseInput::MOUSE_LEFT));
 			bool actionHeld = InputManager.ButtonDown(iPad, MINECRAFT_ACTION_ACTION) || (iPad == 0 && g_KBMInput.IsKBMActive() && g_KBMInput.IsMouseButtonDown(KeyboardMouseInput::MOUSE_LEFT));
 #else
+			bool actionPressed = InputManager.ButtonPressed(iPad, MINECRAFT_ACTION_ACTION);
 			bool actionHeld = InputManager.ButtonDown(iPad, MINECRAFT_ACTION_ACTION);
 #endif
-			if (actionHeld && ticks - player->lastClickTick[0] >= timer->ticksPerSecond / 4)
+
+			if (actionPressed)
 			{
 				//printf("MINECRAFT_ACTION_ACTION ButtonDown");
 				player->handleMouseClick(0);
@@ -3684,7 +3701,7 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 				player->abilities.debugflying = !player->abilities.debugflying;
 				player->abilities.flying = !player->abilities.flying;
 			}
-#endif // PSVITA		
+#endif // PSVITA
 		}
 #endif
 
@@ -3775,7 +3792,7 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 		}
 
 		__uint64 ullButtonsPressed=player->ullButtonsPressed;
-		
+
 		bool selected = false;
 #ifdef __PSVITA__
 		// 4J-PB - use the touchscreen for quickselect
@@ -3800,7 +3817,7 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 			shared_ptr<ItemInstance> selectedItem = player->getSelectedItem();
 			// Dropping items happens over network, so if we only have one then assume that we dropped it and should hide the item
 			int iCount=0;
-			
+
 			if(selectedItem != NULL) iCount=selectedItem->GetCount();
 			if(selectedItem != NULL && !( (player->ullButtonsPressed&(1LL<<MINECRAFT_ACTION_DROP)) && selectedItem->GetCount() == 1))
 			{
@@ -4110,7 +4127,7 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 	}
 #ifdef __PS3__
 
-// 	while(!g_tickLevelQueue.empty()) 
+// 	while(!g_tickLevelQueue.empty())
 // 	{
 // 		Level* pLevel = g_tickLevelQueue.front();
 // 		g_tickLevelQueue.pop();
@@ -4329,6 +4346,19 @@ void Minecraft::setLevel(MultiPlayerLevel *level, int message /*=-1*/, shared_pt
 				playerXUIDOnline.setForAdhoc();
 			}
 #endif
+#ifdef _WINDOWS64
+			// On Windows, the implementation has been changed to use a per-client pseudo XUID based on `uid.dat`.  
+			// To maintain player data compatibility with existing worlds, the world host (the first player) will use the previous embedded pseudo XUID.
+			INetworkPlayer *localNetworkPlayer = g_NetworkManager.GetLocalPlayerByUserIndex(iPrimaryPlayer);
+			if(localNetworkPlayer != NULL && localNetworkPlayer->IsHost())
+			{
+				playerXUIDOffline = Win64Xuid::GetLegacyEmbeddedHostXuid();
+			}
+			else
+			{
+				playerXUIDOffline = Win64Xuid::ResolvePersistentXuid();
+			}
+#endif
 			player->setXuid(playerXUIDOffline);
 			player->setOnlineXuid(playerXUIDOnline);
 
@@ -4338,7 +4368,7 @@ void Minecraft::setLevel(MultiPlayerLevel *level, int message /*=-1*/, shared_pt
 
 			player->resetPos();
 			gameMode->initPlayer(player);
-			
+
 			player->SetXboxPad(iPrimaryPlayer);
 
 			for(int i=0;i<XUSER_MAX_COUNT;i++)
@@ -4465,7 +4495,7 @@ void Minecraft::prepareLevel(int title)
 wstring Minecraft::gatherStats1()
 {
 	//return levelRenderer->gatherStats1();
-	return L"Time to autosave: " + _toString<unsigned int>( app.SecondsToAutosave() ) + L"s";
+	return L"Time to autosave: " + std::to_wstring( app.SecondsToAutosave() ) + L"s";
 }
 
 wstring Minecraft::gatherStats2()
@@ -4511,6 +4541,18 @@ void Minecraft::respawnPlayer(int iPad, int dimension, int newEntityId)
 	PlayerUID playerXUIDOnline = INVALID_XUID;
 	ProfileManager.GetXUID(iTempPad,&playerXUIDOffline,false);
 	ProfileManager.GetXUID(iTempPad,&playerXUIDOnline,true);
+#ifdef _WINDOWS64
+	// Same compatibility rule as create/init paths.
+	INetworkPlayer *localNetworkPlayer = g_NetworkManager.GetLocalPlayerByUserIndex(iTempPad);
+	if(localNetworkPlayer != NULL && localNetworkPlayer->IsHost())
+	{
+		playerXUIDOffline = Win64Xuid::GetLegacyEmbeddedHostXuid();
+	}
+	else
+	{
+		playerXUIDOffline = Win64Xuid::ResolvePersistentXuid();
+	}
+#endif
 	player->setXuid(playerXUIDOffline);
 	player->setOnlineXuid(playerXUIDOnline);
 	player->setIsGuest( ProfileManager.IsGuest(iTempPad) );
@@ -4643,7 +4685,7 @@ void Minecraft::startAndConnectTo(const wstring& name, const wstring& sid, const
 		}
 		else
 		{
-			minecraft->user = new User(L"Player" + _toString<int>(System::currentTimeMillis() % 1000), L"");
+			minecraft->user = new User(L"Player" + std::to_wstring(System::currentTimeMillis() % 1000), L"");
 		}
 	}
 	//else
@@ -4724,7 +4766,7 @@ void Minecraft::main()
 	}
 
 	app.DebugPrintf("\n\n\n\n\n");
-	
+
 	for(unsigned int i = 0; i < 256; ++i)
 	{
 		if(Tile::tiles[i] != NULL)
@@ -4738,7 +4780,7 @@ void Minecraft::main()
 	// 4J-PB - Can't call this for the first 5 seconds of a game - MS rule
 	//if (ProfileManager.IsFullVersion())
 	{
-		name = L"Player" + _toString<__int64>(System::currentTimeMillis() % 1000);
+		name = L"Player" + std::to_wstring(System::currentTimeMillis() % 1000);
 		sessionId = L"-";
 		/* 4J - TODO - get a session ID from somewhere?
 		if (args.length > 0) name = args[0];
@@ -5139,8 +5181,8 @@ void Minecraft::tickAllConnections()
 
 bool Minecraft::addPendingClientTextureRequest(const wstring &textureName)
 {
-	AUTO_VAR(it, find( m_pendingTextureRequests.begin(), m_pendingTextureRequests.end(), textureName));
-	if( it == m_pendingTextureRequests.end() )
+    auto it = find(m_pendingTextureRequests.begin(), m_pendingTextureRequests.end(), textureName);
+    if( it == m_pendingTextureRequests.end() )
 	{
 		m_pendingTextureRequests.push_back(textureName);
 		return true;
@@ -5150,8 +5192,8 @@ bool Minecraft::addPendingClientTextureRequest(const wstring &textureName)
 
 void Minecraft::handleClientTextureReceived(const wstring &textureName)
 {
-	AUTO_VAR(it, find( m_pendingTextureRequests.begin(), m_pendingTextureRequests.end(), textureName));
-	if( it != m_pendingTextureRequests.end() )
+    auto it = find(m_pendingTextureRequests.begin(), m_pendingTextureRequests.end(), textureName);
+    if( it != m_pendingTextureRequests.end() )
 	{
 		m_pendingTextureRequests.erase(it);
 	}
@@ -5181,8 +5223,8 @@ int Minecraft::MustSignInReturnedPSN(void *pParam, int iPad, C4JStorage::EMessag
 {
 	Minecraft* pMinecraft = (Minecraft *)pParam;
 
-	if(result == C4JStorage::EMessage_ResultAccept) 
-	{        
+	if(result == C4JStorage::EMessage_ResultAccept)
+	{
 		SQRNetworkManager_Orbis::AttemptPSNSignIn(&Minecraft::InGame_SignInReturned, pMinecraft, false, iPad);
 	}
 

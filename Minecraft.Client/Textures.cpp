@@ -148,7 +148,7 @@ wchar_t *Textures::preLoaded[TN_COUNT] =
 	L"mob/horse/horse_white",
 	L"mob/horse/horse_zombie",
 	L"mob/horse/mule",
-	
+
 	L"mob/horse/armor/horse_armor_diamond",
 	L"mob/horse/armor/horse_armor_gold",
 	L"mob/horse/armor/horse_armor_iron",
@@ -197,7 +197,7 @@ wchar_t *Textures::preLoaded[TN_COUNT] =
 	L"/GPSE",
 
 	// avatar items
-	
+
 	L"/AH_0006",
 	L"/AH_0003",
 	L"/AH_0007",
@@ -248,15 +248,15 @@ wchar_t *Textures::preLoaded[TN_COUNT] =
 	L"/AP_0023",
 	L"/AH_0008",
 	L"/AH_0009",*/
-
+	
 	L"title/bg/panorama0",	
 	L"title/bg/panorama1",	
 	L"title/bg/panorama2",	
 	L"title/bg/panorama3",	
 	L"title/bg/panorama4",	
 	L"title/bg/panorama5",	
-
-	L"gui/items",	
+	
+	L"gui/items",
 	L"terrain",
 };
 
@@ -364,7 +364,7 @@ int Textures::loadTexture(int idx)
 			return 0;
 	}
 	else
-	{	
+	{
 		if ( idx == TN_TERRAIN )
 		{
 			terrain->getStitchedTexture()->bind(0);
@@ -607,7 +607,7 @@ int Textures::loadTexture(TEXTURE_NAME texId, const wstring& resourceName)
 		(resourceName == L"%blur%misc/pumpkinblur.png") ||
 		(resourceName == L"%clamp%misc/shadow.png") ||
 		(resourceName == L"gui/icons.png" ) ||
-		(resourceName == L"gui/gui.png" ) || 
+		(resourceName == L"gui/gui.png" ) ||
 		(resourceName == L"misc/footprint.png") )
 	{
 		MIPMAP = false;
@@ -704,7 +704,7 @@ void Textures::loadTexture(BufferedImage *img, int id, bool blur, bool clamp)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }
 
-    if (clamp) 
+    if (clamp)
 	{
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
@@ -726,7 +726,7 @@ void Textures::loadTexture(BufferedImage *img, int id, bool blur, bool clamp)
 		rawPixels = anaglyph(rawPixels);
 	}
 
-    byteArray newPixels(w * h * 4);	
+    byteArray newPixels(w * h * 4);
     for (unsigned int i = 0; i < rawPixels.length; i++)
 	{
         int a = (rawPixels[i] >> 24) & 0xff;
@@ -754,15 +754,15 @@ void Textures::loadTexture(BufferedImage *img, int id, bool blur, bool clamp)
 
 	delete[] rawPixels.data;
 	delete[] newPixels.data;
-	
-	if (MIPMAP) 
+
+	if (MIPMAP)
 	{
 		// 4J-PB - In the new XDK, the CreateTexture will fail if the number of mipmaps is higher than the width & height passed in will allow!
 		int iWidthMips=1;
 		int iHeightMips=1;
 		while((8<<iWidthMips)<w) iWidthMips++;
 		while((8<<iHeightMips)<h) iHeightMips++;
-		
+
 		iMipLevels=(iWidthMips<iHeightMips)?iWidthMips:iHeightMips;
 		//RenderManager.TextureSetTextureLevels(5);	// 4J added
 		if(iMipLevels>5)iMipLevels = 5;
@@ -922,7 +922,7 @@ void Textures::replaceTexture(intArray rawPixels, int w, int h, int id)
 	delete [] newPixels.data;
 
 	// New
-	// glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, w, h, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, pixels);	
+	// glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, w, h, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, pixels);
 #ifdef _XBOX
 	RenderManager.TextureDataUpdate(pixels->getBuffer(),0);
 #else
@@ -1099,8 +1099,8 @@ void Textures::removeHttpTexture(const wstring& url)
 int Textures::loadMemTexture(const wstring& url, const wstring& backup)
 {
 	MemTexture *texture = NULL;
-	AUTO_VAR(it, memTextures.find(url) );
-	if (it != memTextures.end())
+    auto it = memTextures.find(url);
+    if (it != memTextures.end())
 	{
 		texture = (*it).second;
 	}
@@ -1143,8 +1143,8 @@ int Textures::loadMemTexture(const wstring& url, const wstring& backup)
 int Textures::loadMemTexture(const wstring& url, int backup)
 {
 	MemTexture *texture = NULL;
-	AUTO_VAR(it, memTextures.find(url) );
-	if (it != memTextures.end())
+    auto it = memTextures.find(url);
+    if (it != memTextures.end())
 	{
 		texture = (*it).second;
 	}
@@ -1186,8 +1186,8 @@ int Textures::loadMemTexture(const wstring& url, int backup)
 MemTexture *Textures::addMemTexture(const wstring& name,MemTextureProcessor *processor)
 {
 	MemTexture *texture = NULL;
-	AUTO_VAR(it, memTextures.find(name) );
-	if (it != memTextures.end())
+    auto it = memTextures.find(name);
+    if (it != memTextures.end())
 	{
 		texture = (*it).second;
 	}
@@ -1195,7 +1195,7 @@ MemTexture *Textures::addMemTexture(const wstring& name,MemTextureProcessor *pro
 	{
 		// can we find it in the app mem files?
 		PBYTE pbData=NULL;
-		DWORD dwBytes=0;		
+		DWORD dwBytes=0;
 		app.GetMemFileDetails(name,&pbData,&dwBytes);
 
 		if(dwBytes!=0)
@@ -1232,8 +1232,8 @@ MemTexture *Textures::addMemTexture(const wstring& name,MemTextureProcessor *pro
 void Textures::removeMemTexture(const wstring& url)
 {
 	MemTexture *texture = NULL;
-	AUTO_VAR(it, memTextures.find(url) );
-	if (it != memTextures.end())
+    auto it = memTextures.find(url);
+    if (it != memTextures.end())
 	{
 		texture = (*it).second;
 
@@ -1266,7 +1266,7 @@ void Textures::tick(bool updateTextures, bool tickDynamics)	// 4J added updateTe
 		}
 
 		// 4J - added - tell renderer that we're about to do a block of dynamic texture updates, so we can unlock the resources after they are done rather than a series of locks/unlocks
-		//RenderManager.TextureDynamicUpdateStart();		
+		//RenderManager.TextureDynamicUpdateStart();
 		terrain->cycleAnimationFrames();
         items->cycleAnimationFrames();
 		//RenderManager.TextureDynamicUpdateEnd();	// 4J added - see comment above
@@ -1274,8 +1274,8 @@ void Textures::tick(bool updateTextures, bool tickDynamics)	// 4J added updateTe
 
 	// 4J - go over all the memory textures once per frame, and free any that haven't been used for a while. Ones that are being used will
 	// have their ticksSinceLastUse reset in Textures::loadMemTexture.
-	for( AUTO_VAR(it, memTextures.begin() ); it != memTextures.end(); )
-	{
+    for (auto it = memTextures.begin(); it != memTextures.end();)
+    {
 		MemTexture *tex = it->second;
 
 		if( tex  && ( ++tex->ticksSinceLastUse > MemTexture::UNUSED_TICKS_TO_FREE ) )
@@ -1318,28 +1318,24 @@ void Textures::reloadAll()
 	skins->clearInvalidTexturePacks();
 
 #if 0
-	AUTO_VAR(itEndLI, loadedImages.end() );
-	for(unordered_map<int, BufferedImage *>::iterator it = loadedImages.begin(); it != itEndLI; it++ )
+	for(auto it = loadedImages.begin(); it != loadedImages.end(); it++ )
 	{
         BufferedImage *image = it->second;
         loadTexture(image, it->first);
     }
 
-	AUTO_VAR(itEndHT, httpTextures.end());
-	for(unordered_map<wstring, HttpTexture *>::iterator it = httpTextures.begin(); it != itEndHT; it++ )
+	for(auto it = httpTextures.begin(); it != httpTextures.end(); it++ )
 	{
 		it->second->isLoaded = false;
 	}
 
-	AUTO_VAR(itEndMT, memTextures.end());
-	for(unordered_map<wstring, MemTexture *>::iterator it = memTextures.begin(); it != itEndMT; it++ )
+	for(auto it = memTextures.begin(); it != memTextures.end(); it++ )
 	{
 		it->second->isLoaded = false;
 	}
 
 
-	AUTO_VAR(itEndIM, idMap.end());
-	for( unordered_map<wstring, int>::iterator it = idMap.begin(); it != itEndIM; it++ )
+	for( auto it = idMap.begin(); it != idMap.end(); it++ )
 	{
 		wstring name = it->first;
 
@@ -1359,8 +1355,7 @@ void Textures::reloadAll()
 		loadTexture(image, id, blur, clamp);
 		delete image;
 	}
-	AUTO_VAR(itEndPM, pixelsMap.end());
-	for( unordered_map<wstring, intArray>::iterator it = pixelsMap.begin(); it != itEndPM; it++ )
+	for( auto it = pixelsMap.begin(); it != pixelsMap.end(); it++ )
 	{
 		wstring name = it->first;
 		BufferedImage *image = readImage(skin->getResource(name));
@@ -1398,7 +1393,7 @@ BufferedImage *Textures::readImage(TEXTURE_NAME texId, const wstring& name)	// 4
 	BufferedImage *img=NULL;
 	MemSect(32);
 	// is this image one of the Title Update ones?
-	bool isTu = IsTUImage(texId, name);	
+	bool isTu = IsTUImage(texId, name);
 	wstring drive = L"";
 
 	if(!skins->isUsingDefaultSkin() && skins->getSelected()->hasFile(L"res/" + name,false))
@@ -1437,7 +1432,7 @@ BufferedImage *Textures::readImage(TEXTURE_NAME texId, const wstring& name)	// 4
 		{
 			img = skins->getDefault()->getImageResource(name,false,isTu,drive); //new BufferedImage(name,false,isTu,drive);
 		}
-		else 
+		else
 		{
 			img = skins->getDefault()->getImageResource(L"1_2_2/" + name, false, isTu, drive); //new BufferedImage(L"/1_2_2" + name,false,isTu,drive);
 		}
@@ -1520,7 +1515,7 @@ TEXTURE_NAME TUImages[] =
 
 	TN_TILE_TRAP_CHEST,
 	TN_TILE_LARGE_TRAP_CHEST,
-	//TN_TILE_XMAS_CHEST,	
+	//TN_TILE_XMAS_CHEST,
 	//TN_TILE_LARGE_XMAS_CHEST,
 
 #ifdef _LARGE_WORLDS
@@ -1531,7 +1526,7 @@ TEXTURE_NAME TUImages[] =
 	TN_DEFAULT_FONT,
 	// TN_ALT_FONT, // Not in TU yet
 
-	TN_COUNT // Why is this here? 
+	TN_COUNT // Why is this here?
 };
 
 // This is for any TU textures that aren't part of our enum indexed preload set
@@ -1593,7 +1588,7 @@ TEXTURE_NAME OriginalImages[] =
 
 	TN_COUNT
 };
-	
+
 wchar_t *OriginalImagesPaths[] =
 {
 	L"misc/watercolor.png",
