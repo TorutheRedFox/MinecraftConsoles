@@ -5,6 +5,7 @@
 #include "OptionsScreen.h"
 #include "TitleScreen.h"
 #include "MultiPlayerLevel.h"
+#include "MultiPlayerLocalPlayer.h"
 #include "..\Minecraft.World\net.minecraft.locale.h"
 #include "..\Minecraft.World\net.minecraft.world.level.h"
 #include "..\Minecraft.World\net.minecraft.stats.h"
@@ -50,15 +51,21 @@ void PauseScreen::buttonClicked(Button* button)
     }
     if (button->id == 1)
 	{
-        if (minecraft->isClientSide())
-		{
+        MinecraftServer::getInstance()->setSaveOnExit(true);
+        app.SetAction(minecraft->player->GetXboxPad(), eAppAction_ExitWorld);
+        //if (minecraft->isClientSide())
+		//{
             minecraft->level->disconnect();
-            MinecraftServer::HaltServer();
-            g_NetworkManager.LeaveGame(FALSE);
-        }
-
-        minecraft->setLevel(NULL);
-        minecraft->setScreen(new TitleScreen());
+        //    //MinecraftServer::HaltServer();
+        //    //g_NetworkManager.LeaveGame(FALSE);
+        //}
+        //
+        //minecraft->setLevel(NULL);
+        minecraft->level = NULL;
+        minecraft->localplayers[0] = NULL;
+        //delete minecraft->player;
+        minecraft->player = NULL;
+        //minecraft->setScreen(new TitleScreen());
     }
     if (button->id == 4)
 	{

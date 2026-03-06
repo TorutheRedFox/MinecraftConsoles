@@ -192,14 +192,15 @@ Minecraft::Minecraft(Component *mouseComponent, Canvas *parent, MinecraftApplet 
 	// 4J - Our actual physical frame buffer is always 1280x720 ie in a 16:9 ratio. If we want to do a 4:3 mode, we are telling the original minecraft code
 	// that the width is 3/4 what it actually is, to correctly present a 4:3 image. Have added width_phys and height_phys for any code we add that requires
 	// to know the real physical dimensions of the frame buffer.
-	if( RenderManager.IsWidescreen() )
-	{
-		this->width = width;
-	}
-	else
-	{
-		this->width = (width * 3 ) / 4;
-	}
+	//if( RenderManager.IsWidescreen() )
+	//{
+	//	this->width = width;
+	//}
+	//else
+	//{
+	//	this->width = (width * 3 ) / 4;
+	//}
+	this->width = width; // we're not on an Xbox 360, our framebuffer is the actual size here
 	this->height = height;
 	this->width_phys = width;
 	this->height_phys = height;
@@ -501,7 +502,6 @@ void Minecraft::setScreen(Screen *screen)
 	if (this->screen != NULL)
 	{
 		this->screen->removed();
-		delete this->screen;
 	}
 
 #ifdef _WINDOWS64
@@ -539,7 +539,7 @@ void Minecraft::setScreen(Screen *screen)
 		//}
 	}
 
-	if (dynamic_cast<TitleScreen *>(screen)!=NULL)
+	if (screen != NULL && dynamic_cast<TitleScreen *>(screen)!=NULL)
 	{
 		options->renderDebug = false;
 		gui->clearMessages();
@@ -1906,7 +1906,7 @@ void Minecraft::run_middle()
 			PIXEndNamedEvent();
 
 			//        if (!Keyboard::isKeyDown(Keyboard.KEY_F7)) Display.update();		// 4J - removed
-
+			
 			// 4J-PB - changing this to be per player
 			//if (player != NULL && player->isInWall()) options->thirdPersonView = false;
 			if (player != NULL && player->isInWall()) player->SetThirdPersonView(0);
@@ -2038,6 +2038,7 @@ void Minecraft::run_middle()
 			}
 			}
 			*/
+			resize(width, height);
 			MemSect(31);
 			checkGlError(L"Post render");
 			MemSect(0);
@@ -2210,7 +2211,7 @@ void Minecraft::resize(int width, int height)
 		ScreenSizeCalculator ssc(options, width, height);
 		int screenWidth = ssc.getWidth();
 		int screenHeight = ssc.getHeight();
-		//        screen->init(this, screenWidth, screenHeight);	// 4J - TODO - put back in
+		screen->init(this, screenWidth, screenHeight);	// 4J - TODO - put back in
 	}
 }
 
@@ -2348,7 +2349,7 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 	}
 #endif
 
-	if ((screen == NULL || screen->passEvents) && (player && !ui.GetMenuDisplayed(iPad)) )
+	if (screen == NULL && (player && !ui.GetMenuDisplayed(iPad)) )
 	{
 #ifdef _WINDOWS64
 		if (!g_KBMInput.IsMouseGrabbed() && g_KBMInput.IsWindowFocused())
@@ -3812,7 +3813,7 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 	{
 		InputManager.SetMenuDisplayed(iPad, false);
 		// 4J-PB
-		if (InputManager.GetValue(iPad, ACTION_MENU_CANCEL) > 0)// && gameMode->isInputAllowed(ACTION_MENU_CANCEL))
+		if (gameMode && InputManager.GetValue(iPad, ACTION_MENU_CANCEL) > 0 && gameMode->isInputAllowed(ACTION_MENU_CANCEL))
 		{
 			setScreen(NULL);
 		}
@@ -4615,7 +4616,7 @@ void Minecraft::startAndConnectTo(const wstring& name, const wstring& sid, const
 	Minecraft *minecraft;
 	// 4J - was new Minecraft(frame, canvas, NULL, 854, 480, fullScreen);
 
-	minecraft = new Minecraft(NULL, NULL, NULL, 1280, 720, fullScreen);
+	minecraft = new Minecraft(NULL, NULL, NULL, 1920, 1080, fullScreen);
 
 	/* - 4J - removed
 	{
