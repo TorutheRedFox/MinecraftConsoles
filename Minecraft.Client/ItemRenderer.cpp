@@ -506,11 +506,12 @@ void ItemRenderer::renderAndDecorateItem(Font *font, Textures *textures, const s
 		glDepthMask(false);
 		textures->bindTexture(&ItemInHandRenderer::ENCHANT_GLINT_LOCATION); // 4J was "%blur%/misc/glint.png"
 		blitOffset -= 50;
-		if( !isConstantBlended )	glEnable(GL_BLEND);
+		glEnable(GL_BLEND);
 
-		glBlendFunc(GL_DST_COLOR, GL_ONE);		// 4J - changed blend equation from GL_DST_COLOR, GL_DST_COLOR so we can fade this out
+		//glBlendFunc(GL_DST_COLOR, GL_ONE);		// 4J - changed blend equation from GL_DST_COLOR, GL_DST_COLOR so we can fade this out
+		glBlendFunc(GL_DST_COLOR, GL_DST_COLOR);
 
-		float blendFactor = isConstantBlended ? Gui::currentGuiBlendFactor : 1.0f;
+		float blendFactor = 1.0f;// isConstantBlended ? Gui::currentGuiBlendFactor : 1.0f;
 
 		glColor4f(0.5f * blendFactor, 0.25f * blendFactor, 0.8f * blendFactor, 1);		// 4J - scale back colourisation with blendFactor
 		// scale the x and y by the scale factor
