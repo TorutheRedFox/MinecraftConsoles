@@ -324,7 +324,7 @@ void SelectWorldScreen::buttonClicked(Button *button)
     }
 	else if (button->id == BUTTON_CANCEL_ID)
 	{
-        //minecraft->setScreen(lastScreen);
+        minecraft->setScreen(lastScreen);
     }
 	else
 	{
