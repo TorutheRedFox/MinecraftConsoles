@@ -256,7 +256,17 @@ void Options::toggle(const Options::Option *option, int dir)
 
 	// 4J-PB - changing
 	//if (option == Option::VIEW_BOBBING) bobView = !bobView;
-	if (option == Option::VIEW_BOBBING) ((dir==0)?bobView=false: bobView=true);
+	//if (option == Option::VIEW_BOBBING) ((dir==0)?bobView=false: bobView=true);if (option == Option::DIFFICULTY)
+	if (option == Option::VIEW_BOBBING)
+	{
+		bobView = app.GetGameSettings(0, eGameSetting_ViewBob);
+
+		bobView = !bobView;
+		int bobView_backup = bobView;
+
+		app.SetGameSettings(0, eGameSetting_ViewBob, bobView);
+		bobView = bobView_backup;
+	}
 	if (option == Option::RENDER_CLOUDS) renderClouds = !renderClouds;
     if (option == Option::ADVANCED_OPENGL)
 	{

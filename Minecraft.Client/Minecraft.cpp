@@ -1483,9 +1483,9 @@ void Minecraft::run_middle()
 
 							if(g_KBMInput.IsKeyPressed(KeyboardMouseInput::KEY_INVENTORY))
 							{
-								if(ui.IsSceneInStack(i, eUIScene_InventoryMenu))
+								if(dynamic_cast<InventoryScreen*>(screen) != NULL)//ui.IsSceneInStack(i, eUIScene_InventoryMenu))
 								{
-									ui.CloseUIScenes(i);
+									setScreen(NULL);//ui.CloseUIScenes(i);
 								}
 								else
 								{
@@ -3754,18 +3754,7 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 			}
 			else
 			{
-				static bool inventoryOpen = false;
-				//app.LoadInventoryMenu(iPad,player);
-				if (!inventoryOpen)
-				{
-					setScreen(new InventoryScreen(player));
-					inventoryOpen = true;
-				}
-				else
-				{
-					setScreen(NULL);
-					inventoryOpen = false;
-				}
+				setScreen(new InventoryScreen(player));
 			}
 		}
 
