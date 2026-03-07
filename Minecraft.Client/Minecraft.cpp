@@ -2052,7 +2052,14 @@ void Minecraft::run_middle()
 			}
 			}
 			*/
-			resize(width, height);
+			static int prevWidth = width;
+			static int prevHeight = height;
+			if (width != prevWidth || height != prevHeight)
+			{
+				prevWidth = width;
+				prevHeight = height;
+				resize(width, height);
+			}
 			MemSect(31);
 			checkGlError(L"Post render");
 			MemSect(0);
