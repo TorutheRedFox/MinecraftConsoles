@@ -1414,7 +1414,7 @@ void CMinecraftApp::ActionGameSettings(int iPad,eGameSetting eVal)
 	case eGameSetting_Difficulty:		
 		if(iPad==ProfileManager.GetPrimaryPad())
 		{
-			pMinecraft->options->toggle(Options::Option::DIFFICULTY,GameSettingsA[iPad]->usBitmaskValues&0x03);
+			//pMinecraft->options->toggle(Options::Option::DIFFICULTY,GameSettingsA[iPad]->usBitmaskValues&0x03);
 			app.DebugPrintf("Difficulty toggle to %d\n",GameSettingsA[iPad]->usBitmaskValues&0x03);
 
 			// Update the Game Host setting

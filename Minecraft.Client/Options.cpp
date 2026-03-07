@@ -15,7 +15,7 @@
 #include "..\Minecraft.World\StringHelpers.h"
 
 // 4J - the Option sub-class used to be an java enumerated type, trying to emulate that functionality here
-const Options::Option Options::Option::options[17] =
+const Options::Option Options::Option::options[] =
 {
 	Options::Option(L"options.music", true, false),
 	Options::Option(L"options.sound", true, false),
@@ -34,6 +34,7 @@ const Options::Option Options::Option::options[17] =
 	Options::Option(L"options.gamma", true, false),
 	Options::Option(L"options.renderClouds",false, true),
 	Options::Option(L"options.particles", false, false),
+	Options::Option(L"options.tooltips", false, true)
 };
 
 const Options::Option *Options::Option::MUSIC = &Options::Option::options[0];
@@ -45,7 +46,7 @@ const Options::Option *Options::Option::VIEW_BOBBING = &Options::Option::options
 const Options::Option *Options::Option::ANAGLYPH = &Options::Option::options[6];
 const Options::Option *Options::Option::ADVANCED_OPENGL = &Options::Option::options[7];
 const Options::Option *Options::Option::FRAMERATE_LIMIT = &Options::Option::options[8];
-const Options::Option *Options::Option::DIFFICULTY = &Options::Option::options[9];
+const Options::Option* Options::Option::DIFFICULTY = &Options::Option::options[9];
 const Options::Option *Options::Option::GRAPHICS = &Options::Option::options[10];
 const Options::Option *Options::Option::AMBIENT_OCCLUSION = &Options::Option::options[11];
 const Options::Option *Options::Option::GUI_SCALE = &Options::Option::options[12];
@@ -53,6 +54,7 @@ const Options::Option *Options::Option::FOV = &Options::Option::options[13];
 const Options::Option *Options::Option::GAMMA = &Options::Option::options[14];
 const Options::Option *Options::Option::RENDER_CLOUDS = &Options::Option::options[15];
 const Options::Option *Options::Option::PARTICLES = &Options::Option::options[16];
+const Options::Option* Options::Option::TOOLTIPS = &Options::Option::options[17];
 
 
 const Options::Option *Options::Option::getItem(int id)
@@ -270,7 +272,20 @@ void Options::toggle(const Options::Option *option, int dir)
 
 	// 4J-PB - Change for Xbox
 	//if (option ==  Option::DIFFICULTY) difficulty = (difficulty + dir) & 3;
-	if (option ==  Option::DIFFICULTY) difficulty = (dir) & 3;
+	//if (option ==  Option::DIFFICULTY) difficulty = (dir) & 3;
+	if (option == Option::DIFFICULTY)
+	{
+		difficulty = app.GetGameSettings(0, eGameSetting_Difficulty);
+
+		difficulty = (difficulty + dir) & 3;
+		int difficulty_backup = difficulty;
+
+		app.SetGameSettings(0, eGameSetting_Difficulty, difficulty);
+		difficulty = difficulty_backup;
+	}
+
+	if (option == Option::TOOLTIPS)
+		app.SetGameSettings(0, eGameSetting_Tooltips, app.GetGameSettings(0, eGameSetting_Tooltips) == 0);
 
 	app.DebugPrintf("Option::DIFFICULTY = %d",difficulty);
 
@@ -310,6 +325,7 @@ bool Options::getBooleanValue(const Options::Option *item)
 	if( item == Option::ADVANCED_OPENGL) return advancedOpengl;
 	if( item == Option::AMBIENT_OCCLUSION) return ambientOcclusion;
     if( item == Option::RENDER_CLOUDS) return renderClouds;
+    if( item == Option::TOOLTIPS) return app.GetGameSettings(0, eGameSetting_Tooltips);
 	return false;
 }
 
@@ -382,7 +398,7 @@ wstring Options::getMessage(const Options::Option *item)
     }
 	else if (item == Option::DIFFICULTY)
 	{
-        return caption + language->getElement(DIFFICULTY_NAMES[difficulty]);
+        return caption + language->getElement(DIFFICULTY_NAMES[app.GetGameSettings(0, eGameSetting_Difficulty)]);
     }
 	else if (item == Option::GUI_SCALE)
 	{

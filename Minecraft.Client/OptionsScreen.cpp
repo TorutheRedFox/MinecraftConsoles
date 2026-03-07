@@ -23,8 +23,8 @@ void OptionsScreen::init()
     int position = 0;
 
 	// 4J - this was as static array but moving it into the function to remove any issues with static initialisation order
-	const Options::Option *items[5] = {Options::Option::MUSIC, Options::Option::SOUND, Options::Option::INVERT_MOUSE, Options::Option::SENSITIVITY, Options::Option::DIFFICULTY};
-    for (int i = 0; i < 5; i++)
+	const Options::Option *items[] = {Options::Option::MUSIC, Options::Option::SOUND, Options::Option::INVERT_MOUSE, Options::Option::SENSITIVITY, Options::Option::DIFFICULTY, Options::Option::TOOLTIPS};
+    for (int i = 0; i < sizeof(items)/sizeof(Options::Option*); i++)
 	{
 		const Options::Option *item = items[i];
         if (!item->isProgress())

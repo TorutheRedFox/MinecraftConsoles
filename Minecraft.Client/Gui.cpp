@@ -91,18 +91,18 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 	bool bTwoPlayerSplitscreen=false;
 	currentGuiScaleFactor = (float) guiScale;		// Keep static copy of scale so we know how gui coordinates map to physical pixels - this is also affected by the viewport
 
-	//switch(guiScale)
-	//{
-	//case 3:
-	//	splitYOffset = 0;
-	//	break;
-	//case 4:
-	//	splitYOffset = -5;
-	//	break;
-	//default: // 2
-	//	splitYOffset = 10;
-	//	break;
-	//}
+	switch(guiScale)
+	{
+	case 3:
+		splitYOffset = 0;
+		break;
+	case 4:
+		splitYOffset = -5;
+		break;
+	default: // 2
+		splitYOffset = 10;
+		break;
+	}
 
 	// Check which screen section this player is in
 	switch(minecraft->player->m_iScreenSection)
@@ -112,7 +112,7 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 		iSafezoneXHalf = 0;//screenWidth/20; // 5%
 		iSafezoneYHalf = 0;//screenHeight/20; // 5%
 		iSafezoneTopYHalf = 0;// iSafezoneYHalf;
-		iTooltipsYOffset = 40 + splitYOffset;
+		iTooltipsYOffset = (quickSelectHeight) + (screenHeight / 8);// +splitYOffset;
 		break;
 	case C4JRender::VIEWPORT_TYPE_SPLIT_TOP:
 		iSafezoneXHalf = screenWidth/10; // 5%  (need to treat the whole screen is 2x this screen)
@@ -194,20 +194,20 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 		switch(minecraft->player->m_iScreenSection)
 		{
 		case C4JRender::VIEWPORT_TYPE_FULLSCREEN:
-			iTooltipsYOffset=screenHeight/10;
+			iTooltipsYOffset = quickSelectHeight;// screenHeight / 10;
 			break;
 		default:
 			//iTooltipsYOffset=screenHeight/10;
 			switch(guiScale)
 			{
 			case 3:
-				iTooltipsYOffset=28;//screenHeight/10;
+				iTooltipsYOffset = quickSelectHeight;//screenHeight/10;
 				break;
 			case 4:
-				iTooltipsYOffset=28;//screenHeight/10;
+				iTooltipsYOffset = quickSelectHeight;//screenHeight/10;
 				break;
 			default: // 2
-				iTooltipsYOffset=14;//screenHeight/10;
+				iTooltipsYOffset = quickSelectHeight;//screenHeight/10;
 				break;
 			}
 			break;

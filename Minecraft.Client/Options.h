@@ -15,7 +15,7 @@ public:
     class Option
 	{
 	public:
-		static const Option options[17];
+		static const Option options[];
 		static const Option *MUSIC;
 		static const Option *SOUND;
 		static const Option *INVERT_MOUSE;
@@ -26,6 +26,7 @@ public:
 		static const Option *ADVANCED_OPENGL;
 		static const Option *FRAMERATE_LIMIT;
 		static const Option *DIFFICULTY;
+		static const Option *TOOLTIPS;
 		static const Option *GRAPHICS;
 		static const Option *AMBIENT_OCCLUSION;
 		static const Option *GUI_SCALE;
