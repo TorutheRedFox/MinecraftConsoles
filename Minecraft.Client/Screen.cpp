@@ -202,8 +202,21 @@ void Screen::updateEvents()
 			}
 		}
 		// Escape: deliver when key is down so we don't miss it (IsKeyPressed can be one frame late)
-		if (vk == VK_ESCAPE && g_KBMInput.IsKeyDown(VK_ESCAPE))
-			deliver = true;
+		
+		if (vk == VK_ESCAPE)// && g_KBMInput.IsKeyDown(VK_ESCAPE))
+		{
+			static bool escPressed = false;
+			if (g_KBMInput.IsKeyDown(VK_ESCAPE))
+			{
+				if (!escPressed)
+				{
+					escPressed = true;
+					deliver = true;
+				}
+			}
+			else
+				escPressed = false;
+		}
 		if (!deliver) continue;
 
 		if (dynamic_cast<ChatScreen*>(this) != nullptr &&
