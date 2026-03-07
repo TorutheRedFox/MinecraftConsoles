@@ -1138,7 +1138,12 @@ void UIScene_LoadOrJoinMenu::handleInput(int iPad, int key, bool repeat, bool pr
 #if defined(__PS3__) || defined(__ORBIS__) || defined(__PSVITA__)
             m_bExitScene=true;
 #else
-            navigateBack();
+            //navigateBack();
+
+            ui.CloseAllPlayersScenes();
+            ui.UpdatePlayerBasePositions();
+            //ui.NavigateToScene(ProfileManager.GetPrimaryPad(), eUIScene_HUD);
+            ui.CloseUIScenes(0, true);
 #endif
             handled = true;
         }

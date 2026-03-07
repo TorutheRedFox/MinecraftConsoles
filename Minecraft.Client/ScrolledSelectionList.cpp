@@ -115,7 +115,7 @@ void ScrolledSelectionList::buttonClicked(Button *button)
 void ScrolledSelectionList::render(int xm, int ym, float a)
 {
 	// 4J Unused
-#if 0
+//#if 0
     renderBackground();
 
     int itemCount = getNumberOfItems();
@@ -201,7 +201,8 @@ void ScrolledSelectionList::render(int xm, int ym, float a)
     glDisable(GL_FOG);
     Tesselator *t = Tesselator::getInstance();
 
-    glBindTexture(GL_TEXTURE_2D, minecraft->textures->loadTexture(L"/gui/background.png"));
+    //glBindTexture(GL_TEXTURE_2D, minecraft->textures->loadTexture(L"/gui/background.png"));
+    glBindTexture(GL_TEXTURE_2D, minecraft->textures->loadTexture(TN_GUI_BACKGROUND));
     glColor4f(1.0f, 1, 1, 1);
     float s = 32;
     t->begin();
@@ -335,7 +336,7 @@ void ScrolledSelectionList::render(int xm, int ym, float a)
     glShadeModel(GL_FLAT);
     glEnable(GL_ALPHA_TEST);
     glDisable(GL_BLEND);
-#endif
+//#endif
 }
 
 void ScrolledSelectionList::renderHoleBackground(int y0, int y1, int a0, int a1)

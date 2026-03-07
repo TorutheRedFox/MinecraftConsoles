@@ -11,6 +11,7 @@
 #include "..\Minecraft.World\System.h"
 #include "..\Minecraft.World\Random.h"
 #include "TitleScreen.h"
+#include "../Minecraft.World/Calendar.h"
 
 Random *TitleScreen::random = new Random();
 
@@ -23,14 +24,37 @@ TitleScreen::TitleScreen()
     splash = L"missingno";
 //   try {	// 4J - removed try/catch
     vector<wstring> splashes;
+    
+	
+    //BufferedReader *br = new BufferedReader(new InputStreamReader(InputStream::getResourceAsStream(L"Common\\res\\title\\splashes.txt"))); //, Charset.forName("UTF-8")
+	//
+    //if (br)
+    //{
+    //    wstring line = L"";
+    //    while (!(line = br->readLine()).empty())
+    //    {
+    //        line = trimString(line);
+    //        if (line.length() > 0)
+    //        {
+    //            splashes.push_back(line);
+    //        }
+    //    }
+    //
+    //    br->close();
+    //    delete br;
+    //}
 
-	
-    BufferedReader *br = new BufferedReader(new InputStreamReader(InputStream::getResourceAsStream(L"Common\\res\\title\\splashes.txt"))); //, Charset.forName("UTF-8")
-	
-    if (br)
+    // use the main file for this
+    wstring filename = L"splashes.txt";
+    if (app.hasArchiveFile(filename))
     {
+        byteArray splashesArray = app.getArchiveFile(filename);
+        ByteArrayInputStream bais(splashesArray);
+        InputStreamReader isr(&bais);
+        BufferedReader br(&isr);
+
         wstring line = L"";
-        while (!(line = br->readLine()).empty())
+        while (!(line = br.readLine()).empty())
         {
             line = trimString(line);
             if (line.length() > 0)
@@ -38,9 +62,8 @@ TitleScreen::TitleScreen()
                 splashes.push_back(line);
             }
         }
-    
-        br->close();
-        delete br;
+
+        br.close();
     }
     
     
@@ -62,20 +85,19 @@ void TitleScreen::keyPressed(wchar_t eventCharacter, int eventKey)
 
 void TitleScreen::init()
 {
-	/* 4J - Implemented in main menu instead
-    Calendar c = Calendar.getInstance();
-    c.setTime(new Date());
+    // 4J - Implemented in main menu instead
+    //Calendar c = Calendar.getInstance();
+    //c.setTime(new Date());
 
-    if (c.get(Calendar.MONTH) + 1 == 11 && c.get(Calendar.DAY_OF_MONTH) == 9) {
-        splash = "Happy birthday, ez!";
-    } else if (c.get(Calendar.MONTH) + 1 == 6 && c.get(Calendar.DAY_OF_MONTH) == 1) {
-        splash = "Happy birthday, Notch!";
-    } else if (c.get(Calendar.MONTH) + 1 == 12 && c.get(Calendar.DAY_OF_MONTH) == 24) {
-        splash = "Merry X-mas!";
-    } else if (c.get(Calendar.MONTH) + 1 == 1 && c.get(Calendar.DAY_OF_MONTH) == 1) {
-        splash = "Happy new year!";
+    if (Calendar::GetMonth() + 1 == 11 && Calendar::GetDayOfMonth() == 9) {//if (c.get(Calendar.MONTH) + 1 == 11 && c.get(Calendar.DAY_OF_MONTH) == 9) {
+        splash = L"Happy birthday, ez!";
+    } else if (Calendar::GetMonth() + 1 == 6 && Calendar::GetDayOfMonth() == 1) {// else if (c.get(Calendar.MONTH) + 1 == 6 && c.get(Calendar.DAY_OF_MONTH) == 1) {
+        splash = L"Happy birthday, Notch!";
+    } else if (Calendar::GetMonth() + 1 == 12 && Calendar::GetDayOfMonth() == 24) {// else if (c.get(Calendar.MONTH) + 1 == 12 && c.get(Calendar.DAY_OF_MONTH) == 24) {
+        splash = L"Merry X-mas!";
+    } else if (Calendar::GetMonth() + 1 == 1 && Calendar::GetDayOfMonth() == 1) {// else if (c.get(Calendar.MONTH) + 1 == 1 && c.get(Calendar.DAY_OF_MONTH) == 1) {
+        splash = L"Happy new year!";
     }
-	*/
 
     Language *language = Language::getInstance();
 
@@ -111,8 +133,8 @@ void TitleScreen::buttonClicked(Button *button)
     }
     if (button->id == 1)
 	{
-        //minecraft->setScreen(new SelectWorldScreen(this));
-        ui.NavigateToScene(0, eUIScene_MainMenu);
+        minecraft->setScreen(new SelectWorldScreen(this));
+        //ui.NavigateToScene(0, eUIScene_MainMenu);
     }
     if (button->id == 2)
 	{
@@ -152,7 +174,7 @@ void TitleScreen::renderPanoramas(int xm, int ym, float a)
     for (int panorama = 0; panorama < 6; panorama++)
         panoramas[panorama] = minecraft->textures->loadTexture(TN_TITLE_BG_PANORAMA0 + panorama);
 
-    int antialias = 3; // 8 originally, runs terrible here for no visual improvement
+    int antialias = 8; // 8 originally, runs terrible here for no visual improvement
     for (int l = 0; l < antialias * antialias; l++) {
         glPushMatrix();
         float x = ((float)(l % antialias) / (float)antialias - 0.5F) / 64.0f;
@@ -210,40 +232,41 @@ void TitleScreen::renderPanoramas(int xm, int ym, float a)
 
 void TitleScreen::renderGaussianBlur(float f)
 {
+    return;
     // TODO - do something about glCopyTexSubImage2D
-    //glBindTexture(GL_TEXTURE_2D, blurBuffer);
+    glBindTexture(GL_TEXTURE_2D, minecraft->textures->loadTexture(TN_GUI_BACKGROUND));//blurBuffer);
     //glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, 256, 256);
-    //glEnable(GL_BLEND);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    //glColorMask(true, true, true, false);
-    //Tesselator *t = Tesselator::getInstance();
-    //t->begin();
-    //byte blurSamples = 3;
-    //for (int i = 0; i < blurSamples; i++) {
-    //    t->color(1.0f, 1.0f, 1.0f, 1.0f / (i + 1));
-    //    int j = width;
-    //    int k = height;
-    //    float f1 = (i - blurSamples / 2) / 256.0f;
-    //    t->vertexUV(j, k, blitOffset, 0.0F + f1, 0.0);
-    //    t->vertexUV(j, 0, blitOffset, 1.0F + f1, 0.0);
-    //    t->vertexUV(0, 0, blitOffset, 1.0F + f1, 1.0);
-    //    t->vertexUV(0, k, blitOffset, 0.0F + f1, 1.0);
-    //}
-    //
-    //t->end();
-    //glColorMask(true, true, true, true);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glColorMask(true, true, true, false);
+    Tesselator *t = Tesselator::getInstance();
+    t->begin();
+    byte blurSamples = 3;
+    for (int i = 0; i < blurSamples; i++) {
+        t->color(1.0f, 1.0f, 1.0f, 1.0f / (i + 1));
+        int x = width;
+        int y = height;
+        float xOffset = (i - blurSamples / 2) / 256.0f;
+        t->vertexUV(x, y, blitOffset, 0.0F + xOffset, 0.0);
+        t->vertexUV(x, 0, blitOffset, 1.0F + xOffset, 0.0);
+        t->vertexUV(0, 0, blitOffset, 1.0F + xOffset, 1.0);
+        t->vertexUV(0, y, blitOffset, 0.0F + xOffset, 1.0);
+    }
+    
+    t->end();
+    glColorMask(true, true, true, true);
 }
 
 void TitleScreen::renderBackground(int xm, int ym, float a)
 {
     //renderDirtBackground(0); // TODO - do panoramas
-    //glViewport(0, 0, 256, 256); // blur doesn't exist
+    glViewport(0, 0, 256, 256); // blur doesn't exist
     renderPanoramas(xm, ym, a);
 
-    //for (int i = 0; i < 8; i++)
-    //    renderGaussianBlur(a);
+    for (int i = 0; i < 8; i++)
+        renderGaussianBlur(a);
 
-    //glViewport(0, 0, minecraft->width, minecraft->height);
+    glViewport(0, 0, minecraft->width, minecraft->height);
 
 
     //Tesselator* t = Tesselator::getInstance();

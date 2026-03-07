@@ -615,8 +615,24 @@ void SoundEngine::playUI(int iSound, float volume, float pitch)
 	}
 	if (!found)
 	{
-		app.DebugPrintf("No sound file found for UI sound: %s\n", basePath);
-		return;
+		// fall back to base path
+		sprintf_s(basePath, "Windows64Media/Sound/Minecraft/%s", ConvertSoundPathToName(name));
+		sprintf_s(finalPath, "%s.wav", basePath);
+
+		for (size_t i = 0; i < count; i++)
+		{
+			sprintf_s(finalPath, "%s%s", basePath, extensions[i]);
+			if (FileExists(finalPath))
+			{
+				found = true;
+				break;
+			}
+		}
+		if (!found)
+		{
+			app.DebugPrintf("No sound file found for UI sound: %s\n", basePath);
+			return;
+		}
 	}
 
     MiniAudioSound* s = new MiniAudioSound();

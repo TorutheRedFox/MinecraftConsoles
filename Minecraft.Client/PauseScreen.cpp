@@ -65,7 +65,7 @@ void PauseScreen::buttonClicked(Button* button)
         minecraft->localplayers[0] = NULL;
         //delete minecraft->player;
         minecraft->player = NULL;
-        minecraft->setScreen(new TitleScreen());
+        //minecraft->setScreen(new TitleScreen());
     }
     if (button->id == 4)
 	{

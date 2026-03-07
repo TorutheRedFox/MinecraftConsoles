@@ -9,6 +9,123 @@
 #include "..\Minecraft.World\net.minecraft.world.level.h"
 #include "..\Minecraft.World\net.minecraft.world.level.storage.h"
 
+#ifdef _WINDOWS64
+#include "..\..\Minecraft.World\NbtIo.h"
+#include "..\..\Minecraft.World\compression.h"
+
+static wstring ReadLevelNameFromSaveFile(const wstring& filePath)
+{
+    // Check for a worldname.txt sidecar written by the rename feature first
+    size_t slashPos = filePath.rfind(L'\\');
+    if (slashPos != wstring::npos)
+    {
+        wstring sidecarPath = filePath.substr(0, slashPos + 1) + L"worldname.txt";
+        FILE* fr = NULL;
+        if (_wfopen_s(&fr, sidecarPath.c_str(), L"r") == 0 && fr)
+        {
+            char buf[128] = {};
+            if (fgets(buf, sizeof(buf), fr))
+            {
+                int len = (int)strlen(buf);
+                while (len > 0 && (buf[len - 1] == '\n' || buf[len - 1] == '\r' || buf[len - 1] == ' '))
+                    buf[--len] = '\0';
+                fclose(fr);
+                if (len > 0)
+                {
+                    wchar_t wbuf[128] = {};
+                    mbstowcs(wbuf, buf, 127);
+                    return wstring(wbuf);
+                }
+            }
+            else fclose(fr);
+        }
+    }
+
+    HANDLE hFile = CreateFileW(filePath.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, NULL);
+    if (hFile == INVALID_HANDLE_VALUE) return L"";
+
+    DWORD fileSize = GetFileSize(hFile, NULL);
+    if (fileSize < 12 || fileSize == INVALID_FILE_SIZE) { CloseHandle(hFile); return L""; }
+
+    unsigned char* rawData = new unsigned char[fileSize];
+    DWORD bytesRead = 0;
+    if (!ReadFile(hFile, rawData, fileSize, &bytesRead, NULL) || bytesRead != fileSize)
+    {
+        CloseHandle(hFile);
+        delete[] rawData;
+        return L"";
+    }
+    CloseHandle(hFile);
+
+    unsigned char* saveData = NULL;
+    unsigned int saveSize = 0;
+    bool freeSaveData = false;
+
+    if (*(unsigned int*)rawData == 0)
+    {
+        // Compressed format: bytes 0-3=0, bytes 4-7=decompressed size, bytes 8+=compressed data
+        unsigned int decompSize = *(unsigned int*)(rawData + 4);
+        if (decompSize == 0 || decompSize > 128 * 1024 * 1024)
+        {
+            delete[] rawData;
+            return L"";
+        }
+        saveData = new unsigned char[decompSize];
+        Compression::getCompression()->Decompress(saveData, &decompSize, rawData + 8, fileSize - 8);
+        saveSize = decompSize;
+        freeSaveData = true;
+    }
+    else
+    {
+        saveData = rawData;
+        saveSize = fileSize;
+    }
+
+    wstring result = L"";
+    if (saveSize >= 12)
+    {
+        unsigned int headerOffset = *(unsigned int*)saveData;
+        unsigned int numEntries = *(unsigned int*)(saveData + 4);
+        const unsigned int entrySize = sizeof(FileEntrySaveData);
+
+        if (headerOffset < saveSize && numEntries > 0 && numEntries < 10000 &&
+            headerOffset + numEntries * entrySize <= saveSize)
+        {
+            FileEntrySaveData* table = (FileEntrySaveData*)(saveData + headerOffset);
+            for (unsigned int i = 0; i < numEntries; i++)
+            {
+                if (wcscmp(table[i].filename, L"level.dat") == 0)
+                {
+                    unsigned int off = table[i].startOffset;
+                    unsigned int len = table[i].length;
+                    if (off >= 12 && off + len <= saveSize && len > 0 && len < 4 * 1024 * 1024)
+                    {
+                        byteArray ba;
+                        ba.data = (byte*)(saveData + off);
+                        ba.length = len;
+                        CompoundTag* root = NbtIo::decompress(ba);
+                        if (root != NULL)
+                        {
+                            CompoundTag* dataTag = root->getCompound(L"Data");
+                            if (dataTag != NULL)
+                                result = dataTag->getString(L"LevelName");
+                            delete root;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    if (freeSaveData) delete[] saveData;
+    delete[] rawData;
+    // "world" is the engine default - it means no real name was ever set,
+    // so return empty to let the caller fall back to the save filename (timestamp).
+    if (result == L"world") result = L"";
+    return result;
+}
+#endif
 
 SelectWorldScreen::SelectWorldScreen(Screen *lastScreen)
 {
@@ -27,6 +144,11 @@ SelectWorldScreen::SelectWorldScreen(Screen *lastScreen)
 
 void SelectWorldScreen::init()
 {
+    ui.NavigateToScene(0, eUIScene_MainMenu);
+
+    ui.NavigateToScene(0, eUIScene_LoadOrJoinMenu);
+    return;
+
     Language *language = Language::getInstance();
     title = language->getElement(L"selectWorld.title");
 
@@ -40,22 +162,92 @@ void SelectWorldScreen::init()
     postInit();
 }
 
+SaveListDetails* m_saveDetails;
+int m_iSaveDetailsCount;
+
 void SelectWorldScreen::loadLevelList()
 {
 	LevelStorageSource *levelSource = minecraft->getLevelSource();
-	levelList = levelSource->getLevelList();
+	//levelList = levelSource->getLevelList();
+    levelList.clear();
 //	Collections.sort(levelList);	// 4J - TODO - get sort functor etc.
 	selectedWorld = -1;
+
+    StorageManager.GetSavesInfo(0, NULL, this, "save");
+
+    auto m_pSaveDetails = StorageManager.ReturnSavesInfo();
+    if (m_pSaveDetails != NULL)
+    {
+        if (m_saveDetails != NULL)
+        {
+            for (unsigned int i = 0; i < m_iSaveDetailsCount; ++i)
+            {
+                if (m_saveDetails[i].pbThumbnailData != NULL)
+                {
+                    delete m_saveDetails[i].pbThumbnailData;
+                }
+            }
+            delete m_saveDetails;
+        }
+        m_saveDetails = new SaveListDetails[m_pSaveDetails->iSaveC];
+
+        m_iSaveDetailsCount = m_pSaveDetails->iSaveC;
+        // Build sorted index array (newest-first by filename timestamp YYYYMMDDHHMMSS)
+        int* sortedIdx = new int[m_pSaveDetails->iSaveC];
+        for (int si = 0; si < (int)m_pSaveDetails->iSaveC; ++si) sortedIdx[si] = si;
+        for (int si = 1; si < (int)m_pSaveDetails->iSaveC; ++si)
+        {
+            int key = sortedIdx[si];
+            int sj = si - 1;
+            while (sj >= 0 && strcmp(m_pSaveDetails->SaveInfoA[sortedIdx[sj]].UTF8SaveFilename, m_pSaveDetails->SaveInfoA[key].UTF8SaveFilename) < 0)
+            {
+                sortedIdx[sj + 1] = sortedIdx[sj];
+                --sj;
+            }
+            sortedIdx[sj + 1] = key;
+        }
+        for (unsigned int i = 0; i < m_pSaveDetails->iSaveC; ++i)
+        {
+            {
+                int origIdx = sortedIdx[i];
+                wchar_t wFilename[MAX_SAVEFILENAME_LENGTH];
+                ZeroMemory(wFilename, sizeof(wFilename));
+                mbstowcs(wFilename, m_pSaveDetails->SaveInfoA[origIdx].UTF8SaveFilename, MAX_SAVEFILENAME_LENGTH - 1);
+                wstring filePath = wstring(L"Windows64\\GameHDD\\") + wstring(wFilename) + wstring(L"\\saveData.ms");
+                wstring levelName = ReadLevelNameFromSaveFile(filePath);
+                //if (!levelName.empty())
+                //{
+                //    m_buttonListSaves.addItem(levelName, wstring(L""));
+                //    wcstombs(m_saveDetails[i].UTF8SaveName, levelName.c_str(), 127);
+                //    m_saveDetails[i].UTF8SaveName[127] = '\0';
+                //}
+                //else
+                //{
+                //    m_buttonListSaves.addItem(m_pSaveDetails->SaveInfoA[origIdx].UTF8SaveTitle, L"");
+                //    memcpy(m_saveDetails[i].UTF8SaveName, m_pSaveDetails->SaveInfoA[origIdx].UTF8SaveTitle, 128);
+                //}
+
+                levelList.emplace_back
+                (
+                    wFilename, levelName.empty() ? wFilename : levelName, m_pSaveDetails->SaveInfoA[origIdx].metaData.modifiedTime, m_pSaveDetails->SaveInfoA[origIdx].metaData.dataSize, GameType::SURVIVAL, false, false, false
+                );
+
+                m_saveDetails[i].saveId = origIdx;
+                memcpy(m_saveDetails[i].UTF8SaveFilename, m_pSaveDetails->SaveInfoA[origIdx].UTF8SaveFilename, MAX_SAVEFILENAME_LENGTH);
+            }
+        }
+        delete[] sortedIdx;
+    }
 }
 
 wstring SelectWorldScreen::getWorldId(int id)
 {
-	return levelList->at(id)->getLevelId();
+	return levelList.at(id).getLevelId();
 }
 
 wstring SelectWorldScreen::getWorldName(int id)
 {
-    wstring levelName = levelList->at(id)->getLevelName();
+    wstring levelName = levelList.at(id).getLevelName();
 
 	if ( levelName.length() == 0 )
 	{
@@ -132,7 +324,7 @@ void SelectWorldScreen::buttonClicked(Button *button)
     }
 	else if (button->id == BUTTON_CANCEL_ID)
 	{
-        minecraft->setScreen(lastScreen);
+        //minecraft->setScreen(lastScreen);
     }
 	else
 	{
@@ -153,10 +345,10 @@ void SelectWorldScreen::worldSelected(int id)
         worldFolderName = L"World" + std::to_wstring(id);
     }
 // 4J Stu - Not used, so commenting to stop the build failing
-#if 0
-    minecraft->selectLevel(worldFolderName, getWorldName(id), 0);
+//#if 0
+    //minecraft->selectLevel(worldFolderName, getWorldName(id), 0);
     minecraft->setScreen(NULL);
-#endif
+//#endif
 }
 
 void SelectWorldScreen::confirmResult(bool result, int id)
@@ -178,6 +370,8 @@ void SelectWorldScreen::confirmResult(bool result, int id)
 
 void SelectWorldScreen::render(int xm, int ym, float a)
 {
+    Screen::renderDirtBackground(0);
+    return;
     // fill(0, 0, width, height, 0x40000000);
     worldSelectionList->render(xm, ym, a);
 
@@ -186,46 +380,46 @@ void SelectWorldScreen::render(int xm, int ym, float a)
     Screen::render(xm, ym, a);
 
 	// 4J - debug code - remove
-	static int count = 0;
-	static bool forceCreateLevel = false;
-	if( count++ >= 100 )
-	{
-		if( !forceCreateLevel && levelList->size() > 0 )
-		{
-			// 4J Stu - For some obscures reason the "delete" button is called "renameButton" and vice versa.
-			//if( levelList->size() > 2 && deleteButton->active )
-			//{
-			//	this->selectedWorld = 2;
-			//	count = 0;
-			//	buttonClicked(deleteButton);
-			//}
-			//else
-			if( levelList->size() > 1 && renameButton->active )
-			{
-				this->selectedWorld = 1;
-				count = 0;
-				buttonClicked(renameButton);
-			}
-			else
-				if( selectButton->active == true )
-			{
-				this->selectedWorld = 0;
-				buttonClicked(selectButton);
-				//this->worldSelected( 0 );
-			}
-			else
-			{
-				selectButton->active = true;
-				deleteButton->active = true;
-				renameButton->active = true;
-				count = 0;
-			}
-		}
-		else
-		{
-			minecraft->setScreen(new CreateWorldScreen(this));
-		}
-	}
+	//static int count = 0;
+	//static bool forceCreateLevel = false;
+	//if( count++ >= 100 )
+	//{
+	//	if( !forceCreateLevel && levelList.size() > 0 )
+	//	{
+	//		// 4J Stu - For some obscures reason the "delete" button is called "renameButton" and vice versa.
+	//		//if( levelList->size() > 2 && deleteButton->active )
+	//		//{
+	//		//	this->selectedWorld = 2;
+	//		//	count = 0;
+	//		//	buttonClicked(deleteButton);
+	//		//}
+	//		//else
+	//		if( levelList.size() > 1 && renameButton->active )
+	//		{
+	//			this->selectedWorld = 1;
+	//			count = 0;
+	//			buttonClicked(renameButton);
+	//		}
+	//		else
+	//			if( selectButton->active == true )
+	//		{
+	//			this->selectedWorld = 0;
+	//			buttonClicked(selectButton);
+	//			//this->worldSelected( 0 );
+	//		}
+	//		else
+	//		{
+	//			selectButton->active = true;
+	//			deleteButton->active = true;
+	//			renameButton->active = true;
+	//			count = 0;
+	//		}
+	//	}
+	//	else
+	//	{
+	//		minecraft->setScreen(new CreateWorldScreen(this));
+	//	}
+	//}
 }
 
 SelectWorldScreen::WorldSelectionList::WorldSelectionList(SelectWorldScreen *sws) : ScrolledSelectionList(sws->minecraft, sws->width, sws->height, 32, sws->height - 64, 36)
@@ -235,7 +429,7 @@ SelectWorldScreen::WorldSelectionList::WorldSelectionList(SelectWorldScreen *sws
 
 int SelectWorldScreen::WorldSelectionList::getNumberOfItems()
 {
-	return (int)this->parent->levelList->size();
+	return (int)this->parent->levelList.size();
 }
 
 void SelectWorldScreen::WorldSelectionList::selectItem(int item, bool doubleClick)
@@ -259,7 +453,7 @@ bool SelectWorldScreen::WorldSelectionList::isSelectedItem(int item)
 
 int SelectWorldScreen::WorldSelectionList::getMaxPosition()
 {
-	return (int)parent->levelList->size() * 36;
+	return (int)parent->levelList.size() * 36;
 }
 
 void SelectWorldScreen::WorldSelectionList::renderBackground()
@@ -269,7 +463,7 @@ void SelectWorldScreen::WorldSelectionList::renderBackground()
 
 void SelectWorldScreen::WorldSelectionList::renderItem(int i, int x, int y, int h, Tesselator *t)
 {
-    LevelSummary *levelSummary = parent->levelList->at(i);
+    LevelSummary *levelSummary = &parent->levelList.at(i);
 
     wstring name = levelSummary->getLevelName();
     if (name.length()==0)

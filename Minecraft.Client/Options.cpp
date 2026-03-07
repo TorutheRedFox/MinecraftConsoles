@@ -177,6 +177,7 @@ Options::Options(Minecraft *minecraft, File workingDirectory)
 	init();
 	this->minecraft = minecraft;
 	optionsFile = File(workingDirectory, L"options.txt");
+	load(); // they removed this, adding it back so they persist
 }
 
 Options::Options()

@@ -5,6 +5,7 @@
 #include "MultiPlayerLevel.h"
 #include "..\..\..\Minecraft.World\net.minecraft.world.level.dimension.h"
 #include "..\..\..\Minecraft.World\net.minecraft.world.level.storage.h"
+#include <Tesselator.h>
 
 UIComponent_Panorama::UIComponent_Panorama(int iPad, void *initData, UILayer *parentLayer) : UIScene(iPad, parentLayer)
 {
@@ -72,8 +73,156 @@ void UIComponent_Panorama::tick()
 	UIScene::tick();
 }
 
+
+void fillGradient(int x0, int y0, int x1, int y1, int col1, int col2)
+{
+	float a1 = ((col1 >> 24) & 0xff) / 255.0f;
+	float r1 = ((col1 >> 16) & 0xff) / 255.0f;
+	float g1 = ((col1 >> 8) & 0xff) / 255.0f;
+	float b1 = ((col1) & 0xff) / 255.0f;
+
+	float a2 = ((col2 >> 24) & 0xff) / 255.0f;
+	float r2 = ((col2 >> 16) & 0xff) / 255.0f;
+	float g2 = ((col2 >> 8) & 0xff) / 255.0f;
+	float b2 = ((col2) & 0xff) / 255.0f;
+	glDisable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glDisable(GL_ALPHA_TEST);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glShadeModel(GL_SMOOTH);
+
+	Tesselator* t = Tesselator::getInstance();
+	t->begin();
+	t->color(r1, g1, b1, a1);
+	t->vertex(static_cast<float>(x1), static_cast<float>(y0), 0);
+	t->vertex(static_cast<float>(x0), static_cast<float>(y0), 0);
+	t->color(r2, g2, b2, a2);
+	t->vertex(static_cast<float>(x0), static_cast<float>(y1),0);
+	t->vertex(static_cast<float>(x1), static_cast<float>(y1),0);
+	t->end();
+
+	glShadeModel(GL_FLAT);
+	glDisable(GL_BLEND);
+	glEnable(GL_ALPHA_TEST);
+	glEnable(GL_TEXTURE_2D);
+}
+
+void renderPanoramas(int xm, int ym, float a)
+{
+	Tesselator* t = Tesselator::getInstance();
+
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluPerspective(120.0f, 1.0f, 0.05f, 10.0f);
+	glMatrixMode(GL_MODELVIEW_MATRIX);
+	glPushMatrix();
+	glLoadIdentity();
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
+	glEnable(GL_BLEND);
+	glEnable(GL_ALPHA_TEST);
+	glDisable(GL_CULL_FACE);
+	glDepthMask(false);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	// CHANGE - performance issues getting these for every loop iteration, get them beforehand
+	int panoramas[6];
+	for (int panorama = 0; panorama < 6; panorama++)
+		panoramas[panorama] = Minecraft::GetInstance()->textures->loadTexture(TN_TITLE_BG_PANORAMA0 + panorama);
+
+	static uint64_t prevTime = System::currentTimeMillis();
+	uint64_t time = System::currentTimeMillis() - prevTime;
+	prevTime = System::currentTimeMillis();
+
+	static float vo = 0;
+	vo += time / 60.0f;
+
+	int antialias = 8; // 8 originally, runs terrible here for no visual improvement
+	for (int l = 0; l < antialias * antialias; l++) {
+		glPushMatrix();
+		float x = ((float)(l % antialias) / (float)antialias - 0.5F) / 64.0f;
+		float y = ((float)(l / antialias) / (float)antialias - 0.5F) / 64.0f;
+		float z = 0.0F;
+		glTranslatef(x, y, z);
+		glRotatef(Mth::sin((vo + a) / 400.0f) * 25.0f + 20.0f, 1.0f, 0.0f, 0.0f);
+		glRotatef(-(vo + a) * 0.1f, 0.0f, 1.0f, 0.0f);
+		for (int panorama = 0; panorama < 6; panorama++) {
+			glPushMatrix();
+			if (panorama == 1) {
+				glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
+			}
+			if (panorama == 2) {
+				glRotatef(180.f, 0.0f, 1.0f, 0.0f);
+			}
+			if (panorama == 3) {
+				glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
+			}
+			if (panorama == 4) {
+				glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+			}
+			if (panorama == 5) {
+				glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+			}
+			//GL11.glBindTexture(GL11.GL_TEXTURE_2D, minecraft.textures
+			//    .loadTexture((new StringBuilder()).append("/title/bg/panorama").append(i1).append(
+			//        ".png").toString()));
+			glBindTexture(GL_TEXTURE_2D, panoramas[panorama]);
+			t->begin();
+			t->color(0xffffff, 255 / (l + 1));
+			float f4 = 0.0F;
+			t->vertexUV(-1.0, -1.0, 1.0, 0.0f + f4, 0.0f + f4);
+			t->vertexUV(1.0, -1.0, 1.0, 1.0f - f4, 0.0f + f4);
+			t->vertexUV(1.0, 1.0, 1.0, 1.0f - f4, 1.0f - f4);
+			t->vertexUV(-1.0, 1.0, 1.0, 0.0f + f4, 1.0f - f4);
+			t->end();
+			glPopMatrix();
+		}
+
+		glPopMatrix();
+		glColorMask(true, true, true, false);
+	}
+	t->offset(0, 0, 0);
+	glColorMask(true, true, true, true);
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW_MATRIX);
+	glPopMatrix();
+	glDepthMask(true);
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_ALPHA_TEST);
+	glEnable(GL_DEPTH_TEST);
+
+	fillGradient(0, 0, 1280, 256, 0xAAFFFFFF, 0x00FFFFFF); // white
+	fillGradient(0, 0, 1280, 256, 0x00000000, 0xAA000000); // black
+}
+
+void renderDirtBackground()
+{
+	// 4J Unused
+//#if 0
+	glDisable(GL_LIGHTING);
+	glDisable(GL_FOG);
+	Tesselator* t = Tesselator::getInstance();
+	//glBindTexture(GL_TEXTURE_2D, minecraft->textures->loadTexture(L"/gui/background.png"));
+	glBindTexture(GL_TEXTURE_2D, Minecraft::GetInstance()->textures->loadTexture(TN_GUI_BACKGROUND));
+	glColor4f(1, 1, 1, 1);
+	float s = 32;
+	t->begin();
+	t->color(0x404040);
+	t->vertexUV(static_cast<float>(0), static_cast<float>(255), static_cast<float>(0), static_cast<float>(0), static_cast<float>(255 / s + 0));
+	t->vertexUV(static_cast<float>(1280), static_cast<float>(255), static_cast<float>(0), static_cast<float>(1280 / s), static_cast<float>(255 / s + 0));
+	t->vertexUV(static_cast<float>(1280), static_cast<float>(0), static_cast<float>(0), static_cast<float>(1280 / s), static_cast<float>(0 + 0));
+	t->vertexUV(static_cast<float>(0), static_cast<float>(0), static_cast<float>(0), static_cast<float>(0), static_cast<float>(0 + 0));
+	t->end();
+	//#endif
+}
+
 void UIComponent_Panorama::render(S32 width, S32 height, C4JRender::eViewportType viewport)
 {
+	//renderPanoramas(width, height, 0.137655854f);
+	renderDirtBackground();
+	return;
 	bool specialViewport =	(viewport == C4JRender::VIEWPORT_TYPE_SPLIT_TOP) ||
 		(viewport == C4JRender::VIEWPORT_TYPE_SPLIT_BOTTOM) ||
 		(viewport == C4JRender::VIEWPORT_TYPE_SPLIT_LEFT) ||

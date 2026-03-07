@@ -1287,7 +1287,7 @@ void Minecraft::run_middle()
 					// If saving isn't disabled, and the main player has a app action running , or has any crafting or containers open, don't autosave
 					if(!StorageManager.GetSaveDisabled() && (app.GetXuiAction(ProfileManager.GetPrimaryPad())==eAppAction_Idle) )
 					{
-						if(!ui.IsPauseMenuDisplayed(ProfileManager.GetPrimaryPad()) && !ui.IsIgnoreAutosaveMenuDisplayed(ProfileManager.GetPrimaryPad()))
+						if(!pause && !ui.IsIgnoreAutosaveMenuDisplayed(ProfileManager.GetPrimaryPad()))
 						{
 							// check if the autotimer countdown has reached zero
 							unsigned char ucAutosaveVal=app.GetGameSettings(ProfileManager.GetPrimaryPad(),eGameSetting_Autosave);
@@ -3797,7 +3797,7 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 			}
 		}
 
-		if ( (player->ullButtonsPressed&(1LL<<MINECRAFT_ACTION_PAUSEMENU) && !pause)
+		if ( (player->ullButtonsPressed&(1LL<<MINECRAFT_ACTION_PAUSEMENU))
 #ifdef _DURANGO
 			|| (player->ullButtonsPressed&(1LL<<ACTION_MENU_GTC_PAUSE))
 #endif

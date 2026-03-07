@@ -3,6 +3,8 @@
 #include "UIScene_FullscreenProgress.h"
 #include "..\..\Minecraft.h"
 #include "..\..\ProgressRenderer.h"
+#include "..\..\TitleScreen.h"
+#include <Tesselator.h>
 
 
 UIScene_FullscreenProgress::UIScene_FullscreenProgress(int iPad, void *initData, UILayer *parentLayer) : UIScene(iPad, parentLayer)
@@ -42,8 +44,8 @@ UIScene_FullscreenProgress::UIScene_FullscreenProgress(int iPad, void *initData,
 
 	// Clear the progress text
 	Minecraft *pMinecraft=Minecraft::GetInstance();
-	pMinecraft->progressRenderer->progressStart(-1);
-	pMinecraft->progressRenderer->progressStage(-1);
+	//pMinecraft->progressRenderer->progressStart(-1);
+	//pMinecraft->progressRenderer->progressStage(-1);
 	m_progressBar.init(L"",0,0,100,0);
 
 	// set the tip
@@ -112,6 +114,38 @@ void UIScene_FullscreenProgress::handleDestroy()
 void UIScene_FullscreenProgress::tick()
 {
 	UIScene::tick();
+
+	Minecraft* minecraft = Minecraft::GetInstance();
+
+	ScreenSizeCalculator ssc(minecraft->options, minecraft->width, minecraft->height);
+	int screenWidth = ssc.getWidth();
+	int screenHeight = ssc.getHeight();
+
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, (float)ssc.rawWidth, (float)ssc.rawHeight, 0, 100, 300);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glTranslatef(0, 0, -200);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	Tesselator* t = Tesselator::getInstance();
+	int id = minecraft->textures->loadTexture(TN_GUI_BACKGROUND);// minecraft->textures->loadTexture(L"/gui/background.png");
+	glBindTexture(GL_TEXTURE_2D, id);
+	float s = 32;
+	t->begin();
+	t->color(0x404040);
+	t->vertexUV((float)(0), (float)(screenHeight), (float)(0), (float)(0), (float)(screenHeight / s));
+	t->vertexUV((float)(screenWidth), (float)(screenHeight), (float)(0), (float)(screenWidth / s), (float)(screenHeight / s));
+	t->vertexUV((float)(screenWidth), (float)(0), (float)(0), (float)(screenWidth / s), (float)(0));
+	t->vertexUV((float)(0), (float)(0), (float)(0), (float)(0), (float)(0));
+	t->end();
+
+	//minecraft->font->drawShadow(title, (screenWidth - minecraft->font->width(title)) / 2, screenHeight / 2 - 4 - 16, 0xffffff);
+	//minecraft->font->drawShadow(status, (screenWidth - minecraft->font->width(status)) / 2, screenHeight / 2 - 4 + 8, 0xffffff);
+	Display::update();
 
 	Minecraft *pMinecraft=Minecraft::GetInstance();
 
@@ -256,6 +290,7 @@ void UIScene_FullscreenProgress::tick()
 				case e_ProgressCompletion_NavigateToHomeMenu:
 					app.DebugPrintf("e_ProgressCompletion_NavigateToHomeMenu\n");
 					//ui.NavigateToHomeMenu();
+					Minecraft::GetInstance()->setScreen(new TitleScreen());
 					ui.CloseAllPlayersScenes();
 					ui.UpdatePlayerBasePositions();
 					break;

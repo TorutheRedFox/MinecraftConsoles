@@ -107,7 +107,7 @@ void ProgressRenderer::progressStagePercentage(int i)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     Tesselator *t = Tesselator::getInstance();
-    int id = minecraft->textures->loadTexture(L"/gui/background.png");
+    int id = minecraft->textures->loadTexture(TN_GUI_BACKGROUND);// minecraft->textures->loadTexture(L"/gui/background.png");
     glBindTexture(GL_TEXTURE_2D, id);
     float s = 32;
     t->begin();
@@ -142,8 +142,8 @@ void ProgressRenderer::progressStagePercentage(int i)
         glEnable(GL_TEXTURE_2D);
     }
 
-    minecraft->font->drawShadow(title, (screenWidth - minecraft->font->width(title)) / 2, screenHeight / 2 - 4 - 16, 0xffffff);
-    minecraft->font->drawShadow(status, (screenWidth - minecraft->font->width(status)) / 2, screenHeight / 2 - 4 + 8, 0xffffff);
+    //minecraft->font->drawShadow(title, (screenWidth - minecraft->font->width(title)) / 2, screenHeight / 2 - 4 - 16, 0xffffff);
+    //minecraft->font->drawShadow(status, (screenWidth - minecraft->font->width(status)) / 2, screenHeight / 2 - 4 + 8, 0xffffff);
     Display::update();
 
 	/*	// 4J - removed

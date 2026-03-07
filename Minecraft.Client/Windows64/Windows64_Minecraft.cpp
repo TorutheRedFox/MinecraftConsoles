@@ -50,6 +50,12 @@
 
 #include "Xbox/resource.h"
 
+extern "C"
+{
+	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+	__declspec(dllexport) unsigned long NvOptimusEnablement = 0x00000001;
+}
+
 #ifdef _MSC_VER
 #pragma comment(lib, "legacy_stdio_definitions.lib")
 #endif
@@ -1579,7 +1585,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		//{
 			pMinecraft->applyFrameMouseLook();  // Per-frame mouse look (before ticks + render)
 			pMinecraft->run_middle();
-			app.SetAppPaused( g_NetworkManager.IsLocalGame() && g_NetworkManager.GetPlayerCount() == 1 && ui.IsPauseMenuDisplayed(ProfileManager.GetPrimaryPad()) );
+			app.SetAppPaused( g_NetworkManager.IsLocalGame() && g_NetworkManager.GetPlayerCount() == 1 && pMinecraft->pause );//ui.IsPauseMenuDisplayed(ProfileManager.GetPrimaryPad()) );
 		//}
 		//else
 		//{
