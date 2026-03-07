@@ -126,16 +126,23 @@ void Screen::updateEvents()
 {
 #ifdef _WINDOWS64
 	// Poll mouse button state and dispatch click/release events
+	static bool buttonPressed[3]{ 0 };
+
 	for (int btn = 0; btn < 3; btn++)
 	{
-		if (g_KBMInput.IsMouseButtonPressed(btn))
+		if (g_KBMInput.IsMouseButtonDown(btn))
 		{
-			int xm = Mouse::getX() * width / minecraft->width;
-			int ym = height - Mouse::getY() * height / minecraft->height - 1;
-			mouseClicked(xm, ym, btn);
+			if (!buttonPressed[btn]) // works around jank with IsMouseButtonPressed
+			{
+				buttonPressed[btn] = true;
+				int xm = Mouse::getX() * width / minecraft->width;
+				int ym = height - Mouse::getY() * height / minecraft->height - 1;
+				mouseClicked(xm, ym, btn);
+			}
 		}
-		if (g_KBMInput.IsMouseButtonReleased(btn))
+		else if (buttonPressed[btn])
 		{
+			buttonPressed[btn] = false;
 			int xm = Mouse::getX() * width / minecraft->width;
 			int ym = height - Mouse::getY() * height / minecraft->height - 1;
 			mouseReleased(xm, ym, btn);
