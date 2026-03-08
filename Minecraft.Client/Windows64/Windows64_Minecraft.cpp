@@ -1458,7 +1458,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	}
 #endif
 	MSG msg = {0};
-	while( WM_QUIT != msg.message && !app.m_bShutdown)
+	while( WM_QUIT != msg.message && !app.m_bShutdown && (!pMinecraft || pMinecraft->running))
 	{
 		g_KBMInput.Tick();
 
