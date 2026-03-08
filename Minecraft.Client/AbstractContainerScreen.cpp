@@ -93,17 +93,17 @@ void AbstractContainerScreen::render(int xm, int ym, float a)
     if (inventory->getCarried() == NULL && hoveredSlot != NULL && hoveredSlot->hasItem())
 	{
 
-        //wstring elementName = trimString(Language::getInstance()->getElementName(hoveredSlot->getItem()->getDescriptionId()));
-        //
-        //if (elementName.length() > 0)
-		//{
-        //    int x = xm - xo + 12;
-        //    int y = ym - yo - 12;
-        //    int width = font->width(elementName);
-        //    fillGradient(x - 3, y - 3, x + width + 3, y + 8 + 3, 0xc0000000, 0xc0000000);
-        //
-        //    font->drawShadow(elementName, x, y, 0xffffffff);
-        //}
+        wstring elementName = trimString(Language::getInstance()->getElementName(hoveredSlot->getItem()->getHoverName()));
+        
+        if (elementName.length() > 0)
+		{
+            int x = xm - xo + 12;
+            int y = ym - yo - 12;
+            int width = font->width(elementName);
+            fillGradient(x - 3, y - 3, x + width + 3, y + 8 + 3, 0xc0000000, 0xc0000000);
+        
+            font->drawShadow(elementName, x, y, 0xffffffff);
+        }
 
     }
 
