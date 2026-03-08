@@ -111,6 +111,10 @@ void renderPanoramas(int xm, int ym, float a)
 {
 	Tesselator* t = Tesselator::getInstance();
 
+	ScreenSizeCalculator ssc(Minecraft::GetInstance()->options, Minecraft::GetInstance()->width, Minecraft::GetInstance()->height);
+	int width = ssc.getWidth();
+	int height = ssc.getHeight();
+
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
@@ -193,14 +197,19 @@ void renderPanoramas(int xm, int ym, float a)
 	glEnable(GL_ALPHA_TEST);
 	glEnable(GL_DEPTH_TEST);
 
-	fillGradient(0, 0, 1280, 256, 0xAAFFFFFF, 0x00FFFFFF); // white
-	fillGradient(0, 0, 1280, 256, 0x00000000, 0xAA000000); // black
+	fillGradient(0, 0, width, height, 0xAAFFFFFF, 0x00FFFFFF); // white
+	fillGradient(0, 0, width, height, 0x00000000, 0xAA000000); // black
 }
 
 void renderDirtBackground()
 {
 	// 4J Unused
 //#if 0
+	ScreenSizeCalculator ssc(Minecraft::GetInstance()->options, Minecraft::GetInstance()->width, Minecraft::GetInstance()->height);
+	int width = ssc.getWidth();
+	int height = ssc.getHeight();
+	float vo = 0;
+
 	glDisable(GL_LIGHTING);
 	glDisable(GL_FOG);
 	Tesselator* t = Tesselator::getInstance();
@@ -210,10 +219,10 @@ void renderDirtBackground()
 	float s = 32;
 	t->begin();
 	t->color(0x404040);
-	t->vertexUV(static_cast<float>(0), static_cast<float>(255), static_cast<float>(0), static_cast<float>(0), static_cast<float>(255 / s + 0));
-	t->vertexUV(static_cast<float>(1280), static_cast<float>(255), static_cast<float>(0), static_cast<float>(1280 / s), static_cast<float>(255 / s + 0));
-	t->vertexUV(static_cast<float>(1280), static_cast<float>(0), static_cast<float>(0), static_cast<float>(1280 / s), static_cast<float>(0 + 0));
-	t->vertexUV(static_cast<float>(0), static_cast<float>(0), static_cast<float>(0), static_cast<float>(0), static_cast<float>(0 + 0));
+	t->vertexUV(static_cast<float>(0), static_cast<float>(height), static_cast<float>(0), static_cast<float>(0), static_cast<float>(height / s + vo));
+	t->vertexUV(static_cast<float>(width), static_cast<float>(height), static_cast<float>(0), static_cast<float>(width / s), static_cast<float>(height / s + vo));
+	t->vertexUV(static_cast<float>(width), static_cast<float>(0), static_cast<float>(0), static_cast<float>(width / s), static_cast<float>(0 + vo));
+	t->vertexUV(static_cast<float>(0), static_cast<float>(0), static_cast<float>(0), static_cast<float>(0), static_cast<float>(0 + vo));
 	t->end();
 	//#endif
 }
