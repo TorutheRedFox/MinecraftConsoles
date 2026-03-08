@@ -147,6 +147,7 @@ void SelectWorldScreen::init()
     ui.NavigateToScene(0, eUIScene_MainMenu);
 
     ui.NavigateToScene(0, eUIScene_LoadOrJoinMenu);
+    minecraft->setScreen(NULL);
     return;
 
     Language *language = Language::getInstance();

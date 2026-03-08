@@ -9,6 +9,7 @@
 #include "..\..\..\Minecraft.World\ConsoleSaveFile.h"
 #include "..\..\..\Minecraft.World\ConsoleSaveFileOriginal.h"
 #include "..\..\ProgressRenderer.h"
+#include "..\..\TitleScreen.h"
 #include "..\..\MinecraftServer.h"
 #include "..\..\TexturePackRepository.h"
 #include "..\..\TexturePack.h"
@@ -1144,6 +1145,7 @@ void UIScene_LoadOrJoinMenu::handleInput(int iPad, int key, bool repeat, bool pr
             ui.UpdatePlayerBasePositions();
             //ui.NavigateToScene(ProfileManager.GetPrimaryPad(), eUIScene_HUD);
             ui.CloseUIScenes(0, true);
+            Minecraft::GetInstance()->setScreen(new TitleScreen());
 #endif
             handled = true;
         }
