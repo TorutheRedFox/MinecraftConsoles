@@ -1534,8 +1534,8 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	// but keep g_iScreenWidth/Height at 1920x1080 for logical resolution
 	// (SWF selection, ortho projection, game logic). The real window
 	// dimensions are tracked by g_rScreenWidth/g_rScreenHeight.
-	//g_rScreenWidth = GetSystemMetrics(SM_CXSCREEN);
-	//g_rScreenHeight = GetSystemMetrics(SM_CYSCREEN);
+	g_rScreenWidth = GetSystemMetrics(SM_CXSCREEN);
+	g_rScreenHeight = GetSystemMetrics(SM_CYSCREEN);
 
 	// Load username from username.txt
     char exePath[MAX_PATH] = {};

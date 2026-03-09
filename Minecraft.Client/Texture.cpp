@@ -716,7 +716,8 @@ int Texture::crispBlend(int c0, int c1)
 	int a0 = static_cast<int>(((c0 & 0xff000000) >> 24)) & 0xff;
 	int a1 = static_cast<int>(((c1 & 0xff000000) >> 24)) & 0xff;
 
-	int a = 255;
+	int a = ((a0 + a1) >> 1) & 0xff;
+
 	if (a0 + a1 < 255)
 	{
 		a = 0;

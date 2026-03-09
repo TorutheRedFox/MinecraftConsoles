@@ -19,12 +19,12 @@ void VideoSettingsScreen::init()
     this->title = language->getElement(L"options.videoTitle");
 
 	// 4J - this was as static array but moving it into the function to remove any issues with static initialisation order
-	const Options::Option *items[8] = {
-			        Options::Option::GRAPHICS, Options::Option::RENDER_DISTANCE, Options::Option::AMBIENT_OCCLUSION, Options::Option::FRAMERATE_LIMIT, Options::Option::ANAGLYPH, Options::Option::VIEW_BOBBING,
+	const Options::Option *items[] = {
+			        Options::Option::GAMMA, Options::Option::FOV, Options::Option::GRAPHICS, Options::Option::RENDER_DISTANCE, Options::Option::AMBIENT_OCCLUSION, Options::Option::FRAMERATE_LIMIT, Options::Option::ANAGLYPH, Options::Option::VIEW_BOBBING,
 			        Options::Option::GUI_SCALE, Options::Option::ADVANCED_OPENGL
 	};
 
-	for (int position = 0; position < 8; position++)
+	for (int position = 0; position < sizeof(items)/sizeof(Options::Option*); position++)
 	{
 		const Options::Option *item = items[position];
         if (!item->isProgress())
