@@ -1501,7 +1501,7 @@ void Minecraft::run_middle()
 
 							if(g_KBMInput.IsKeyPressed(KeyboardMouseInput::KEY_INVENTORY))
 							{
-								if(dynamic_cast<InventoryScreen*>(screen) != NULL)//isClosableByEitherKey && !isEditing)
+								if(dynamic_cast<AbstractContainerScreen*>(screen) != NULL)//isClosableByEitherKey && !isEditing)
 								{
 									setScreen(NULL);//ui.CloseUIScenes(i);
 								}
@@ -2389,7 +2389,7 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 		setScreen(nullptr);
 	}
 
-	if (screen != nullptr)
+	if (player != nullptr && screen != nullptr)
 	{
 		player->missTime = 10000;
 		player->lastClickTick[0] = ticks + 10000;

@@ -12,6 +12,7 @@
 #ifdef _WINDOWS64
 #include "..\..\Minecraft.World\NbtIo.h"
 #include "..\..\Minecraft.World\compression.h"
+#include <Common/UI/UI.h>
 
 static wstring ReadLevelNameFromSaveFile(const wstring& filePath)
 {

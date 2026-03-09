@@ -159,7 +159,7 @@ void UIScene_HUD::customDraw(IggyCustomDrawCallbackRegion *region)
 	if(pMinecraft->localplayers[m_iPad] == nullptr || pMinecraft->localgameModes[m_iPad] == nullptr) return;
 
 	int slot = -1;
-	swscanf(static_cast<wchar_t *>region->name,L"slot_%d",&slot);
+	swscanf(static_cast<wchar_t *>(region->name),L"slot_%d",&slot);
 	if (slot == -1)
 	{
 		app.DebugPrintf("This is not the control we are looking for\n");

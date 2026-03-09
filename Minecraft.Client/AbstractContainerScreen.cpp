@@ -53,7 +53,7 @@ void AbstractContainerScreen::render(int xm, int ym, float a)
 	
     Slot *hoveredSlot = nullptr;
 	
-	for ( Slot *slot : *menu->slots )
+	for ( Slot *slot : menu->slots )
 	{
         renderSlot(slot);
 
