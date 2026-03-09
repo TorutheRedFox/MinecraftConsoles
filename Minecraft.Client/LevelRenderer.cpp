@@ -3739,6 +3739,10 @@ int LevelRenderer::rebuildChunkThreadProc(LPVOID lpParam)
 
 	while(true)
 	{
+		Minecraft* minecraft = Minecraft::GetInstance();
+		if (minecraft && !minecraft->running)
+			break; // end if the game isn't running
+
 		s_activationEventA[index]->WaitForSignal(INFINITE);
 
 		//app.DebugPrintf("Rebuilding permaChunk %d\n", index + 1);
