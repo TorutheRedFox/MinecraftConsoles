@@ -12,6 +12,8 @@
 #include "..\Minecraft.World\Random.h"
 #include "TitleScreen.h"
 #include "../Minecraft.World/Calendar.h"
+#include "../Minecraft.World/Tile.h"
+#include <TileRenderer.h>
 
 Random *TitleScreen::random = new Random();
 
@@ -76,6 +78,18 @@ TitleScreen::TitleScreen()
 void TitleScreen::tick()
 {
 	vo += 1.0f;
+
+    if (initializedLetterBlocks) // Toru - was null check
+    {
+        for (int x = 0; x < 39; x++)
+        {
+            for (int y = 0; y < 5; y++)
+            {
+                letterBlocks[x][y].tick();
+            }
+        }
+    }
+
 	//if( vo > 100.0f ) minecraft->setScreen(new SelectWorldScreen(this));		// 4J - temp testing
 }
 
@@ -157,7 +171,7 @@ void TitleScreen::renderPanoramas(int xm, int ym, float a)
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
-    gluPerspective(120.0f, 1.0f, 0.05f, 10.0f);
+    gluPerspective(120.0f * (float)height / (float)width, (float)width / (float)height, 0.05f, 10.0f);
     glMatrixMode(GL_MODELVIEW_MATRIX);
     glPushMatrix();
     glLoadIdentity();
@@ -174,11 +188,11 @@ void TitleScreen::renderPanoramas(int xm, int ym, float a)
     for (int panorama = 0; panorama < 6; panorama++)
         panoramas[panorama] = minecraft->textures->loadTexture(TN_TITLE_BG_PANORAMA0 + panorama);
 
-    int antialias = 8; // 8 originally, runs terrible here for no visual improvement
-    for (int l = 0; l < antialias * antialias; l++) {
+    int samples = 8; // 8 originally, runs terrible here for no visual improvement
+    for (int l = 0; l < samples * samples; l++) {
         glPushMatrix();
-        float x = ((float)(l % antialias) / (float)antialias - 0.5F) / 64.0f;
-        float y = ((float)(l / antialias) / (float)antialias - 0.5F) / 64.0f;
+        float x = (((float)(l % samples) / (float)samples) - 0.5F) / 16.0f;
+        float y = (((float)(l / samples) / (float)samples) - 0.5F) / 16.0f;
         float z = 0.0F;
         glTranslatef(x, y, z);
         glRotatef(Mth::sin((vo + a) / 400.0f) * 25.0f + 20.0f, 1.0f, 0.0f, 0.0f);
@@ -204,8 +218,14 @@ void TitleScreen::renderPanoramas(int xm, int ym, float a)
             //    .loadTexture((new StringBuilder()).append("/title/bg/panorama").append(i1).append(
             //        ".png").toString()));
             glBindTexture(GL_TEXTURE_2D, panoramas[panorama]);
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // Toru - added these to compensate for lack of blur
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
             t->begin();
-            t->color(0xffffff, 255 / (l + 1));
+            t->color(0xffffff, 255 / samples);
             float f4 = 0.0F;
             t->vertexUV(-1.0, -1.0, 1.0, 0.0f + f4, 0.0f + f4);
             t->vertexUV(1.0, -1.0, 1.0, 1.0f - f4, 0.0f + f4);
@@ -283,10 +303,12 @@ void TitleScreen::render(int xm, int ym, float a)
     fillGradient(0, 0, width, height, 0xAAFFFFFF, 0x00FFFFFF); // white
     fillGradient(0, 0, width, height, 0x00000000, 0xAA000000); // black
 
+    //renderMinecraftLogo(a);
+
     int logoWidth = 155 + 119;
     int logoX = width / 2 - logoWidth / 2;
     int logoY = 30;
-
+    
     //glBindTexture(GL_TEXTURE_2D, minecraft->textures->loadTexture(L"/title/mclogo.png"));
     glBindTexture(GL_TEXTURE_2D, minecraft->textures->loadTexture(TN_TITLE_MCLOGO));
     glColor4f(1, 1, 1, 1);
@@ -295,10 +317,10 @@ void TitleScreen::render(int xm, int ym, float a)
     t->color(0xffffff);
     glPushMatrix();
     glTranslatef((float)width / 2 + 90, 70, 0);
-
+    
     glRotatef(-20, 0, 0, 1);
     float sss = 1.8f - Mth::abs(Mth::sin(System::currentTimeMillis() % 1000 / 1000.0f * PI * 2) * 0.1f);
-
+    
     sss = sss * 100 / (font->width(splash) + 8 * 4);
     glScalef(sss, sss, sss);
     drawCenteredString(font, splash, 0, -8, 0xffff00);
@@ -311,4 +333,98 @@ void TitleScreen::render(int xm, int ym, float a)
 
     Screen::render(xm, ym, a);
 //#endif
+}
+
+void TitleScreen::renderMinecraftLogo(float a) {
+    if (!initializedLetterBlocks) {
+        initializedLetterBlocks = true;
+
+        for (int x = 0; x < 39; x++) {
+            for (int y = 0; y < 5; y++) {
+                letterBlocks[x][y] = TitleScreen::LetterBlock(x, y);
+            }
+        }
+    }
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    ScreenSizeCalculator ssc(minecraft->options, minecraft->width, minecraft->height);
+    int height = 120 * ssc.scale;
+    gluPerspective(70.0F, (float)minecraft->width / (float)height, 0.05F, 100.0F);
+    glViewport(0, minecraft->height - height, minecraft->width, height);
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    glDisable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glDepthMask(true);
+    unique_ptr<TileRenderer> tileRenderer = make_unique<TileRenderer>();
+
+    for (int layer = 0; layer < 3; layer++) {
+        glPushMatrix();
+        glTranslatef(0.4F, 0.6F, -13.0F);
+        if (layer == 0) {
+            glClear(GL_DEPTH_BUFFER_BIT);
+            glTranslatef(0.0F, -0.4F, 0.0F);
+            glScalef(0.98F, 1.0F, 1.0F);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        }
+
+        if (layer == 1) {
+            glDisable(GL_BLEND);
+            glClear(GL_DEPTH_BUFFER_BIT);
+        }
+
+        if (layer == 2) {
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_COLOR, GL_ONE);
+        }
+
+        glScalef(1.0F, -1.0F, 1.0F);
+        glRotatef(15.0F, 1.0F, 0.0F, 0.0F);
+        glScalef(0.89F, 1.0F, 0.4F);
+        glTranslatef((float)(-39) * 0.5F, (float)(-5) * 0.5F, 0.0F);
+        //glBindTexture(GL_TEXTURE_2D, minecraft->textures->loadTexture(TN_TERRAIN));
+        if (layer == 0) {
+            //glBindTexture(GL_TEXTURE_2D, this.minecraft.textures.loadTexture("/title/black.png"));
+        }
+
+        for (int y = 0; y < 5; y++) {
+            for (int x = 0; x < 39; x++) {
+                char c = logo[y][x];
+                if (c != ' ') {
+                    glPushMatrix();
+                    TitleScreen::LetterBlock &letterBlock = letterBlocks[x][y];
+                    float z = (float)(letterBlock.yO + (letterBlock.y - letterBlock.yO) * (double)a);
+                    float scale = 1.0F;
+                    float alpha = 1.0F;
+                    float rotation = 0.0F;
+                    if (layer == 0)
+                    {
+                        scale = z * 0.04F + 1.0F;
+                        alpha = 1.0F / scale;
+                        z = 0.0F;
+                    }
+
+                    glTranslatef((float)x, (float)y, z);
+                    glScalef(scale, scale, scale);
+                    glRotatef(rotation, 0.0F, 1.0F, 0.0F);
+                    tileRenderer->renderCube(Tile::stone, alpha);
+                    glPopMatrix();
+                }
+            }
+        }
+
+        glPopMatrix();
+    }
+
+    glDisable(GL_BLEND);
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+    glViewport(0, 0, minecraft->width, minecraft->height);
+    glEnable(GL_CULL_FACE);
 }
