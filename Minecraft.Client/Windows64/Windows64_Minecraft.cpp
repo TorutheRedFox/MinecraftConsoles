@@ -106,13 +106,13 @@ BOOL g_bWidescreen = TRUE;
 // The 3D world renders at native resolution; Flash UI is 16:9-fitted and centered
 // within each viewport (pillarboxed on ultrawide, letterboxed on tall displays).
 // ApplyScreenMode() can still override these for debug/test resolutions via launch args.
-int g_iScreenWidth = 1920;
-int g_iScreenHeight = 1080;
+int g_iScreenWidth = 854;
+int g_iScreenHeight = 480;
 
 // Real window dimensions — updated on every WM_SIZE so the 3D perspective
 // always matches the current window, even after a resize.
-int g_rScreenWidth = 1920;
-int g_rScreenHeight = 1080;
+int g_rScreenWidth = 854;
+int g_rScreenHeight = 480;
 
 float g_iAspectRatio = static_cast<float>(g_iScreenWidth) / g_iScreenHeight;
 static bool g_bResizeReady = false;
@@ -788,7 +788,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 		return FALSE;
 	}
 
-	ShowWindow(g_hWnd, (nCmdShow != SW_HIDE) ? SW_SHOWMAXIMIZED : nCmdShow);
+	ShowWindow(g_hWnd, (nCmdShow != SW_HIDE) ? SW_SHOWNORMAL : nCmdShow);
 	UpdateWindow(g_hWnd);
 
 	return TRUE;
@@ -956,85 +956,6 @@ HRESULT InitDevice()
 	RenderManager.Initialise(g_pd3dDevice, g_pSwapChain);
 
 	PostProcesser::GetInstance().Init();
-
-	return S_OK;
-}
-
-//--------------------------------------------------------------------------------------
-// Change resolution
-//--------------------------------------------------------------------------------------
-HRESULT ChangeDeviceResolution()
-{
-	HRESULT hr = S_OK;
-
-	RECT rc;
-	GetClientRect(g_hWnd, &rc);
-	UINT width = rc.right - rc.left;
-	UINT height = rc.bottom - rc.top;
-	//app.DebugPrintf("width: %d, height: %d\n", width, height);
-	width = g_iScreenWidth;
-	height = g_iScreenHeight;
-	//app.DebugPrintf("width: %d, height: %d\n", width, height);
-
-	// release current targets
-	ID3D11RenderTargetView* nullViews[D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT] = { 0 };
-	g_pImmediateContext->OMSetRenderTargets(ARRAYSIZE(nullViews), nullViews, nullptr);
-	g_pRenderTargetView->Release();
-	g_pDepthStencilView->Release();
-	g_pImmediateContext->Flush();
-
-	// create new ones
-	
-	// resize the buffers
-	hr = g_pSwapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
-	
-	// Create a render target view
-	ID3D11Texture2D* pBackBuffer = NULL;
-	hr = g_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
-	if (FAILED(hr))
-		return hr;
-
-	// Create a depth stencil buffer
-	D3D11_TEXTURE2D_DESC descDepth;
-	ZeroMemory(&descDepth, sizeof(descDepth));
-
-	descDepth.Width = width;
-	descDepth.Height = height;
-	descDepth.MipLevels = 1;
-	descDepth.ArraySize = 1;
-	descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	descDepth.SampleDesc.Count = 1;
-	descDepth.SampleDesc.Quality = 0;
-	descDepth.Usage = D3D11_USAGE_DEFAULT;
-	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	descDepth.CPUAccessFlags = 0;
-	descDepth.MiscFlags = 0;
-	hr = g_pd3dDevice->CreateTexture2D(&descDepth, NULL, &g_pDepthStencilBuffer);
-
-	D3D11_DEPTH_STENCIL_VIEW_DESC descDSView;
-	ZeroMemory(&descDSView, sizeof(descDSView));
-	descDSView.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	descDSView.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-	descDSView.Texture2D.MipSlice = 0;
-
-	hr = g_pd3dDevice->CreateDepthStencilView(g_pDepthStencilBuffer, &descDSView, &g_pDepthStencilView);
-
-	hr = g_pd3dDevice->CreateRenderTargetView(pBackBuffer, NULL, &g_pRenderTargetView);
-	pBackBuffer->Release();
-	if (FAILED(hr))
-		return hr;
-
-	g_pImmediateContext->OMSetRenderTargets(1, &g_pRenderTargetView, g_pDepthStencilView);
-
-	// Setup the viewport
-	D3D11_VIEWPORT vp;
-	vp.Width = (FLOAT)width;
-	vp.Height = (FLOAT)height;
-	vp.MinDepth = 0.0f;
-	vp.MaxDepth = 1.0f;
-	vp.TopLeftX = 0;
-	vp.TopLeftY = 0;
-	g_pImmediateContext->RSSetViewports(1, &vp);
 
 	return S_OK;
 }
@@ -1613,8 +1534,8 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	// but keep g_iScreenWidth/Height at 1920x1080 for logical resolution
 	// (SWF selection, ortho projection, game logic). The real window
 	// dimensions are tracked by g_rScreenWidth/g_rScreenHeight.
-	g_rScreenWidth = GetSystemMetrics(SM_CXSCREEN);
-	g_rScreenHeight = GetSystemMetrics(SM_CYSCREEN);
+	//g_rScreenWidth = GetSystemMetrics(SM_CXSCREEN);
+	//g_rScreenHeight = GetSystemMetrics(SM_CYSCREEN);
 
 	// Load username from username.txt
     char exePath[MAX_PATH] = {};
@@ -1914,11 +1835,6 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		Minecraft::GetInstance()->height = Minecraft::GetInstance()->height_phys = g_iScreenHeight;
 		g_iAspectRatio = ((float)Minecraft::GetInstance()->width_phys / (float)Minecraft::GetInstance()->height_phys);
 		g_bWidescreen = g_iAspectRatio > (16.0 / 9.0);
-
-		if (prevWidth != g_iScreenWidth || prevHeight != g_iScreenHeight)
-		{
-			ChangeDeviceResolution();
-		}
 
 		app.UpdateTime();
 		PIXBeginNamedEvent(0,"Input manager tick");

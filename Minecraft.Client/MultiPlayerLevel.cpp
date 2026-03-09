@@ -902,7 +902,7 @@ void MultiPlayerLevel::removeClientConnection(ClientConnection *c, bool sendDisc
 		c->sendAndDisconnect(std::make_shared<DisconnectPacket>(DisconnectPacket::eDisconnect_Quitting));
 	}
 
-    auto it = find(connections.begin(), connections.end(), c);
+    auto it = find(connections.begin(), connections.end(), c); 
     if( it != connections.end() )
 	{
 		connections.erase( it );

@@ -1288,6 +1288,8 @@ int GameRenderer::runUpdate(LPVOID lpParam)
 		bool shouldContinue = false;
 		do
 		{
+			if (!minecraft->running)
+				break;
 			shouldContinue = minecraft->levelRenderer->updateDirtyChunks();
 			count++;
 		} while ( shouldContinue && count < MAX_DEFERRED_UPDATES );

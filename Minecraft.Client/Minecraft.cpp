@@ -2088,8 +2088,8 @@ void Minecraft::run_middle()
 			}
 			}
 			*/
-			static int prevWidth = width;
-			static int prevHeight = height;
+			static int prevWidth = 0;
+			static int prevHeight = 0;
 			if (width != prevWidth || height != prevHeight)
 			{
 				prevWidth = width;
