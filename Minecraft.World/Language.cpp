@@ -13,12 +13,18 @@ Language::Language()
     {
         wstring prevLine = L"null";
         wstring line = L"";
+        int sameLines = 0;
         while (true)
         {
             line = br->readLine();
             line = trimString(line);
             if (line == prevLine)
-                break;
+            {
+                if (sameLines++ > 16)
+                    break;
+            }
+            else
+                sameLines = 0;
             prevLine = line;
             if (line.length() > 0)
             {
@@ -41,12 +47,18 @@ Language::Language()
     {
         wstring prevLine = L"null";
         wstring line = L"";
+        int sameLines = 0;
         while (true)
         {
             line = br->readLine();
             line = trimString(line);
             if (line == prevLine)
-                break;
+            {
+                if (sameLines++ > 16)
+                    break;
+            }
+            else
+                sameLines = 0;
             prevLine = line;
             if (line.length() > 0)
             {

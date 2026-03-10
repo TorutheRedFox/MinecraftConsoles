@@ -3,6 +3,7 @@
 #include "..\Minecraft.Client\MinecraftServer.h"
 #include "..\Minecraft.Client\PlayerList.h"
 #include "..\Minecraft.Client\ServerPlayer.h"
+#include "..\Minecraft.World\I18n.h"
 #include "Command.h"
 
 AdminLogCommand *Command::logger;
@@ -26,7 +27,7 @@ void Command::logAdminAction(shared_ptr<CommandSender> source, int type, ChatPac
 {
 	if (logger != nullptr)
 	{
-		logger->logAdminCommand(source, type, messageType, message, customData, additionalMessage);
+		logger->logAdminCommand(source, type, messageType, I18n::get(message), customData, I18n::get(additionalMessage));
 	}
 }
 
