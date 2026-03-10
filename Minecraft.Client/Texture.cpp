@@ -716,7 +716,8 @@ int Texture::crispBlend(int c0, int c1)
 	int a0 = static_cast<int>(((c0 & 0xff000000) >> 24)) & 0xff;
 	int a1 = static_cast<int>(((c1 & 0xff000000) >> 24)) & 0xff;
 
-	if (a0 >= 0xff || a1 >= 0xff)
+	// continue with crisp blend if it's likely to be an opaque/cutout tile in the atlas
+	if (a0 >= 0xfa || a1 >= 0xfa)
 	{
 		int a = 255;
 
@@ -752,23 +753,9 @@ int Texture::crispBlend(int c0, int c1)
 
 		return (a << 24) | (r << 16) | (g << 8) | b;
 	}
-	else
+	else // smoothblend if it's transparent
 	{
-		int a = ((a0 + a1) >> 1) & 0xff;
-
-		int r0 = ((c0 >> 16) & 0xff);
-		int g0 = ((c0 >> 8) & 0xff);
-		int b0 = ((c0) & 0xff);
-
-		int r1 = ((c1 >> 16) & 0xff);
-		int g1 = ((c1 >> 8) & 0xff);
-		int b1 = ((c1) & 0xff);
-
-		int r = (r0 + r1) >> 1;
-		int g = (g0 + g1) >> 1;
-		int b = (b0 + b1) >> 1;
-
-		return (a << 24) | (r << 16) | (g << 8) | b;
+		return (((a0 + a1) >> 1) << 24) | (((c0 & 0xfefefe) + (c1 & 0xfefefe)) >> 1);
 	}
 }
 
