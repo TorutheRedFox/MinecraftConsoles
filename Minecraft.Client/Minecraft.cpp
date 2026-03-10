@@ -2104,6 +2104,8 @@ void Minecraft::run_middle()
 			pause = g_NetworkManager.IsLocalGame() && g_NetworkManager.GetPlayerCount() == 1 && screen != nullptr && screen->isPauseScreen();//app.IsPauseMenuDisplayed(ProfileManager.GetPrimaryPad());
 			//pause = app.IsAppPaused();
 
+			app.SetXuiServerAction(ProfileManager.GetPrimaryPad(),eXuiServerAction_PauseServer,(void *)pause);
+
 #ifndef _CONTENT_PACKAGE
 			while (System::nanoTime() >= lastTime + 1000000000)
 			{
@@ -4198,7 +4200,7 @@ void Minecraft::reloadSound()
 
 bool Minecraft::isClientSide()
 {
-	return level != nullptr && level->isClientSide;
+	return level != nullptr && !g_NetworkManager.IsLocalGame();//level->isClientSide;
 }
 
 void Minecraft::selectLevel(ConsoleSaveFile *saveFile, const wstring& levelId, const wstring& levelName, LevelSettings *levelSettings)
