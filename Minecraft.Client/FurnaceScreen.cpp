@@ -20,8 +20,8 @@ void FurnaceScreen::renderLabels()
 void FurnaceScreen::renderBg(float a)
 {
 	// 4J Unused
-#if 0
-	int tex = minecraft->textures->loadTexture(L"/gui/furnace.png");
+//#if 0
+	int tex = minecraft->textures->loadTexture(TN_GUI_FURNACE);
 	glColor4f(1, 1, 1, 1);
 	minecraft->textures->bind(tex);
 	int xo = (width - imageWidth) / 2;
@@ -35,5 +35,5 @@ void FurnaceScreen::renderBg(float a)
 
 	int p = furnace->getBurnProgress(24);
 	this->blit(xo + 79, yo + 34, 176, 14, p + 1, 16);
-#endif
+//#endif
 }

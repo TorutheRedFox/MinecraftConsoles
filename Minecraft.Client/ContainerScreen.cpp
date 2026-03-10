@@ -19,22 +19,22 @@ ContainerScreen::ContainerScreen(shared_ptr<Container> inventory, shared_ptr<Con
 
 void ContainerScreen::renderLabels()
 {
-#if 0
+//#if 0
 	font->draw(container->getName(), 8, 2 + 2 + 2, 0x404040);
 	font->draw(inventory->getName(), 8, imageHeight - 96 + 2, 0x404040);
-#endif
+//#endif
 }
 
 void ContainerScreen::renderBg(float a)
 {
 	// 4J Unused
-#if 0
-	int tex = minecraft->textures->loadTexture(L"/gui/container.png");
+//#if 0
+	int tex = minecraft->textures->loadTexture(TN_GUI_CONTAINER);
 	glColor4f(1, 1, 1, 1);
 	minecraft->textures->bind(tex);
 	int xo = (width - imageWidth) / 2;
 	int yo = (height - imageHeight) / 2;
 	this->blit(xo, yo, 0, 0, imageWidth, containerRows * 18 + 17);
 	this->blit(xo, yo + containerRows * 18 + 17, 0, 222 - 96, imageWidth, 96);
-#endif
+//#endif
 }

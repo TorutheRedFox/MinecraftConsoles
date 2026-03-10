@@ -124,6 +124,11 @@ void Screen::init()
 
 void Screen::updateEvents()
 {
+	if (!eventDelayed) // ignore one
+	{
+		eventDelayed = true;
+		return;
+	}
 #ifdef _WINDOWS64
 	// Poll mouse button state and dispatch click/release events
 	static bool buttonPressed[3]{ 0 };

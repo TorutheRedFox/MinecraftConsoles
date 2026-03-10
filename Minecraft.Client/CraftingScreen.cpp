@@ -23,12 +23,12 @@ void CraftingScreen::renderLabels()
 void CraftingScreen::renderBg(float a)
 {
 	// 4J Unused
-#if 0
-    int tex = minecraft->textures->loadTexture(L"/gui/crafting.png");
+//#if 0
+    int tex = minecraft->textures->loadTexture(TN_GUI_CRAFTING);
     glColor4f(1, 1, 1, 1);
     minecraft->textures->bind(tex);
     int xo = (width - imageWidth) / 2;
     int yo = (height - imageHeight) / 2;
     this->blit(xo, yo, 0, 0, imageWidth, imageHeight);
-#endif
+//#endif
 }

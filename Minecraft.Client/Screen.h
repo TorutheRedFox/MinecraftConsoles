@@ -9,6 +9,7 @@ class Screen : public GuiComponent
 {
 protected:
 	Minecraft *minecraft;
+    bool eventDelayed = false;
 public:
 	int width;
     int height;

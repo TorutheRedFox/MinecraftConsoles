@@ -239,7 +239,7 @@ void Options::set(const Options::Option *item, float fVal)
 	}
 	if (item == Option::GAMMA)
 	{
-		gamma = fVal;
+		app.SetGameSettings(0,eGameSetting_Gamma,fVal * 100);
 	}
 	if (item == Option::RENDER_DISTANCE)
 	{
@@ -318,7 +318,7 @@ void Options::toggle(const Options::Option *option, int dir)
 float Options::getProgressValue(const Options::Option *item)
 {
 	if (item == Option::FOV) return fov;
-	if (item == Option::GAMMA) return gamma;
+	if (item == Option::GAMMA) return app.GetGameSettings(0,eGameSetting_Gamma) / 100.0f;
     if (item == Option::MUSIC) return music;
     if (item == Option::SOUND) return sound;
     if (item == Option::SENSITIVITY) return sensitivity;

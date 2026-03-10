@@ -601,10 +601,10 @@ void LocalPlayer::openTextEdit(shared_ptr<TileEntity> tileEntity)
 
 bool LocalPlayer::openContainer(shared_ptr<Container> container)
 {
-	bool success = app.LoadContainerMenu(GetXboxPad(), inventory, container );
-	if( success ) ui.PlayUISFX(eSFX_Press);
-	//minecraft->setScreen(new ContainerScreen(inventory, container));
-	return success;
+	//bool success = app.LoadContainerMenu(GetXboxPad(), inventory, container );
+	//if( success ) ui.PlayUISFX(eSFX_Press);
+	minecraft->setScreen(new ContainerScreen(inventory, container));
+	return true;//success;
 }
 
 bool LocalPlayer::openHopper(shared_ptr<HopperTileEntity> container)
@@ -633,11 +633,11 @@ bool LocalPlayer::openHorseInventory(shared_ptr<EntityHorse> horse, shared_ptr<C
 
 bool LocalPlayer::startCrafting(int x, int y, int z)
 {
-	bool success = app.LoadCrafting3x3Menu(GetXboxPad(), dynamic_pointer_cast<LocalPlayer>( shared_from_this() ), x, y, z );
-	if( success ) ui.PlayUISFX(eSFX_Press);
+	//bool success = app.LoadCrafting3x3Menu(GetXboxPad(), dynamic_pointer_cast<LocalPlayer>( shared_from_this() ), x, y, z );
+	//if( success ) ui.PlayUISFX(eSFX_Press);
 	//app.LoadXuiCraftMenu(0,inventory, level, x, y, z);
-	//minecraft->setScreen(new CraftingScreen(inventory, level, x, y, z));
-	return success;
+	minecraft->setScreen(new CraftingScreen(inventory, level, x, y, z));
+	return true;//success;
 }
 
 bool LocalPlayer::openFireworks(int x, int y, int z)
@@ -665,10 +665,10 @@ bool LocalPlayer::startRepairing(int x, int y, int z)
 
 bool LocalPlayer::openFurnace(shared_ptr<FurnaceTileEntity> furnace)
 {
-	bool success = app.LoadFurnaceMenu(GetXboxPad(),inventory, furnace);
-	if( success ) ui.PlayUISFX(eSFX_Press);
-	//minecraft->setScreen(new FurnaceScreen(inventory, furnace));
-	return success;
+	//bool success = app.LoadFurnaceMenu(GetXboxPad(),inventory, furnace);
+	//if( success ) ui.PlayUISFX(eSFX_Press);
+	minecraft->setScreen(new FurnaceScreen(inventory, furnace));
+	return true;//success;
 }
 
 bool LocalPlayer::openBrewingStand(shared_ptr<BrewingStandTileEntity> brewingStand)

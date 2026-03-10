@@ -3818,11 +3818,13 @@ void Minecraft::tick(bool bFirst, bool bUpdateTextures)
 			}
 		}
 
-		if ( (player->ullButtonsPressed&(1LL<<MINECRAFT_ACTION_PAUSEMENU))
+		if ( screen == nullptr && ((player->ullButtonsPressed&(1LL<<MINECRAFT_ACTION_PAUSEMENU))
 #ifdef _DURANGO
-			|| (player->ullButtonsPressed&(1LL<<ACTION_MENU_GTC_PAUSE))
+			|| (player->ullButtonsPressed&(1LL<<ACTION_MENU_GTC_PAUSE) )
+#elif defined(_WINDOWS64)
+			|| (g_KBMInput.IsKeyPressed(VK_ESCAPE))
 #endif
-			)
+			))
 		{
 			//app.DebugPrintf("PAUSE PRESS PROCESSING - ipad = %d, NavigateToScene\n",player->GetXboxPad());
 			//ui.PlayUISFX(eSFX_Press);
