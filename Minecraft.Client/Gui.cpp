@@ -448,8 +448,8 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 				
 
 
-				double oldHealth = minecraft->localplayers[iPad]->lastHealth;
-				double currentHealth = minecraft->localplayers[iPad]->getHealth();
+				double oldHealth = static_cast<int>(ceil(minecraft->localplayers[iPad]->lastHealth));
+				double currentHealth = static_cast<int>(ceil(minecraft->localplayers[iPad]->getHealth()));
 				double absorption;
 				double totalAbsorption = minecraft->localplayers[iPad]->getAbsorptionAmount();
 				int numHealthRows = Mth::ceil((maxHealth + totalAbsorption) / 2 / (float) NUM_HEARTS_PER_ROW);
