@@ -72,7 +72,7 @@ void TntTile::destroy(Level *level, int x, int y, int z, int data, shared_ptr<Li
 {
 	if (level->isClientSide) return;
 
-	if ((data & EXPLODE_BIT) == 1 )
+	//if ((data & EXPLODE_BIT) == 1 )
 	{
 		// 4J - added condition to have finite limit of these
 		if( level->newPrimedTntAllowed() && app.GetGameHostOption(eGameHostOption_TNT) )
