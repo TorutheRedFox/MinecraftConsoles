@@ -44,7 +44,7 @@ void TntTile::neighborChanged(Level *level, int x, int y, int z, int type)
 
 int TntTile::getResourceCount(Random *random)
 {
-	return 1;
+	return 0;// 1;
 }
 
 void TntTile::wasExploded(Level *level, int x, int y, int z, Explosion *explosion)
