@@ -292,7 +292,7 @@ Textures::Textures(TexturePackRepository *skins, Options *options)
 
 	// 4J Stu - Changed these to our PreStitchedTextureMap from TextureMap
 	terrain = new PreStitchedTextureMap(Icon::TYPE_TERRAIN, L"terrain", L"textures/blocks/", missingNo, true);
-	items = new PreStitchedTextureMap(Icon::TYPE_ITEM, L"items", L"textures/items/", missingNo, true);
+	items = new PreStitchedTextureMap(Icon::TYPE_ITEM, L"gui/items", L"textures/items/", missingNo, true);
 
 	// 4J - added - preload a set of commonly used textures that can then be referenced directly be an enumerated type rather by string
 	loadIndexedTextures();
