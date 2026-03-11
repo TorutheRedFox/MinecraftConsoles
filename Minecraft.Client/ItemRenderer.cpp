@@ -209,7 +209,8 @@ void ItemRenderer::renderItemBillboard(shared_ptr<ItemEntity> entity, Icon *icon
     float r = 1.0f;
     float xo = 0.5f;
     float yo = 0.25f;
-
+	// Toru - we don't want 3D items
+#if 0
 	if (entityRenderDispatcher->options->fancyGraphics)
 	{
 		// Consider forcing the mipmap LOD level to use, if this is to be rendered from a larger than standard source texture.
@@ -340,7 +341,30 @@ void ItemRenderer::renderItemBillboard(shared_ptr<ItemEntity> entity, Icon *icon
 
 			glPopMatrix();
 		}
-}
+	}
+#endif
+	for (int i = 0; i < count; i++)
+	{
+		glPushMatrix();
+		if (i > 0)
+		{
+			float _xo = (random->nextFloat() * 2 - 1) * 0.3f;
+			float _yo = (random->nextFloat() * 2 - 1) * 0.3f;
+			float _zo = (random->nextFloat() * 2 - 1) * 0.3f;
+			glTranslatef(_xo, _yo, _zo);
+		}
+		if (!m_bItemFrame) glRotatef(180 - entityRenderDispatcher->playerRotY, 0, 1, 0);
+		glColor4f(red, green, blue, 1);
+		t->begin();
+		t->normal(0, 1, 0);
+		t->vertexUV((float)(0 - xo), (float)(0 - yo), static_cast<float>(0), (float)(u0), (float)(v1));
+		t->vertexUV((float)(r - xo), (float)(0 - yo), static_cast<float>(0), (float)(u1), (float)(v1));
+		t->vertexUV((float)(r - xo), (float)(1 - yo), static_cast<float>(0), (float)(u1), (float)(v0));
+		t->vertexUV((float)(0 - xo), (float)(1 - yo), static_cast<float>(0), (float)(u0), (float)(v0));
+		t->end();
+
+		glPopMatrix();
+	}
 }
 
 void ItemRenderer::renderGuiItem(Font *font, Textures *textures, shared_ptr<ItemInstance> item, float x, float y, float fScale, float fAlpha)

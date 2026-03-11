@@ -98,10 +98,10 @@ void ItemEntity::tick()
 			MemSect(0);
 		}
 
-		if (!level->isClientSide)
-		{
-			mergeWithNeighbours();
-		}
+		//if (!level->isClientSide)
+		//{
+		//	mergeWithNeighbours();
+		//}
 	}
 
 	float friction = 0.98f;
