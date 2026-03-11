@@ -61,24 +61,26 @@ void LivingEntityRenderer::render(shared_ptr<Entity> _mob, double x, double y, d
 
 	/*try*/
 	{
-		float bodyRot = rotlerp(mob->yBodyRotO, mob->yBodyRot, a);
-		float headRot = rotlerp(mob->yHeadRotO, mob->yHeadRot, a);
-
-		if (mob->isRiding() && mob->riding->instanceof(eTYPE_LIVINGENTITY))
-		{
-			shared_ptr<LivingEntity> riding = dynamic_pointer_cast<LivingEntity>(mob->riding);
-			bodyRot = rotlerp(riding->yBodyRotO, riding->yBodyRot, a);
-
-			float headDiff = Mth::wrapDegrees(headRot - bodyRot);
-			if (headDiff < -85) headDiff = -85;
-			if (headDiff >= 85) headDiff = +85;
-			bodyRot = headRot - headDiff;
-			if (headDiff * headDiff > 50 * 50)
-			{
-				bodyRot += headDiff * 0.2f;
-			}
-		}
-
+		//float bodyRot = rotlerp(mob->yBodyRotO, mob->yBodyRot, a);
+		//float headRot = rotlerp(mob->yHeadRotO, mob->yHeadRot, a);
+		//
+		//if (mob->isRiding() && mob->riding->instanceof(eTYPE_LIVINGENTITY))
+		//{
+		//	shared_ptr<LivingEntity> riding = dynamic_pointer_cast<LivingEntity>(mob->riding);
+		//	bodyRot = rotlerp(riding->yBodyRotO, riding->yBodyRot, a);
+		//
+		//	float headDiff = Mth::wrapDegrees(headRot - bodyRot);
+		//	if (headDiff < -85) headDiff = -85;
+		//	if (headDiff >= 85) headDiff = +85;
+		//	bodyRot = headRot - headDiff;
+		//	if (headDiff * headDiff > 50 * 50)
+		//	{
+		//		bodyRot += headDiff * 0.2f;
+		//	}
+		//}
+		
+		float bodyRot = (mob->yBodyRotO + (mob->yBodyRot - mob->yBodyRotO) * a);
+		float headRot = (mob->yRotO + (mob->yRot - mob->yRotO) * a);
 		float headRotx = (mob->xRotO + (mob->xRot - mob->xRotO) * a);
 
 		setupPosition(mob, x, y, z);

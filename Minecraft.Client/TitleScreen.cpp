@@ -296,12 +296,13 @@ void TitleScreen::render(int xm, int ym, float a)
 {
 	// 4J Unused
 //#if 0
-    renderBackground(xm, ym, a);
+    //renderBackground(xm, ym, a);
+    renderDirtBackground(0);
 
     Tesselator *t = Tesselator::getInstance();
 
-    fillGradient(0, 0, width, height, 0xAAFFFFFF, 0x00FFFFFF); // white
-    fillGradient(0, 0, width, height, 0x00000000, 0xAA000000); // black
+    //fillGradient(0, 0, width, height, 0xAAFFFFFF, 0x00FFFFFF); // white
+    //fillGradient(0, 0, width, height, 0x00000000, 0xAA000000); // black
 
     //renderMinecraftLogo(a);
 
@@ -326,8 +327,7 @@ void TitleScreen::render(int xm, int ym, float a)
     drawCenteredString(font, splash, 0, -8, 0xffff00);
     glPopMatrix();
 
-    //drawString(font, ClientConstants::VERSION_STRING, 2, 2, 0x505050);
-    drawString(font, ClientConstants::VERSION_STRING, 2, height - 10, 0xffffff);
+    drawString(font, ClientConstants::VERSION_STRING, 2, 2, 0x505050);
     wstring msg = L"Copyright Mojang AB. Do not distribute.";
     drawString(font, msg, width - font->width(msg) - 2, height - 10, 0xffffff);
 

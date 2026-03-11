@@ -407,15 +407,16 @@ void ItemInHandRenderer::render(float a)
     Lighting::turnOn();
     glPopMatrix();
 
-    if (localPlayer)
-	{
-        float xrr = localPlayer->xBobO + (localPlayer->xBob - localPlayer->xBobO) * a;
-        float yrr = localPlayer->yBobO + (localPlayer->yBob - localPlayer->yBobO) * a;
-		// 4J - was using player->xRot and yRot directly here rather than interpolating between old & current with a
-		float yr = player->yRotO + (player->yRot - player->yRotO) * a;
-        glRotatef((xr - xrr) * 0.1f, 1, 0, 0);
-        glRotatef((yr - yrr) * 0.1f, 0, 1, 0);
-    }
+	// Toru - removed as we don't want the sway from beta 1.8 onwards
+    //if (localPlayer)
+	//{
+    //    float xrr = localPlayer->xBobO + (localPlayer->xBob - localPlayer->xBobO) * a;
+    //    float yrr = localPlayer->yBobO + (localPlayer->yBob - localPlayer->yBobO) * a;
+	//	// 4J - was using player->xRot and yRot directly here rather than interpolating between old & current with a
+	//	float yr = player->yRotO + (player->yRot - player->yRotO) * a;
+    //    glRotatef((xr - xrr) * 0.1f, 1, 0, 0);
+    //    glRotatef((yr - yrr) * 0.1f, 0, 1, 0);
+    //}
 
     shared_ptr<ItemInstance> item = selectedItem;
 

@@ -50,20 +50,20 @@ void LookControl::tick()
 		float yRotD = static_cast<float>(atan2(zd, xd) * 180 / PI) - 90;
 		float xRotD = static_cast<float>(-(atan2(yd, sd) * 180 / PI));
 		mob->xRot = rotlerp(mob->xRot, xRotD, xMax);
-		mob->yHeadRot = rotlerp(mob->yHeadRot, yRotD, yMax);
+		mob->yRot = rotlerp(mob->yRot, yRotD, yMax);
 	}
 	else
 	{		
-		mob->yHeadRot = rotlerp(mob->yHeadRot, mob->yBodyRot, 10);
+		mob->yRot = rotlerp(mob->yRot, mob->yBodyRot, 10);
 	}
 
-	float headDiffBody = Mth::wrapDegrees(mob->yHeadRot - mob->yBodyRot);
+	float headDiffBody = Mth::wrapDegrees(mob->yRot - mob->yBodyRot);
 
 	if (!mob->getNavigation()->isDone())
 	{
 		// head clamped to body
-		if (headDiffBody < -75) mob->yHeadRot = mob->yBodyRot - 75;
-		if (headDiffBody > 75) mob->yHeadRot = mob->yBodyRot + 75;
+		if (headDiffBody < -75) mob->yRot = mob->yBodyRot - 75;
+		if (headDiffBody > 75) mob->yRot = mob->yBodyRot + 75;
 	}
 }
 

@@ -772,44 +772,44 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 
 #if RENDER_HUD
 	// Moved so the opacity blend is applied to it
-	if (bDisplayGui && minecraft->gameMode->hasExperience() && minecraft->player->experienceLevel > 0)
-	{
-		if (true)
-		{
-			bool blink = false;
-			int col = blink ? 0xffffff : 0x80ff20;
-			wchar_t formatted[10];
-			swprintf(formatted, 10, L"%d",minecraft->player->experienceLevel);
-
-			wstring str = formatted;
-			int x = iWidthOffset + (screenWidth - font->width(str)) / 2;
-			int y = screenHeight - iSafezoneYHalf - iTooltipsYOffset;
-			// If we're in creative mode, we don't need to offset the XP display so much
-			if (minecraft->gameMode->canHurtPlayer())
-			{
-				y-=18;
-			}
-			else
-			{
-				y-=13;
-			}
-
-			if(bTwoPlayerSplitscreen)
-			{
-				y+=iHeightOffset;
-			}
-			//int y = screenHeight - 31 - 4;
-			font->draw(str, x + 1, y, 0x000000);
-			font->draw(str, x - 1, y, 0x000000);
-			font->draw(str, x, y + 1, 0x000000);
-			font->draw(str, x, y - 1, 0x000000);
-			// 			font->draw(str, x + 1, y + 1, 0x000000);
-			// 			font->draw(str, x - 1, y + 1, 0x000000);
-			// 			font->draw(str, x + 1, y - 1, 0x000000);
-			// 			font->draw(str, x - 1, y - 1, 0x000000);
-			font->draw(str, x, y, col);
-		}
-	}
+	//if (bDisplayGui && minecraft->gameMode->hasExperience() && minecraft->player->experienceLevel > 0)
+	//{
+	//	if (true)
+	//	{
+	//		bool blink = false;
+	//		int col = blink ? 0xffffff : 0x80ff20;
+	//		wchar_t formatted[10];
+	//		swprintf(formatted, 10, L"%d",minecraft->player->experienceLevel);
+	//
+	//		wstring str = formatted;
+	//		int x = iWidthOffset + (screenWidth - font->width(str)) / 2;
+	//		int y = screenHeight - iSafezoneYHalf - iTooltipsYOffset;
+	//		// If we're in creative mode, we don't need to offset the XP display so much
+	//		if (minecraft->gameMode->canHurtPlayer())
+	//		{
+	//			y-=18;
+	//		}
+	//		else
+	//		{
+	//			y-=13;
+	//		}
+	//
+	//		if(bTwoPlayerSplitscreen)
+	//		{
+	//			y+=iHeightOffset;
+	//		}
+	//		//int y = screenHeight - 31 - 4;
+	//		font->draw(str, x + 1, y, 0x000000);
+	//		font->draw(str, x - 1, y, 0x000000);
+	//		font->draw(str, x, y + 1, 0x000000);
+	//		font->draw(str, x, y - 1, 0x000000);
+	//		// 			font->draw(str, x + 1, y + 1, 0x000000);
+	//		// 			font->draw(str, x - 1, y + 1, 0x000000);
+	//		// 			font->draw(str, x + 1, y - 1, 0x000000);
+	//		// 			font->draw(str, x - 1, y - 1, 0x000000);
+	//		font->draw(str, x, y, col);
+	//	}
+	//}
 #endif // RENDER_HUD
 
 	// 4J - added to disable blends, which we have enabled previously to allow gui fading
