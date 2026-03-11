@@ -25,22 +25,26 @@ FoodItem::FoodItem(int id, int nutrition, float saturationMod, bool isMeat)
 	: Item( id ), nutrition(nutrition), saturationModifier( saturationMod ), m_isMeat( isMeat )
 {
 	_init();
+
+	maxStackSize = 1;
 }
 
 FoodItem::FoodItem(int id, int nutrition, bool isMeat)
 	: Item( id ), nutrition(nutrition), saturationModifier( FoodConstants::FOOD_SATURATION_NORMAL ), m_isMeat( isMeat )
 {
 	_init();
+
+	maxStackSize = 1;
 }
 
 shared_ptr<ItemInstance> FoodItem::useTimeDepleted(shared_ptr<ItemInstance> instance, Level *level, shared_ptr<Player> player)
 {
-	instance->count--;
-	player->getFoodData()->eat(this);
-	// 4J - new sound brought forward from 1.2.3
-	level->playEntitySound(player, eSoundType_RANDOM_BURP, 0.5f, level->random->nextFloat() * 0.1f + 0.9f);
-
-	addEatEffect(instance, level, player);
+	//instance->count--;
+	//player->getFoodData()->eat(this);
+	//// 4J - new sound brought forward from 1.2.3
+	//level->playEntitySound(player, eSoundType_RANDOM_BURP, 0.5f, level->random->nextFloat() * 0.1f + 0.9f);
+	//
+	//addEatEffect(instance, level, player);
 
 	return instance;
 }
