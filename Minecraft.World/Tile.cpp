@@ -250,7 +250,7 @@ void Tile::staticCtor()
 	Tile::SOUND_METAL = new Tile::SoundType(eMaterialSoundType_STONE, 1, 1.5f);
 	Tile::SOUND_GLASS = new Tile::SoundType(eMaterialSoundType_STONE, 1, 1, eSoundType_RANDOM_GLASS,eSoundType_STEP_STONE);
 	Tile::SOUND_CLOTH = new Tile::SoundType(eMaterialSoundType_CLOTH, 1, 1);
-	Tile::SOUND_SAND = new Tile::SoundType(eMaterialSoundType_SAND, 1, 1);
+	Tile::SOUND_SAND = new Tile::SoundType(eMaterialSoundType_SAND, 1, 1, eSoundType_STEP_GRAVEL, eSoundType_STEP_SAND);
 	Tile::SOUND_SNOW = new Tile::SoundType(eMaterialSoundType_SNOW, 1, 1);
 	Tile::SOUND_LADDER = new Tile::SoundType(eMaterialSoundType_LADDER, 1, 1,eSoundType_DIG_WOOD);
 	Tile::SOUND_ANVIL = new Tile::SoundType(eMaterialSoundType_ANVIL, 0.3f, 1, eSoundType_DIG_STONE, eSoundType_RANDOM_ANVIL_LAND);

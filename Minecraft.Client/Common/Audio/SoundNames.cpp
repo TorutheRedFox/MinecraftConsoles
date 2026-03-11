@@ -68,6 +68,7 @@ const WCHAR *ConsoleSoundEngine::wchSoundNames[eSoundType_MAX]=
 //	L"mob.irongolem.walk",				//  eSoundType_MOB_IRONGOLEM_WALK
 	L"random.bow",						//	eSoundType_RANDOM_BOW,
 	L"random.bowhit",					//	eSoundType_RANDOM_BOW_HIT,
+	L"random.drr",						//	eSoundType_RANDOM_DRR,
 	L"random.explode",					//	eSoundType_RANDOM_EXPLODE,
 	L"random.fizz",						//	eSoundType_RANDOM_FIZZ,	
 	L"random.pop",						//	eSoundType_RANDOM_POP,

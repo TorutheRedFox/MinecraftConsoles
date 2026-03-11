@@ -358,7 +358,7 @@ void Arrow::tick()
 						);
 				}
 
-				playSound( eSoundType_RANDOM_BOW_HIT, 1.0f, 1.2f / (random->nextFloat() * 0.2f + 0.9f));
+				playSound( eSoundType_RANDOM_DRR, 1.0f, 1.2f / (random->nextFloat() * 0.2f + 0.9f));
 				if (res->entity->GetType() != eTYPE_ENDERDRAGON) remove();
 			}			
 			else
@@ -392,7 +392,7 @@ void Arrow::tick()
 				z -= (zd / dd) * 0.05f;
 			}
 
-			playSound(eSoundType_RANDOM_BOW_HIT, 1.0f, 1.2f / (random->nextFloat() * 0.2f + 0.9f));
+			playSound(eSoundType_RANDOM_DRR, 1.0f, 1.2f / (random->nextFloat() * 0.2f + 0.9f));
 			inGround = true;
 			shakeTime = 7;
 			setCritArrow(false);

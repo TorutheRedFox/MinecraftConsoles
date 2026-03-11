@@ -81,7 +81,22 @@ shared_ptr<ItemInstance> BowItem::use(shared_ptr<ItemInstance> instance, Level *
 {
 	if (player->abilities.instabuild || player->inventory->hasResource(Item::arrow_Id))
 	{
-		player->startUsingItem(instance, getUseDuration(instance));
+		//player->startUsingItem(instance, getUseDuration(instance));
+		bool infiniteArrows = player->abilities.instabuild || EnchantmentHelper::getEnchantmentLevel(Enchantment::arrowInfinite->id, instance) > 0;
+		
+		shared_ptr<Arrow> arrow = std::make_shared<Arrow>(level, player, 1.0f);
+
+		level->playEntitySound(player, eSoundType_RANDOM_BOW, 1.0f, 1 / (random->nextFloat() * 0.4f + 0.8f));
+
+		if (infiniteArrows)
+		{
+			arrow->pickup = Arrow::PICKUP_CREATIVE_ONLY;
+		}
+		else
+		{
+			player->inventory->removeResource(Item::arrow_Id);
+		}
+		if (!level->isClientSide) level->addEntity(arrow);
 	}
 	return instance;
 }

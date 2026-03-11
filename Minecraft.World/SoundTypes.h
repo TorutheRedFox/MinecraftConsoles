@@ -64,6 +64,7 @@ enum eSOUND_TYPE
 //	eSoundType_MOB_IRONGOLEM_WALK,
 	eSoundType_RANDOM_BOW,
 	eSoundType_RANDOM_BOW_HIT,
+	eSoundType_RANDOM_DRR,
 	eSoundType_RANDOM_EXPLODE,
 	eSoundType_RANDOM_FIZZ,	
 	eSoundType_RANDOM_POP,
