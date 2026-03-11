@@ -166,14 +166,14 @@ void Explosion::explode()
 void Explosion::finalizeExplosion(bool generateParticles, vector<TilePos> *toBlowDirect/*=nullptr*/)		// 4J - added toBlowDirect parameter
 {
 	level->playSound(x, y, z, eSoundType_RANDOM_EXPLODE, 4, (1 + (level->random->nextFloat() - level->random->nextFloat()) * 0.2f) * 0.7f);
-	if (r < 2 || !destroyBlocks)
-	{
-		level->addParticle(eParticleType_largeexplode, x, y, z, 1.0f, 0, 0);
-	}
-	else
-	{
-		level->addParticle(eParticleType_hugeexplosion, x, y, z, 1.0f, 0, 0);
-	}
+	//if (r < 2 || !destroyBlocks)
+	//{
+	//	level->addParticle(eParticleType_largeexplode, x, y, z, 1.0f, 0, 0);
+	//}
+	//else
+	//{
+	//	level->addParticle(eParticleType_hugeexplosion, x, y, z, 1.0f, 0, 0);
+	//}
 	
 	// 4J - use pointer to vector directly passed in if this is available - used to speed up calling this from an incoming packet
 	vector<TilePos> *toBlowArray = toBlowDirect ? toBlowDirect : new vector<TilePos>( toBlow.begin(), toBlow.end() );
@@ -183,7 +183,7 @@ void Explosion::finalizeExplosion(bool generateParticles, vector<TilePos> *toBlo
 		// TODO 4J Stu - Reverse iterator
 		PIXBeginNamedEvent(0,"Finalizing explosion size %d",toBlow.size());
 		app.DebugPrintf("Finalizing explosion size %d\n",toBlow.size());
-		static const int MAX_EXPLODE_PARTICLES = 50;
+		static const int MAX_EXPLODE_PARTICLES = 100;//50;
 		// 4J - try and make at most MAX_EXPLODE_PARTICLES pairs of particles
 		int fraction = static_cast<int>(toBlowArray->size()) / MAX_EXPLODE_PARTICLES;
 		if( fraction == 0 ) fraction = 1;

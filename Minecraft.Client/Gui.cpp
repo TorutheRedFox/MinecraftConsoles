@@ -470,7 +470,7 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 				{
 					if (armor > 0)
 					{
-						int xo = xLeft + i * 8;
+						int xo = xRight - i * 8 - 9;
 						if (i * 2 + 1 < armor) blit(xo, yLine1, 16 + 2 * 9, 9, 9, 9);
 						if (i * 2 + 1 == armor) blit(xo, yLine1, 16 + 1 * 9, 9, 9, 9);
 						if (i * 2 + 1 > armor) blit(xo, yLine1, 16 + 0 * 9, 9, 9, 9);
@@ -621,8 +621,8 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 					for (int i = 0; i < count + extra; i++)
 					{
 						// Air bubbles
-						if (i < count) blit(xRight - i * 8 - 9, yLine2, 16, 9 * 2, 9, 9);
-						else blit(xRight - i * 8 - 9, yLine2, 16 + 9, 9 * 2, 9, 9);
+						if (i < count) blit(xRight - i * 8 - 9, armor > 0 ? yLine2 : yLine1, 16, 9 * 2, 9, 9);
+						else blit(xRight - i * 8 - 9, armor > 0 ? yLine2 : yLine1, 16 + 9, 9 * 2, 9, 9);
 					}
 				}
 			}
