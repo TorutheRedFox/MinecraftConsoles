@@ -17,6 +17,15 @@ public:
 	static const int EVENT_SET_OPEN_COUNT = 1;
 
 private:
+	Icon* iconTop;
+	Icon* iconSide;
+	Icon* iconFront;
+
+	Icon* iconDoubleFrontLeft;
+	Icon* iconDoubleFrontRight;
+	Icon* iconDoubleRearLeft;
+	Icon* iconDoubleRearRight;
+
 	Random *random;
 
 public:
@@ -27,6 +36,8 @@ protected:
 	~ChestTile();
 
 public:
+	virtual Icon* getTexture(int face, int data);
+	virtual Icon* getTexture(LevelSource* level, int x, int y, int z, int face);
 	virtual bool isSolidRender(bool isServerLevel = false);
 	virtual bool isCubeShaped();
 	virtual int getRenderShape();

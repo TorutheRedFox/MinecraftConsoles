@@ -16,7 +16,7 @@ ChestTile::ChestTile(int id, int type) : BaseEntityTile(id, Material::wood, isSo
 	random = new Random();
 	this->type = type;
 
-	setShape(1 / 16.0f, 0, 1 / 16.0f, 15 / 16.0f, 14 / 16.0f, 15 / 16.0f);
+	//setShape(1 / 16.0f, 0, 1 / 16.0f, 15 / 16.0f, 14 / 16.0f, 15 / 16.0f);
 }
 
 ChestTile::~ChestTile()
@@ -24,43 +24,120 @@ ChestTile::~ChestTile()
 	delete random;
 }
 
+
+Icon* ChestTile::getTexture(int face, int data)
+{
+	if (face == Facing::UP) return iconTop;
+	if (face == Facing::DOWN) return iconTop;
+	if (face == Facing::SOUTH) return iconFront;
+	else return icon;
+}
+
+Icon* ChestTile::getTexture(LevelSource* level, int x, int y, int z, int face)
+{
+	if (face == Facing::UP) return iconTop;
+	if (face == Facing::DOWN) return iconTop;
+
+	int n = level->getTile(x, y, z - 1); // face = 2
+	int s = level->getTile(x, y, z + 1); // face = 3
+	int w = level->getTile(x - 1, y, z); // face = 4
+	int e = level->getTile(x + 1, y, z); // face = 5
+
+	// Long!
+	int lockDir = 4;
+	if (n == id || s == id)
+	{
+		if (face == Facing::NORTH || face == Facing::SOUTH)
+			return icon;
+
+		int w2 = level->getTile(x - 1, y, n == id ? z - 1 : z + 1);
+		int e2 = level->getTile(x + 1, y, n == id ? z - 1 : z + 1);
+
+		lockDir = 5;
+
+		if ((Tile::solid[w] || Tile::solid[w2]) && !Tile::solid[e] && !Tile::solid[e2]) lockDir = 5;
+		if ((Tile::solid[e] || Tile::solid[e2]) && !Tile::solid[w] && !Tile::solid[w2]) lockDir = 4;
+
+		bool isRight = false;
+		if ((face == Facing::WEST && n == id) || (face == Facing::EAST && s == id))
+			isRight = true;
+
+		if (lockDir == face)
+			return isRight ? iconDoubleFrontRight : iconDoubleFrontLeft;
+		else
+			return isRight ? iconDoubleRearRight : iconDoubleRearLeft;
+	}
+	else if (w == id || e == id)
+	{
+		if (face == Facing::WEST || face == Facing::EAST)
+			return icon;
+
+		int n2 = level->getTile(w == id ? x - 1 : x + 1, y, z - 1);
+		int s2 = level->getTile(w == id ? x - 1 : x + 1, y, z + 1);
+
+		lockDir = 3;
+
+		if ((Tile::solid[n] || Tile::solid[n2]) && !Tile::solid[s] && !Tile::solid[s2]) lockDir = 3;
+		if ((Tile::solid[s] || Tile::solid[s2]) && !Tile::solid[n] && !Tile::solid[n2]) lockDir = 2;
+
+		bool isRight = false;
+		if ((face == Facing::NORTH && e == id) || (face == Facing::SOUTH && w == id))
+			isRight = true;
+
+		if (lockDir == face)
+			return isRight ? iconDoubleFrontRight : iconDoubleFrontLeft;
+		else
+			return isRight ? iconDoubleRearRight : iconDoubleRearLeft;
+	}
+	else
+	{
+		lockDir = 3;
+		if (Tile::solid[n] && !Tile::solid[s]) lockDir = 3;
+		if (Tile::solid[s] && !Tile::solid[n]) lockDir = 2;
+		if (Tile::solid[w] && !Tile::solid[e]) lockDir = 5;
+		if (Tile::solid[e] && !Tile::solid[w]) lockDir = 4;
+	}
+
+	return face != lockDir ? icon : iconFront;
+}
+
 bool ChestTile::isSolidRender(bool isServerLevel)
 {
-	return false;
+	return true;// false;
 }
 
 bool ChestTile::isCubeShaped()
 {
-	return false;
+	return true;// false;
 }
 
 int ChestTile::getRenderShape()
 {
-	return Tile::SHAPE_ENTITYTILE_ANIMATED;
+	return Tile::SHAPE_BLOCK;//Tile::SHAPE_ENTITYTILE_ANIMATED;
 }
 
 void ChestTile::updateShape(LevelSource *level, int x, int y, int z, int forceData, shared_ptr<TileEntity> forceEntity)
 {
-	if (level->getTile(x, y, z - 1) == id)
-	{
-		setShape(1 / 16.0f, 0, 0, 15 / 16.0f, 14 / 16.0f, 15 / 16.0f);
-	}
-	else if (level->getTile(x, y, z + 1) == id)
-	{
-		setShape(1 / 16.0f, 0, 1 / 16.0f, 15 / 16.0f, 14 / 16.0f, 1);
-	}
-	else if (level->getTile(x - 1, y, z) == id)
-	{
-		setShape(0, 0, 1 / 16.0f, 15 / 16.0f, 14 / 16.0f, 15 / 16.0f);
-	}
-	else if (level->getTile(x + 1, y, z) == id)
-	{
-		setShape(1 / 16.0f, 0, 1 / 16.0f, 1, 14 / 16.0f, 15 / 16.0f);
-	}
-	else
-	{
-		setShape(1 / 16.0f, 0, 1 / 16.0f, 15 / 16.0f, 14 / 16.0f, 15 / 16.0f);
-	}
+	//if (level->getTile(x, y, z - 1) == id)
+	//{
+	//	setShape(1 / 16.0f, 0, 0, 15 / 16.0f, 14 / 16.0f, 15 / 16.0f);
+	//}
+	//else if (level->getTile(x, y, z + 1) == id)
+	//{
+	//	setShape(1 / 16.0f, 0, 1 / 16.0f, 15 / 16.0f, 14 / 16.0f, 1);
+	//}
+	//else if (level->getTile(x - 1, y, z) == id)
+	//{
+	//	setShape(0, 0, 1 / 16.0f, 15 / 16.0f, 14 / 16.0f, 15 / 16.0f);
+	//}
+	//else if (level->getTile(x + 1, y, z) == id)
+	//{
+	//	setShape(1 / 16.0f, 0, 1 / 16.0f, 1, 14 / 16.0f, 15 / 16.0f);
+	//}
+	//else
+	//{
+	//	setShape(1 / 16.0f, 0, 1 / 16.0f, 15 / 16.0f, 14 / 16.0f, 15 / 16.0f);
+	//}
 }
 
 void ChestTile::onPlace(Level *level, int x, int y, int z)
@@ -367,5 +444,11 @@ void ChestTile::registerIcons(IconRegister *iconRegister)
 {
 	// Register wood as the chest's icon, because it's used by the particles
 	// when destroying the chest
-	icon = iconRegister->registerIcon(L"planks_oak");
+	iconTop = iconRegister->registerIcon(L"chest_top");
+	icon = iconRegister->registerIcon(L"chest_side");
+	iconFront = iconRegister->registerIcon(L"chest_front");
+	iconDoubleFrontLeft = iconRegister->registerIcon(L"double_chest_front_left");
+	iconDoubleFrontRight = iconRegister->registerIcon(L"double_chest_front_right");
+	iconDoubleRearLeft = iconRegister->registerIcon(L"double_chest_rear_left");
+	iconDoubleRearRight = iconRegister->registerIcon(L"double_chest_rear_right");
 }

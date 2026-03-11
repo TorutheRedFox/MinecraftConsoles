@@ -685,6 +685,9 @@ void PreStitchedTextureMap::loadUVs()
 		ADD_ICON(1,		9,	L"emerald_block");
 		ADD_ICON(1,		10,	L"redstone_block");
 		ADD_ICON(1,		11,	L"dropper_front_horizontal");
+		ADD_ICON(1,		9,	L"chest_top");
+		ADD_ICON(1,		10,	L"chest_side");
+		ADD_ICON(1,		11,	L"chest_front");
 		ADD_ICON(1,		12,	L"mushroom_red");
 		ADD_ICON(1,		13,	L"mushroom_brown");
 		ADD_ICON(1,		14,	L"sapling_jungle");
@@ -701,6 +704,8 @@ void PreStitchedTextureMap::loadUVs()
 		ADD_ICON(2,		8,	L"dispenser_front_vertical");
 		ADD_ICON(2,		9,	L"beacon");
 		ADD_ICON(2,		10,	L"dropper_front_vertical");
+		ADD_ICON(2,		9,	L"double_chest_front_left");
+		ADD_ICON(2,		10,	L"double_chest_front_right");
 		ADD_ICON(2,		11,	L"workbench_top");
 		ADD_ICON(2,		12,	L"furnace_front");
 		ADD_ICON(2,		13,	L"furnace_side");
@@ -718,6 +723,8 @@ void PreStitchedTextureMap::loadUVs()
 		ADD_ICON(3,		8,	L"fern");
 		ADD_ICON(3,		9,	L"daylight_detector_top");
 		ADD_ICON(3,		10,	L"daylight_detector_side");
+		ADD_ICON(3,		9,	L"double_chest_rear_left");
+		ADD_ICON(3,		10,	L"double_chest_rear_right");
 		ADD_ICON(3,		11,	L"workbench_side");
 		ADD_ICON(3,		12,	L"workbench_front");
 		ADD_ICON(3,		13,	L"furnace_front_lit");

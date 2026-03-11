@@ -13,7 +13,7 @@ class CompoundTag;
 class ChestTileEntity : public TileEntity, public Container
 {
 public:
-	eINSTANCEOF GetType() { return eTYPE_CHESTTILEENTITY; }
+	//eINSTANCEOF GetType() { return eTYPE_CHESTTILEENTITY; }
 	static TileEntity *create() { return new ChestTileEntity(); }
 
 	int getContainerType(); // 4J-Added;
