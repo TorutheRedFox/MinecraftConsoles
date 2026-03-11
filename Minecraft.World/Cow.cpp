@@ -67,7 +67,7 @@ int Cow::getDeathSound()
 
 void Cow::playStepSound(int xt, int yt, int zt, int t)
 {
-	playSound(eSoundType_MOB_COW_STEP, 0.15f, 1);
+	Entity::playStepSound(xt, yt, zt, t);//playSound(eSoundType_MOB_COW_STEP, 0.15f, 1);
 }
 
 float Cow::getSoundVolume() 

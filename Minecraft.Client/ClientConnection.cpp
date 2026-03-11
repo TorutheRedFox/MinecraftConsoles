@@ -2565,8 +2565,8 @@ void ClientConnection::handleSetHealth(shared_ptr<SetHealthPacket> packet)
 {
 	//minecraft->player->hurtTo(packet->health);
 	minecraft->localplayers[m_userIndex]->hurtTo(packet->health,packet->damageSource);
-	minecraft->localplayers[m_userIndex]->getFoodData()->setFoodLevel(packet->food);
-	minecraft->localplayers[m_userIndex]->getFoodData()->setSaturation(packet->saturation);
+	//minecraft->localplayers[m_userIndex]->getFoodData()->setFoodLevel(packet->food);
+	//minecraft->localplayers[m_userIndex]->getFoodData()->setSaturation(packet->saturation);
 
 	// We need food
 	if(packet->food < FoodConstants::HEAL_LEVEL - 1)

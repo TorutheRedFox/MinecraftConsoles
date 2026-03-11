@@ -241,54 +241,54 @@ void LocalPlayer::aiStep()
 	checkInTile(x + bbWidth * 0.35, bb->y0 + 0.5, z - bbWidth * 0.35);
 	checkInTile(x + bbWidth * 0.35, bb->y0 + 0.5, z + bbWidth * 0.35);
 
-	bool enoughFoodToSprint = getFoodData()->getFoodLevel() > FoodConstants::MAX_FOOD * FoodConstants::FOOD_SATURATION_LOW;
-
-	// 4J Stu - If we can fly, then we should be able to sprint without requiring food. This is particularly a problem for people who save a survival
-	// world with low food, then reload it in creative.
-	if(abilities.mayfly || isAllowedToFly() ) enoughFoodToSprint = true;
-
-	bool forwardEnoughToTriggerSprint = input->ya >= runTreshold;
-	bool forwardReturnedToDeadzone = input->ya == 0.0f;
-	bool forwardEnoughToContinueSprint = input->ya >= runTreshold;
-
-	// 4J - altered this slightly to make sure that the joypad returns to below returnTreshold in between registering two movements up to runThreshold
-	if (onGround && !isSprinting() && enoughFoodToSprint && !isUsingItem() && !hasEffect(MobEffect::blindness))
-	{
-		if( !wasRunning && forwardEnoughToTriggerSprint )
-		{
-			if (sprintTriggerTime == 0)
-			{
-				sprintTriggerTime = 7;
-				sprintTriggerRegisteredReturn = false;
-			}
-			else
-			{
-				if( sprintTriggerRegisteredReturn )
-				{
-					setSprinting(true);
-					sprintTriggerTime = 0;
-					sprintTriggerRegisteredReturn = false;
-				}
-			}
-		}
-		else if( ( sprintTriggerTime > 0 ) && forwardReturnedToDeadzone )		// zero sprintForward here signifies that we have returned to the deadzone
-		{
-			sprintTriggerRegisteredReturn = true;
-		}
-	}
-	if (isSneaking()) sprintTriggerTime = 0;
-#ifdef _WINDOWS64
-	if (input->sprinting && !isSprinting() && onGround && enoughFoodToSprint && !isUsingItem() && !hasEffect(MobEffect::blindness) && !isSneaking())
-	{
-		setSprinting(true);
-	}
-#endif
-	// 4J-PB - try not stopping sprint on collision
-	//if (isSprinting() && (input->ya < runTreshold || horizontalCollision || !enoughFoodToSprint))
-	if (isSprinting() && (!forwardEnoughToContinueSprint || !enoughFoodToSprint || isSneaking() || isUsingItem()))
-	{
-		setSprinting(false);
-	}	
+//	bool enoughFoodToSprint = getFoodData()->getFoodLevel() > FoodConstants::MAX_FOOD * FoodConstants::FOOD_SATURATION_LOW;
+//
+//	// 4J Stu - If we can fly, then we should be able to sprint without requiring food. This is particularly a problem for people who save a survival
+//	// world with low food, then reload it in creative.
+//	if(abilities.mayfly || isAllowedToFly() ) enoughFoodToSprint = true;
+//
+//	bool forwardEnoughToTriggerSprint = input->ya >= runTreshold;
+//	bool forwardReturnedToDeadzone = input->ya == 0.0f;
+//	bool forwardEnoughToContinueSprint = input->ya >= runTreshold;
+//
+//	// 4J - altered this slightly to make sure that the joypad returns to below returnTreshold in between registering two movements up to runThreshold
+//	if (onGround && !isSprinting() && enoughFoodToSprint && !isUsingItem() && !hasEffect(MobEffect::blindness))
+//	{
+//		if( !wasRunning && forwardEnoughToTriggerSprint )
+//		{
+//			if (sprintTriggerTime == 0)
+//			{
+//				sprintTriggerTime = 7;
+//				sprintTriggerRegisteredReturn = false;
+//			}
+//			else
+//			{
+//				if( sprintTriggerRegisteredReturn )
+//				{
+//					setSprinting(true);
+//					sprintTriggerTime = 0;
+//					sprintTriggerRegisteredReturn = false;
+//				}
+//			}
+//		}
+//		else if( ( sprintTriggerTime > 0 ) && forwardReturnedToDeadzone )		// zero sprintForward here signifies that we have returned to the deadzone
+//		{
+//			sprintTriggerRegisteredReturn = true;
+//		}
+//	}
+//	if (isSneaking()) sprintTriggerTime = 0;
+//#ifdef _WINDOWS64
+//	if (input->sprinting && !isSprinting() && onGround && enoughFoodToSprint && !isUsingItem() && !hasEffect(MobEffect::blindness) && !isSneaking())
+//	{
+//		setSprinting(true);
+//	}
+//#endif
+//	// 4J-PB - try not stopping sprint on collision
+//	//if (isSprinting() && (input->ya < runTreshold || horizontalCollision || !enoughFoodToSprint))
+//	if (isSprinting() && (!forwardEnoughToContinueSprint || !enoughFoodToSprint || isSneaking() || isUsingItem()))
+//	{
+//		setSprinting(false);
+//	}	
 
 	// 4J Stu - Fix for #52705 - Customer Encountered: Player can fly in bed while being in Creative mode.
 	if (!isSleeping() && (abilities.mayfly || isAllowedToFly() ))

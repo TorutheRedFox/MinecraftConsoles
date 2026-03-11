@@ -375,10 +375,10 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 		int iLastHealth = minecraft->player->lastHealth;
 		random->setSeed(tickCount * 312871);
 
-		bool foodBlink = false;
-		FoodData *foodData = minecraft->player->getFoodData();
-		int food = foodData->getFoodLevel();
-		int oldFood = foodData->getLastFoodLevel();
+		//bool foodBlink = false;
+		//FoodData *foodData = minecraft->player->getFoodData();
+		//int food = foodData->getFoodLevel();
+		//int oldFood = foodData->getLastFoodLevel();
 
 // 		if (false) //(true)
 // 		{
@@ -410,36 +410,36 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 				}
 
 				// render experience bar
-				int xpNeededForNextLevel = minecraft->player->getXpNeededForNextLevel();
-				if (xpNeededForNextLevel > 0)
-				{
-					int w = 182;
-
-					int progress = (int) (minecraft->player->experienceProgress * (float) (w + 1));
-
-					int yo = screenHeight - iSafezoneYHalf - iTooltipsYOffset - 8;
-					if(bTwoPlayerSplitscreen)
-					{
-						yo+=iHeightOffset;
-					}
-					blit(xLeft, yo, 0, 64, w, 5);
-					if (progress > 0)
-					{
-						blit(xLeft, yo, 0, 69, progress, 5);
-					}
-				}
+				//int xpNeededForNextLevel = minecraft->player->getXpNeededForNextLevel();
+				//if (xpNeededForNextLevel > 0)
+				//{
+				//	int w = 182;
+				//
+				//	int progress = (int) (minecraft->player->experienceProgress * (float) (w + 1));
+				//
+				//	int yo = screenHeight - iSafezoneYHalf - iTooltipsYOffset - 8;
+				//	if(bTwoPlayerSplitscreen)
+				//	{
+				//		yo+=iHeightOffset;
+				//	}
+				//	blit(xLeft, yo, 0, 64, w, 5);
+				//	if (progress > 0)
+				//	{
+				//		blit(xLeft, yo, 0, 69, progress, 5);
+				//	}
+				//}
 
 				int yLine1, yLine2;
 				if(bTwoPlayerSplitscreen)
 				{
 					//yo = iHeightOffset + screenHeight - 10 - iSafezoneYHalf - iTooltipsYOffset;
-					yLine1 = iHeightOffset + screenHeight - 18 - iSafezoneYHalf - iTooltipsYOffset;
+					yLine1 = iHeightOffset + screenHeight - 10 - iSafezoneYHalf - iTooltipsYOffset;
 					yLine2 = yLine1 - 10;
 				}
 				else
 				{
 					//yo = screenHeight - 10 - iSafezoneYHalf - iTooltipsYOffset;
-					yLine1 = screenHeight - 18 - iSafezoneYHalf - iTooltipsYOffset;
+					yLine1 = screenHeight - 10 - iSafezoneYHalf - iTooltipsYOffset;
 					yLine2 = yLine1 - 10;
 				}
 
@@ -453,7 +453,7 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 				double absorption;
 				double totalAbsorption = minecraft->localplayers[iPad]->getAbsorptionAmount();
 				int numHealthRows = Mth::ceil((maxHealth + totalAbsorption) / 2 / (float) NUM_HEARTS_PER_ROW);
-				int healthRowHeight = max(10 - (numHealthRows - 2), 3);
+				int healthRowHeight = max(0 - (numHealthRows - 2), 3);
 				//int yLine2 = yLine1 - (numHealthRows - 1) * healthRowHeight - 10;
 				absorption = totalAbsorption;
 
@@ -471,9 +471,9 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 					if (armor > 0)
 					{
 						int xo = xLeft + i * 8;
-						if (i * 2 + 1 < armor) blit(xo, yLine2, 16 + 2 * 9, 9, 9, 9);
-						if (i * 2 + 1 == armor) blit(xo, yLine2, 16 + 1 * 9, 9, 9, 9);
-						if (i * 2 + 1 > armor) blit(xo, yLine2, 16 + 0 * 9, 9, 9, 9);
+						if (i * 2 + 1 < armor) blit(xo, yLine1, 16 + 2 * 9, 9, 9, 9);
+						if (i * 2 + 1 == armor) blit(xo, yLine1, 16 + 1 * 9, 9, 9, 9);
+						if (i * 2 + 1 > armor) blit(xo, yLine1, 16 + 0 * 9, 9, 9, 9);
 					}
 				}
 
@@ -544,38 +544,38 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 				if (riding == NULL)
 				{
 					// render food
-					for (int i = 0; i < FoodConstants::MAX_FOOD / 2; i++)
-					{
-						int yo = yLine1;
-
-
-						int texBaseX = 16;
-						int bg = 0;
-						if (minecraft->player->hasEffect(MobEffect::hunger))
-						{
-							texBaseX += 4 * 9;
-							bg = 13;
-						}
-
-						if (minecraft->player->getFoodData()->getSaturationLevel() <= 0)
-						{
-							if ((tickCount % (food * 3 + 1)) == 0)
-							{
-								yo += random->nextInt(3) - 1;
-							}
-						}
-
-						if (foodBlink) bg = 1;
-						int xo = xRight - i * 8 - 9;
-						blit(xo, yo, 16 + bg * 9, 9 * 3, 9, 9);
-						if (foodBlink)
-						{
-							if (i * 2 + 1 < oldFood) blit(xo, yo, texBaseX + 6 * 9, 9 * 3, 9, 9);
-							if (i * 2 + 1 == oldFood) blit(xo, yo, texBaseX + 7 * 9, 9 * 3, 9, 9);
-						}
-						if (i * 2 + 1 < food) blit(xo, yo, texBaseX + 4 * 9, 9 * 3, 9, 9);
-						if (i * 2 + 1 == food) blit(xo, yo, texBaseX + 5 * 9, 9 * 3, 9, 9);
-					}
+					//for (int i = 0; i < FoodConstants::MAX_FOOD / 2; i++)
+					//{
+					//	int yo = yLine1;
+					//
+					//
+					//	int texBaseX = 16;
+					//	int bg = 0;
+					//	if (minecraft->player->hasEffect(MobEffect::hunger))
+					//	{
+					//		texBaseX += 4 * 9;
+					//		bg = 13;
+					//	}
+					//
+					//	if (minecraft->player->getFoodData()->getSaturationLevel() <= 0)
+					//	{
+					//		if ((tickCount % (food * 3 + 1)) == 0)
+					//		{
+					//			yo += random->nextInt(3) - 1;
+					//		}
+					//	}
+					//
+					//	if (foodBlink) bg = 1;
+					//	int xo = xRight - i * 8 - 9;
+					//	blit(xo, yo, 16 + bg * 9, 9 * 3, 9, 9);
+					//	if (foodBlink)
+					//	{
+					//		if (i * 2 + 1 < oldFood) blit(xo, yo, texBaseX + 6 * 9, 9 * 3, 9, 9);
+					//		if (i * 2 + 1 == oldFood) blit(xo, yo, texBaseX + 7 * 9, 9 * 3, 9, 9);
+					//	}
+					//	if (i * 2 + 1 < food) blit(xo, yo, texBaseX + 4 * 9, 9 * 3, 9, 9);
+					//	if (i * 2 + 1 == food) blit(xo, yo, texBaseX + 5 * 9, 9 * 3, 9, 9);
+					//}
 				}
 				else if (living != nullptr)
 				{
@@ -602,7 +602,7 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 							int texBaseX = 52;
 							int bg = 0;
 					
-							if (foodBlink) bg = 1;
+							//if (foodBlink) bg = 1;
 							int xo = xRight - i * 8 - 9;
 							blit(xo, yo, texBaseX + bg * 9, 9 * 1, 9, 9);
 							if (i * 2 + 1 + baseHealth < riderCurrentHealth) blit(xo, yo, texBaseX + 4 * 9, 9 * 1, 9, 9);

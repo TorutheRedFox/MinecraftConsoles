@@ -107,19 +107,22 @@ void PreStitchedTextureMap::stitch()
 #endif
 	if(texturePack->hasFile(L"res/" + filename,false))
 	{
-		drive = texturePack->getPath(true);
+		drive = texturePack->getPath(false);
 	}
 	else
 	{
-		drive = Minecraft::GetInstance()->skins->getDefault()->getPath(true);
+		drive = Minecraft::GetInstance()->skins->getDefault()->getPath(false);
 		texturePack = Minecraft::GetInstance()->skins->getDefault();
 	}
 
 	//BufferedImage *image = new BufferedImage(texturePack->getResource(L"/" + filename),false,true,drive); //ImageIO::read(texturePack->getResource(L"/" + filename));
-	BufferedImage *image = texturePack->getImageResource(filename, false, true, drive);
+	BufferedImage *image = texturePack->getImageResource(filename, false, false, drive);
 	MemSect(0);
 	int height = image->getHeight();
 	int width = image->getWidth();
+
+	if (iconType == Icon::TYPE_TERRAIN)
+		height = width * 2; // aspect ratio that's expected by the stitcher
 
 	if(stitchResult != nullptr)
 	{

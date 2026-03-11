@@ -357,10 +357,10 @@ void Player::tick()
 		}
 	}
 
-	if (!level->isClientSide)
-	{
-		foodData.tick(dynamic_pointer_cast<Player>(shared_from_this()));
-	}
+	//if (!level->isClientSide)
+	//{
+	//	foodData.tick(dynamic_pointer_cast<Player>(shared_from_this()));
+	//}
 
 	// 4J Stu Debugging
 	if (!level->isClientSide)
@@ -1286,7 +1286,7 @@ void Player::readAdditionalSaveData(CompoundTag *entityTag)
 		respawnForced = entityTag->getBoolean(L"SpawnForced");
 	}
 
-	foodData.readAdditionalSaveData(entityTag);
+	//foodData.readAdditionalSaveData(entityTag);
 	abilities.loadSaveData(entityTag);
 
 	if (entityTag->contains(L"EnderItems"))
@@ -1320,7 +1320,7 @@ void Player::addAdditonalSaveData(CompoundTag *entityTag)
 		entityTag->putBoolean(L"SpawnForced", respawnForced);
 	}
 
-	foodData.addAdditonalSaveData(entityTag);
+	//foodData.addAdditonalSaveData(entityTag);
 	abilities.addSaveData(entityTag);
 
 	entityTag->put(L"EnderItems", enderChestInventory->createTag());
@@ -1477,7 +1477,7 @@ void Player::actuallyHurt(DamageSource *source, float dmg)
 	setAbsorptionAmount(getAbsorptionAmount() - (originalDamage - dmg));
 	if (dmg == 0) return;
 
-	causeFoodExhaustion(source->getFoodExhaustion());
+	//causeFoodExhaustion(source->getFoodExhaustion());
 	float oldHealth = getHealth();
 	setHealth(getHealth() - dmg);
 	getCombatTracker()->recordDamage(source, oldHealth, dmg);
@@ -1698,7 +1698,7 @@ void Player::attack(shared_ptr<Entity> entity)
 			}
 		}
 
-		causeFoodExhaustion(FoodConstants::EXHAUSTION_ATTACK);
+		//causeFoodExhaustion(FoodConstants::EXHAUSTION_ATTACK);
 	}
 
 	// if (SharedConstants::INGAME_DEBUG_OUTPUT)
@@ -2087,14 +2087,14 @@ void Player::jumpFromGround()
 	// 4J Stu - This seems to have been missed from 1.7.3, but do we care?
 	//awardStat(Stats::jump, 1);
 
-	if (isSprinting())
-	{
-		causeFoodExhaustion(FoodConstants::EXHAUSTION_SPRINT_JUMP);
-	}
-	else
-	{
-		causeFoodExhaustion(FoodConstants::EXHAUSTION_JUMP);
-	}
+	//if (isSprinting())
+	//{
+	//	causeFoodExhaustion(FoodConstants::EXHAUSTION_SPRINT_JUMP);
+	//}
+	//else
+	//{
+	//	causeFoodExhaustion(FoodConstants::EXHAUSTION_JUMP);
+	//}
 }
 
 
@@ -2134,11 +2134,11 @@ void Player::checkMovementStatistiscs(double dx, double dy, double dz)
 	if (isUnderLiquid(Material::water))
 	{
 		int distance = static_cast<int>(Math::round(sqrt(dx * dx + dy * dy + dz * dz) * 100.0f));
-		if (distance > 0)
-		{
-			//awardStat(Stats::diveOneCm, distance);
-			causeFoodExhaustion(FoodConstants::EXHAUSTION_SWIM * distance * .01f);
-		}
+		//if (distance > 0)
+		//{
+		//	//awardStat(Stats::diveOneCm, distance);
+		//	causeFoodExhaustion(FoodConstants::EXHAUSTION_SWIM * distance * .01f);
+		//}
 	}
 	else if (isInWater())
 	{
@@ -2152,7 +2152,7 @@ void Player::checkMovementStatistiscs(double dx, double dy, double dz)
 				distanceSwim -= newDistance;
 				awardStat( GenericStats::swimOneM(), GenericStats::param_swim(newDistance/100) );
 			}
-			causeFoodExhaustion(FoodConstants::EXHAUSTION_SWIM * horizontalDistance * .01f);
+			//causeFoodExhaustion(FoodConstants::EXHAUSTION_SWIM * horizontalDistance * .01f);
 		}
 	}
 	else if (onLadder())
@@ -2180,14 +2180,14 @@ void Player::checkMovementStatistiscs(double dx, double dy, double dz)
 				distanceWalk -= newDistance;
 				awardStat( GenericStats::walkOneM(), GenericStats::param_walk(newDistance/100) );
 			}
-			if (isSprinting())
-			{
-				causeFoodExhaustion(FoodConstants::EXHAUSTION_SPRINT * horizontalDistance * .01f);
-			}
-			else
-			{
-				causeFoodExhaustion(FoodConstants::EXHAUSTION_WALK * horizontalDistance * .01f);
-			}
+			//if (isSprinting())
+			//{
+			//	causeFoodExhaustion(FoodConstants::EXHAUSTION_SPRINT * horizontalDistance * .01f);
+			//}
+			//else
+			//{
+			//	causeFoodExhaustion(FoodConstants::EXHAUSTION_WALK * horizontalDistance * .01f);
+			//}
 		}
 	}
 }
@@ -2441,6 +2441,8 @@ int Player::getXpNeededForNextLevel()
 */
 void Player::causeFoodExhaustion(float amount)
 {
+	// Toru - unused
+#if 0
 	if( isAllowedToIgnoreExhaustion() || ( isAllowedToFly() && abilities.flying) ) return;
 	if (abilities.invulnerable || hasInvulnerablePrivilege() ) return;
 
@@ -2451,6 +2453,7 @@ void Player::causeFoodExhaustion(float amount)
 	{
 		foodData.addExhaustion(amount);
 	}
+#endif
 }
 
 FoodData *Player::getFoodData()
@@ -2460,7 +2463,7 @@ FoodData *Player::getFoodData()
 
 bool Player::canEat(bool magicalItem)
 {
-	return (magicalItem || foodData.needsFood()) && !abilities.invulnerable && !hasInvulnerablePrivilege();
+	return true;//(magicalItem || foodData.needsFood()) && !abilities.invulnerable && !hasInvulnerablePrivilege();
 }
 
 bool Player::isHurt()
@@ -2482,10 +2485,10 @@ void Player::startUsingItem(shared_ptr<ItemInstance> instance, int duration)
 	awardStat(GenericStats::itemsUsed(instance->getItem()->id),
 		GenericStats::param_itemsUsed(dynamic_pointer_cast<Player>(shared_from_this()),instance));
 
-#if (!defined _DURANGO) && (defined _EXTENDED_ACHIEVEMENTS)
-	if ( (instance->getItem()->id == Item::rotten_flesh_Id) && (getFoodData()->getFoodLevel() == 0) )
-		awardStat(GenericStats::ironBelly(), GenericStats::param_ironBelly());
-#endif
+//#if (!defined _DURANGO) && (defined _EXTENDED_ACHIEVEMENTS)
+//	if ( (instance->getItem()->id == Item::rotten_flesh_Id) && (getFoodData()->getFoodLevel() == 0) )
+//		awardStat(GenericStats::ironBelly(), GenericStats::param_ironBelly());
+//#endif
 }
 
 bool Player::mayDestroyBlockAt(int x, int y, int z)
@@ -2562,7 +2565,7 @@ void Player::restoreFrom(shared_ptr<Player> oldPlayer, bool restoreAll)
 		inventory->replaceWith(oldPlayer->inventory);
 
 		setHealth(oldPlayer->getHealth());
-		foodData = oldPlayer->foodData;
+		//foodData = oldPlayer->foodData;
 
 		experienceLevel = oldPlayer->experienceLevel;
 		totalExperience = oldPlayer->totalExperience;

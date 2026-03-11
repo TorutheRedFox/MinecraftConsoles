@@ -202,7 +202,7 @@ int VillagerGolem::getDeathSound()
 
 void VillagerGolem::playStepSound(int xt, int yt, int zt, int t)
 {
-	playSound(eSoundType_MOB_IRONGOLEM_WALK, 1, 1);
+	Entity::playStepSound(xt, yt, zt, t);//playSound(eSoundType_MOB_IRONGOLEM_WALK, 1, 1);
 }
 
 void VillagerGolem::dropDeathLoot(bool wasKilledByPlayer, int playerBonusLevel)

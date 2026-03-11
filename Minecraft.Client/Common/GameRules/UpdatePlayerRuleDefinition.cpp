@@ -138,10 +138,10 @@ void UpdatePlayerRuleDefinition::postProcessPlayer(shared_ptr<Player> player)
 		player->setHealth(m_health);
 	}
 
-	if(m_bUpdateFood)
-	{
-		player->getFoodData()->setFoodLevel(m_food);
-	}
+	//if(m_bUpdateFood)
+	//{
+	//	player->getFoodData()->setFoodLevel(m_food);
+	//}
 
 	double x = player->x;
 	double y = player->y;

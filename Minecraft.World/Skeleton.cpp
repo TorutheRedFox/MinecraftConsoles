@@ -88,7 +88,7 @@ int Skeleton::getDeathSound()
 
 void Skeleton::playStepSound(int xt, int yt, int zt, int t)
 {
-	playSound(eSoundType_MOB_SKELETON_STEP, 0.15f, 1);
+	Entity::playStepSound(xt, yt, zt, t);//playSound(eSoundType_MOB_SKELETON_STEP, 0.15f, 1);
 }
 
 bool Skeleton::doHurtTarget(shared_ptr<Entity> target)
