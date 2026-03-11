@@ -2463,7 +2463,7 @@ FoodData *Player::getFoodData()
 
 bool Player::canEat(bool magicalItem)
 {
-	return true;//(magicalItem || foodData.needsFood()) && !abilities.invulnerable && !hasInvulnerablePrivilege();
+	return magicalItem || isHurt();//(magicalItem || foodData.needsFood()) && !abilities.invulnerable && !hasInvulnerablePrivilege();
 }
 
 bool Player::isHurt()

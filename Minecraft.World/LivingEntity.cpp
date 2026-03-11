@@ -957,12 +957,12 @@ void LivingEntity::knockback(shared_ptr<Entity> source, float dmg, double xd, do
 
 int LivingEntity::getHurtSound()
 {
-	return eSoundType_DAMAGE_HURT;
+	return eSoundType_RANDOM_HURT;
 }
 
 int LivingEntity::getDeathSound()
 {
-	return eSoundType_DAMAGE_HURT;
+	return eSoundType_RANDOM_HURT;
 }
 
 /**
@@ -1011,14 +1011,14 @@ void LivingEntity::causeFallDamage(float distance)
 	if (dmg > 0)
 	{
 		// 4J - new sounds here brought forward from 1.2.3
-		if (dmg > 4)
-		{
-			playSound(eSoundType_DAMAGE_FALL_BIG, 1, 1);
-		}
-		else
-		{
-			playSound(eSoundType_DAMAGE_FALL_SMALL, 1, 1);
-		}
+		//if (dmg > 4)
+		//{
+		//	playSound(eSoundType_DAMAGE_FALL_BIG, 1, 1);
+		//}
+		//else
+		//{
+		//	playSound(eSoundType_DAMAGE_FALL_SMALL, 1, 1);
+		//}
 		hurt(DamageSource::fall, dmg);
 
 		int t = level->getTile( Mth::floor(x), Mth::floor(y - 0.2f - this->heightOffset), Mth::floor(z));

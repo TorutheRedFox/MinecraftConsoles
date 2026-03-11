@@ -68,7 +68,9 @@ shared_ptr<ItemInstance> FoodItem::use(shared_ptr<ItemInstance> instance, Level 
 {
 	if (player->canEat(canAlwaysEat))
 	{
-		player->startUsingItem(instance, getUseDuration(instance));
+		// old food behavior
+		instance->count--;
+		player->heal(nutrition);//player->startUsingItem(instance, getUseDuration(instance));
 	}
 
 	// 4J : WESTY : Other award ... eating cooked pork chop.

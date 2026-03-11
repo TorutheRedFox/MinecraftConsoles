@@ -84,6 +84,7 @@ const WCHAR *ConsoleSoundEngine::wchSoundNames[eSoundType_MAX]=
 	L"random.chestclosed",				//	eSoundType_RANDOM_CHEST_CLOSE,
 	L"random.door_open",				//	eSoundType_RANDOM_DOOR_OPEN,
 	L"random.door_close",				//	eSoundType_RANDOM_DOOR_CLOSE,
+	L"random.hurt",						//	eSoundType_RANDOM_HURT,
 	L"ambient.weather.rain",			//	eSoundType_AMBIENT_WEATHER_RAIN,
 	L"ambient.weather.thunder",			//	eSoundType_AMBIENT_WEATHER_THUNDER,
 	L"ambient.cave",				//	eSoundType_CAVE_CAVE, DON'T USE FOR XBOX 360!!!
