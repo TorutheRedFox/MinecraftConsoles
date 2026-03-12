@@ -72,7 +72,7 @@ public:
 	static const int genDepthBitsPlusFour = genDepthBits + 4;
 	static const int genDepth = 1 << genDepthBits;
 	static const int genDepthMinusOne = genDepth - 1;
-	static const int constSeaLevel = genDepth / 2 - 1;
+	static const int constSeaLevel = genDepth / 2;
 
 	static const int CHUNK_TILE_COUNT = maxBuildHeight * 16 * 16;
 	static const int HALF_CHUNK_TILE_COUNT = CHUNK_TILE_COUNT/2;

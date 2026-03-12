@@ -324,7 +324,7 @@ void RandomLevelSource::prepareHeights(int xOffs, int zOffs, byteArray blocks)
 							}
 
 							// 4J - this comparison used to just be with 0.0f but is now varied by block above
-							if ((val += vala) > comp)
+							if ((val += vala) > 0)
 							{
 								tileId = static_cast<byte>(Tile::stone_Id);
 							}
@@ -335,8 +335,8 @@ void RandomLevelSource::prepareHeights(int xOffs, int zOffs, byteArray blocks)
 							if( emin == 0 )
 							{
 								// This matches code in MultiPlayerChunkCache that makes the geometry which continues at the edge of the world
-								if( yc * CHUNK_HEIGHT + y <= ( level->getSeaLevel() - 10 ) ) tileId = Tile::stone_Id;
-								else if( yc * CHUNK_HEIGHT + y < level->getSeaLevel() ) tileId = Tile::calmWater_Id;
+								if( yc * CHUNK_HEIGHT + y <= ( waterHeight - 10 ) ) tileId = Tile::stone_Id;
+								else if( yc * CHUNK_HEIGHT + y < waterHeight ) tileId = Tile::calmWater_Id;
 							}
 
 							blocks[offs += step] = tileId;
@@ -508,14 +508,14 @@ LevelChunk *RandomLevelSource::getChunk(int xOffs, int zOffs)
 	// 4J Stu Design Change - 1.8 gen goes stronghold, mineshaft, village, canyon
 	// this changed in 1.2 to canyon, mineshaft, village, stronghold
 	// This change makes sense as it stops canyons running through other structures
-	canyonFeature->apply(this, level, xOffs, zOffs, blocks);
-	if (generateStructures)
-	{
-		mineShaftFeature->apply(this, level, xOffs, zOffs, blocks);
-		villageFeature->apply(this, level, xOffs, zOffs, blocks);
-		strongholdFeature->apply(this, level, xOffs, zOffs, blocks);
-		scatteredFeature->apply(this, level, xOffs, zOffs, blocks);
-	}
+	//canyonFeature->apply(this, level, xOffs, zOffs, blocks);
+	//if (generateStructures)
+	//{
+	//	mineShaftFeature->apply(this, level, xOffs, zOffs, blocks);
+	//	villageFeature->apply(this, level, xOffs, zOffs, blocks);
+	//	strongholdFeature->apply(this, level, xOffs, zOffs, blocks);
+	//	scatteredFeature->apply(this, level, xOffs, zOffs, blocks);
+	//}
 	//        canyonFeature.apply(this, level, xOffs, zOffs, blocks);
 	// townFeature.apply(this, level, xOffs, zOffs, blocks);
 	// addCaves(xOffs, zOffs, blocks);
@@ -642,8 +642,8 @@ doubleArray RandomLevelSource::getHeights(doubleArray buffer, int x, int y, int 
 			//sss = sss * 0.9f + 0.1f;
 			//ddd = (ddd * 4 - 1) / 8.0f;
 
-			double temperature = level->getBiomeSource()->getTemperature(bx, 1, bz);
-			double downfall = level->getBiomeSource()->getDownfall(bx, bz) * temperature;
+			double temperature = level->getBiomeSource()->getTemperature(xx, 1, zz);
+			double downfall = level->getBiomeSource()->getDownfall(xx, zz) * temperature;
 
 			pow = 1.0 - downfall;
 			pow *= pow;
@@ -679,10 +679,9 @@ doubleArray RandomLevelSource::getHeights(doubleArray buffer, int x, int y, int 
 
 			for (int yy = 0; yy < ySize; yy++)
 			{
-				double depth = ddd;
+				double depth = rdepth;
 				double scale = sss;
 
-				depth += rdepth * 0.2;
 				depth = depth * ySize / 16.0;
 
 				double yCenter = ySize / 2.0 + depth * 4;
