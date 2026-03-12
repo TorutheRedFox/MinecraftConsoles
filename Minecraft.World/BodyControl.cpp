@@ -22,18 +22,18 @@ void BodyControl::clientTick()
 	{
 		// we are moving.
 		mob->yBodyRot = mob->yRot;
-		mob->yHeadRot = clamp(mob->yBodyRot, mob->yHeadRot, maxClampAngle);
-		lastHeadY = mob->yHeadRot;
+		mob->yRot = clamp(mob->yBodyRot, mob->yRot, maxClampAngle);
+		lastHeadY = mob->yRot;
 		timeStill = 0;
 		return;
 	}
 
 	// Body will align to head after looking long enough in a direction
 	float clampAngle = maxClampAngle;
-	if (abs(mob->yHeadRot - lastHeadY) > 15)
+	if (abs(mob->yRot - lastHeadY) > 15)
 	{
 		timeStill = 0;
-		lastHeadY = mob->yHeadRot;
+		lastHeadY = mob->yRot;
 	}
 	else
 	{
@@ -42,7 +42,7 @@ void BodyControl::clientTick()
 		if (timeStill > timeStillBeforeTurn) clampAngle = max(1 - (timeStill - timeStillBeforeTurn) / 10.f, 0.0f) * maxClampAngle;
 	}
 
-	mob->yBodyRot = clamp(mob->yHeadRot, mob->yBodyRot, clampAngle);
+	mob->yBodyRot = clamp(mob->yRot, mob->yBodyRot, clampAngle);
 }
 
 float BodyControl::clamp(float clampTo, float clampFrom, float clampAngle)

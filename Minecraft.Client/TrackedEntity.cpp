@@ -305,7 +305,7 @@ void TrackedEntity::tick(EntityTracker *tracker, vector<shared_ptr<Player> > *pl
 			wasRiding = true;
 		}
 
-		int yHeadRot = Mth::floor(e->getYHeadRot() * 256 / 360);
+		int yHeadRot = Mth::floor(e->yRot * 256 / 360);
 		if (abs(yHeadRot - yHeadRotp) >= TOLERANCE_LEVEL)
 		{
 			broadcast(std::make_shared<RotateHeadPacket>(e->entityId, static_cast<byte>(yHeadRot)));
@@ -672,7 +672,7 @@ shared_ptr<Packet> TrackedEntity::getAddEntityPacket()
 	}
 	else if (e->instanceof(eTYPE_ENDERDRAGON))
 	{
-		yHeadRotp = Mth::floor(e->getYHeadRot() * 256 / 360);
+		yHeadRotp = Mth::floor(e->yRot * 256 / 360);
 		return std::make_shared<AddMobPacket>(dynamic_pointer_cast<LivingEntity>(e), yRotp, xRotp, xp, yp, zp, yHeadRotp);
 	}
 	else if (e->instanceof(eTYPE_FISHINGHOOK))
