@@ -43,24 +43,30 @@ void VideoSettingsScreen::init()
 
 }
 
-void VideoSettingsScreen::buttonClicked(Button *button)
+void VideoSettingsScreen::buttonClicked(Button* button)
 {
     if (!button->active) return;
-    if (button->id < 100 && (dynamic_cast<SmallButton *>(button) != nullptr))
-	{
-        options->toggle(static_cast<SmallButton *>(button)->getOption(), 1);
+    
+    int guiScaleO = options->guiScale;
+
+    if (button->id < 100 && (dynamic_cast<SmallButton*>(button) != nullptr))
+    {
+        options->toggle(static_cast<SmallButton*>(button)->getOption(), 1);
         button->msg = options->getMessage(Options::Option::getItem(button->id));
     }
     if (button->id == 200)
-	{
+    {
         minecraft->options->save();
         minecraft->setScreen(lastScreen);
     }
 
-    ScreenSizeCalculator ssc(minecraft->options, minecraft->width, minecraft->height);
-    int screenWidth = ssc.getWidth();
-    int screenHeight = ssc.getHeight();
-    Screen::init(minecraft, screenWidth, screenHeight);	// 4J - was this.init
+    if (options->guiScale != guiScaleO)
+    {
+        ScreenSizeCalculator ssc(minecraft->options, minecraft->width, minecraft->height);
+        int screenWidth = ssc.getWidth();
+        int screenHeight = ssc.getHeight();
+        Screen::init(minecraft, screenWidth, screenHeight);	// 4J - was this.init
+    }
 }
 
 void VideoSettingsScreen::render(int xm, int ym, float a)
