@@ -3377,9 +3377,9 @@ bool Level::shouldFreeze(int x, int y, int z, bool checkNeighbors)
 
 bool Level::shouldSnow(int x, int y, int z)
 {
-	Biome *biome = getBiome(x, z);
-	float temp = biome->getTemperature();
-	if (temp > 0.15f) return false;
+	//Biome *biome = getBiome(x, z);
+	float temp = getBiomeSource()->getTemperature(x, 1, z) - ((y - 64) / 64.0) * 0.3;
+	if (temp >= 0.5f) return false;
 
 
 	if (y >= 0 && y < maxBuildHeight && getBrightness(LightLayer::Block, x, y, z) < 10)

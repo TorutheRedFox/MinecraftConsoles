@@ -314,14 +314,19 @@ void RandomLevelSource::prepareHeights(int xOffs, int zOffs, byteArray blocks)
 							// changes we've made edge-of-world things - original sets blocks[offs += step] directly
 							// here rather than setting a tileId
 							int tileId = 0;
+
+							if (yc * CHUNK_HEIGHT + y < waterHeight)
+							{
+								if (level->getBiomeSource()->getTemperature(x, y, z) < 0.5 && yc * CHUNK_HEIGHT + y >= waterHeight - 1)
+									tileId = static_cast<byte>(Tile::ice_Id);
+								else
+									tileId = static_cast<byte>(Tile::calmWater_Id);
+							}
+
 							// 4J - this comparison used to just be with 0.0f but is now varied by block above
 							if ((val += vala) > comp)
 							{
 								tileId = static_cast<byte>(Tile::stone_Id);
-							}
-							else if (yc * CHUNK_HEIGHT + y < waterHeight)
-							{
-								tileId = static_cast<byte>(Tile::calmWater_Id);
 							}
 
 							// 4J - more extra code to make sure that the column at the edge of the world is just water & rock, to match the infinite sea that
@@ -891,6 +896,60 @@ void RandomLevelSource::postProcess(ChunkSource *parent, int xt, int zt)
 		tf->place(level, pprandom, x, level->getHeightmap(x, z), z);
 	}
 
+	for (int i = 0; i < 2; i++)
+	{
+		int x = xo + pprandom->nextInt(16) + 8;
+		int y = pprandom->nextInt(Level::genDepth);
+		int z = zo + pprandom->nextInt(16) + 8;
+		FlowerFeature ff(Tile::flower->id);
+		ff.place(level, pprandom, x, y, z);
+	}
+
+	if (random->nextInt(2) == 0)
+	{
+		int x = xo + pprandom->nextInt(16) + 8;
+		int y = pprandom->nextInt(Level::genDepth);
+		int z = zo + pprandom->nextInt(16) + 8;
+		FlowerFeature ff(Tile::rose->id);
+		ff.place(level, pprandom, x, y, z);
+	}
+
+	if (random->nextInt(4) == 0)
+	{
+		int x = xo + pprandom->nextInt(16) + 8;
+		int y = pprandom->nextInt(Level::genDepth);
+		int z = zo + pprandom->nextInt(16) + 8;
+		FlowerFeature ff(Tile::mushroom_brown->id);
+		ff.place(level, pprandom, x, y, z);
+	}
+
+	if (random->nextInt(8) == 0)
+	{
+		int x = xo + pprandom->nextInt(16) + 8;
+		int y = pprandom->nextInt(Level::genDepth);
+		int z = zo + pprandom->nextInt(16) + 8;
+		FlowerFeature ff(Tile::mushroom_red->id);
+		ff.place(level, pprandom, x, y, z);
+	}
+
+	for (int i = 0; i < 10; i++)
+	{
+		int x = xo + pprandom->nextInt(16) + 8;
+		int y = pprandom->nextInt(Level::genDepth);
+		int z = zo + pprandom->nextInt(16) + 8;
+		ReedsFeature rf;
+		rf.place(level, pprandom, x, y, z);
+	}
+
+	if (random->nextInt(32) == 0)
+	{
+		int x = xo + pprandom->nextInt(16) + 8;
+		int y = pprandom->nextInt(Level::genDepth);
+		int z = zo + pprandom->nextInt(16) + 8;
+		PumpkinFeature pf;
+		pf.place(level, pprandom, x, y, z);
+	}
+
 	int numCacti = 0;
 	if (biome == Biome::desert) numCacti += 10;
 
@@ -941,12 +1000,12 @@ void RandomLevelSource::postProcess(ChunkSource *parent, int xt, int zt)
 	{
 		for (int z = 0; z < 16; z++)
 		{
-			int y = level->getTopRainBlock(xo + x, zo + z);
+			int y = level->getTopSolidBlock(xo + x, zo + z);
 
-			if (level->shouldFreezeIgnoreNeighbors(x + xo, y - 1, z + zo))
-			{
-				level->setTileAndData(x + xo, y - 1, z + zo, Tile::ice_Id, 0, Tile::UPDATE_CLIENTS);
-			}
+			//if (level->shouldFreezeIgnoreNeighbors(x + xo, y - 1, z + zo))
+			//{
+			//	level->setTileAndData(x + xo, y - 1, z + zo, Tile::ice_Id, 0, Tile::UPDATE_CLIENTS);
+			//}
 			if (level->shouldSnow(x + xo, y, z + zo))
 			{
 				level->setTileAndData(x + xo, y, z + zo, Tile::topSnow_Id, 0, Tile::UPDATE_CLIENTS);

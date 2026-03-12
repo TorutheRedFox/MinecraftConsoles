@@ -69,23 +69,32 @@ int GrassTile::getColor(LevelSource *level, int x, int y, int z, int data)
 {
 	//return level->getBiomeSource()->getBiome(x, z)->getGrassColor(level, x, y, z);
 
-	int totalRed = 0;
-	int totalGreen = 0;
-	int totalBlue = 0;
+	//int totalRed = 0;
+	//int totalGreen = 0;
+	//int totalBlue = 0;
+	//
+	//for (int oz = -1; oz <= 1; oz++)
+	//{
+	//	for (int ox = -1; ox <= 1; ox++)
+	//	{
+	//		int grassColor = GrassColor::get(level->getBiomeSource()->getTemperature(x + ox, 1, z + oz), level->getBiomeSource()->getDownfall(x + ox, z + oz));//getBiome(x + ox, z + oz)->getGrassColor();
+	//
+	//		totalRed += (grassColor & 0xff0000) >> 16;
+	//		totalGreen += (grassColor & 0xff00) >> 8;
+	//		totalBlue += (grassColor & 0xff);
+	//	}
+	//}
+	//
+	//return (((totalRed / 9) & 0xFF) << 16) | (((totalGreen / 9) & 0xFF) << 8) | (((totalBlue / 9) & 0xFF));
 
-	for (int oz = -1; oz <= 1; oz++)
-	{
-		for (int ox = -1; ox <= 1; ox++)
-		{
-			int grassColor = level->getBiome(x + ox, z + oz)->getGrassColor();
+	BiomeArray block = level->getBiomeSource()->getBiomeBlock(x, z, 1, 1);
 
-			totalRed += (grassColor & 0xff0000) >> 16;
-			totalGreen += (grassColor & 0xff00) >> 8;
-			totalBlue += (grassColor & 0xff);
-		}
-	}
+	double temp = level->getBiomeSource()->getTemperature(x, 1, z);
+	double rain = level->getBiomeSource()->getDownfall(x, z);
 
-	return (((totalRed / 9) & 0xFF) << 16) | (((totalGreen / 9) & 0xFF) << 8) | (((totalBlue / 9) & 0xFF));
+	delete[] block.data;
+
+	return GrassColor::get(temp, rain);
 }
 
 void GrassTile::tick(Level *level, int x, int y, int z, Random *random)

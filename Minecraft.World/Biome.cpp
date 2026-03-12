@@ -254,9 +254,9 @@ bool Biome::hasSnow()
 	// 4J - snowCovered flag removed as it wasn't being set by the game anymore - snow is now temperature dependent to match code in rain rendering, shouldFreeze functions etc.
 	if( !_hasRain ) return false;
 
-	if( getTemperature() >= 0.15f ) return false;
+	//if( getTemperature() >= 0.15f ) return false;
 
-	return true;
+	return this->snowCovered;
 }
 
 bool Biome::hasRain()

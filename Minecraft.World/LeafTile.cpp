@@ -69,23 +69,32 @@ int LeafTile::getColor(LevelSource *level, int x, int y, int z, int data)
 		return FoliageColor::getBirchColor();
 	}
 
-	int totalRed = 0;
-	int totalGreen = 0;
-	int totalBlue = 0;
+	//int totalRed = 0;
+	//int totalGreen = 0;
+	//int totalBlue = 0;
+	//
+	//for (int oz = -1; oz <= 1; oz++)
+	//{
+	//	for (int ox = -1; ox <= 1; ox++)
+	//	{
+	//		int foliageColor = level->getBiome(x + ox, z + oz)->getFolageColor();
+	//
+	//		totalRed += (foliageColor & 0xff0000) >> 16;
+	//		totalGreen += (foliageColor & 0xff00) >> 8;
+	//		totalBlue += (foliageColor & 0xff);
+	//	}
+	//}
+	//
+	//return (((totalRed / 9) & 0xFF) << 16) | (((totalGreen / 9) & 0xFF) << 8) | (((totalBlue / 9) & 0xFF));
 
-	for (int oz = -1; oz <= 1; oz++)
-	{
-		for (int ox = -1; ox <= 1; ox++)
-		{
-			int foliageColor = level->getBiome(x + ox, z + oz)->getFolageColor();
+	BiomeArray block = level->getBiomeSource()->getBiomeBlock(x, z, 1, 1);
 
-			totalRed += (foliageColor & 0xff0000) >> 16;
-			totalGreen += (foliageColor & 0xff00) >> 8;
-			totalBlue += (foliageColor & 0xff);
-		}
-	}
+	double temp = level->getBiomeSource()->getTemperature(x, 1, z);
+	double rain = level->getBiomeSource()->getDownfall(x, z);
 
-	return (((totalRed / 9) & 0xFF) << 16) | (((totalGreen / 9) & 0xFF) << 8) | (((totalBlue / 9) & 0xFF));
+	delete[] block.data;
+
+	return FoliageColor::get(temp, rain);
 }
 
 void LeafTile::onRemove(Level *level, int x, int y, int z, int id, int data)

@@ -23,18 +23,18 @@ int FoliageColor::get(double temp, double rain)
 
 int FoliageColor::getEvergreenColor()
 {
-	return Minecraft::GetInstance()->getColourTable()->getColor(eMinecraftColour_Foliage_Evergreen);
-	//return 0x619961;
+	//return Minecraft::GetInstance()->getColourTable()->getColor(eMinecraftColour_Foliage_Evergreen);
+	return 0x619961;
 }
 
 int FoliageColor::getBirchColor()
 {
-	return Minecraft::GetInstance()->getColourTable()->getColor(eMinecraftColour_Foliage_Birch);
-	//return 0x80a755;
+	//return Minecraft::GetInstance()->getColourTable()->getColor(eMinecraftColour_Foliage_Birch);
+	return 0x80a755;
 }
 
 int FoliageColor::getDefaultColor()
 {
-	return Minecraft::GetInstance()->getColourTable()->getColor(eMinecraftColour_Foliage_Default);
-	//return 0x48b518;
+	//return Minecraft::GetInstance()->getColourTable()->getColor(eMinecraftColour_Foliage_Default);
+	return 0x48b518;
 }

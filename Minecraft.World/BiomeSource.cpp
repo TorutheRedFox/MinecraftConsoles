@@ -95,18 +95,41 @@ floatArray BiomeSource::getDownfallBlock(int x, int z, int w, int h) const
 // 4J - removal of separate temperature & downfall layers brought forward from 1.2.3
 void BiomeSource::getDownfallBlock(floatArray &downfalls, int x, int z, int w, int h) const
 {
-	doubleArray buffer(w * h);
-
-	buffer = downfallMap->getRegion(buffer, x, z, w, h, 0.05, 0.05, 0.5);
+	doubleArray _downfalls(w * h);
+	doubleArray noises(w * h);
+	_downfalls = downfallMap->getRegion(_downfalls, x, z, w, h, 0.005, 0.05, 1.0 / 3.0);
+	noises = noiseMap->getRegion(noises, x, z, w, h, 0.25, 0.25, 1.0 / 1.7);
 
 	if (downfalls.data == nullptr || static_cast<int>(downfalls.length) < w * h)
 	{
 		if (downfalls.data) delete[] downfalls.data;
 		downfalls = floatArray(w * h);
 	}
-	
-	for (unsigned int i = 0; i < downfalls.length; i++)
-		downfalls[i] = (float)buffer[i];
+
+	int s = 0;
+
+	for (int xx = 0; xx < w; xx++) {
+		for (int zz = 0; zz < h; zz++) {
+			double noise = noises[s] * 1.1 + 0.5;
+			double noiseamp = 0.002;
+			double amp = 1.0 - amp;
+			double rain = (_downfalls[s] * 0.15 + 0.7) * amp + noise * noiseamp;
+			rain = 1.0 - (1.0 - rain) * (1.0 - rain);
+			if (rain < 0.0) {
+				rain = 0.0;
+			}
+
+			if (rain > 1.0) {
+				rain = 1.0;
+			}
+
+			downfalls[s] = rain;
+			s++;
+		}
+	}
+
+	delete[] _downfalls.data;
+	delete[] noises.data;
 }
 
 BiomeCache::Block *BiomeSource::getBlockAt(int x, int y)
@@ -116,7 +139,10 @@ BiomeCache::Block *BiomeSource::getBlockAt(int x, int y)
 
 float BiomeSource::getTemperature(int x, int y, int z) const
 {
-	return scaleTemp(cache->getTemperature(x, z), y);
+	floatArray temperatures = getTemperatureBlock(x, z, 1, 1);
+	float temp = scaleTemp(temperatures[0], y);
+	delete[] temperatures.data;
+	return temp;
 }
 
 // 4J - brought forward from 1.2.3
@@ -168,6 +194,9 @@ void BiomeSource::getTemperatureBlock(floatArray& temperatures, int x, int z, in
 			s++;
 		}
 	}
+
+	delete [] _temperatures.data;
+	delete [] noises.data;
 }
 
 BiomeArray BiomeSource::getRawBiomeBlock(int x, int z, int w, int h) const
@@ -270,6 +299,8 @@ void BiomeSource::getBiomeBlock(BiomeArray& biomes, int x, int z, int w, int h, 
 			double noiseAmp = 0.01;
 			double amp = 1.0 - noiseAmp;
 			double temp = (temperatures[s] * 0.15 + 0.7) * amp + noise * noiseAmp;
+			noiseAmp = 0.002f;
+			amp = 1.0 - noiseAmp;
 			double downfall = (downfalls[s] * 0.15 + 0.5) * amp + noise * noiseAmp;
 			temp = 1.0 - (1.0 - temp) * (1.0 - temp);
 			if (temp < 0.0) {
