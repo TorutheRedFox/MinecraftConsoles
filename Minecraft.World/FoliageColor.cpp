@@ -3,23 +3,23 @@
 #include "FoliageColor.h"
 
 // 4J Stu - Don't use this any more
-//intArray FoliageColor::pixels;
-//
-//void FoliageColor::init(intArray pixels)
-//{
-//	int *oldData = FoliageColor::pixels.data;
-//	FoliageColor::pixels = pixels;
-//	delete[] oldData;
-//}
-//
-//int FoliageColor::get(double temp, double rain)
-//{
-//    rain *= temp;
-//    int x = (int) ((1 - temp) * 255);
-//    int y = (int) ((1 - rain) * 255);
-//    int returnVal = pixels[y << 8 | x];
-//	return returnVal;
-//}
+intArray FoliageColor::pixels;
+
+void FoliageColor::init(intArray pixels)
+{
+	int *oldData = FoliageColor::pixels.data;
+	FoliageColor::pixels = pixels;
+	delete[] oldData;
+}
+
+int FoliageColor::get(double temp, double rain)
+{
+    rain *= temp;
+    int x = (int) ((1 - temp) * 255);
+    int y = (int) ((1 - rain) * 255);
+    int returnVal = pixels[y << 8 | x];
+	return returnVal;
+}
 
 int FoliageColor::getEvergreenColor()
 {

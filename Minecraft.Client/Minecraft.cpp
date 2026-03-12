@@ -350,8 +350,8 @@ void Minecraft::init()
 
 	// 4J Stu - Not using these any more
 	//WaterColor::init(textures->loadTexturePixels(L"misc/watercolor.png"));
-	//GrassColor::init(textures->loadTexturePixels(L"misc/grasscolor.png"));
-	//FoliageColor::init(textures->loadTexturePixels(L"misc/foliagecolor.png"));
+	GrassColor::init(textures->loadTexturePixels(TN_MISC_GRASSCOLOR, L"misc/grasscolor.png"));
+	FoliageColor::init(textures->loadTexturePixels(TN_MISC_FOLIAGECOLOR, L"misc/foliagecolor.png"));
 
 	gameRenderer = new GameRenderer(this);
 	EntityRenderDispatcher::instance->itemInHandRenderer = new ItemInHandRenderer(this,false);

@@ -29,6 +29,8 @@ const wchar_t *Textures::preLoaded[TN_COUNT] =
 	L"%blur%misc/pumpkinblur",
 	L"%blur%/misc/vignette",		// Not currently used
 	L"%clamp%misc/shadow",
+	L"misc/grasscolor",
+	L"misc/foliagecolor",
 	L"/achievement/bg",				// Not currently used
 	L"art/kz",
 	L"environment/clouds",
@@ -1322,8 +1324,8 @@ void Textures::reloadAll()
 	pixelsMap.clear();
 	// 4J Stu - These are not used any more
 	//WaterColor::init(loadTexturePixels(L"misc/watercolor.png"));
-	//GrassColor::init(loadTexturePixels(L"misc/grasscolor.png"));
-	//FoliageColor::init(loadTexturePixels(L"misc/foliagecolor.png"));
+	GrassColor::init(loadTexturePixels(TN_MISC_GRASSCOLOR, L"misc/grasscolor.png"));
+	FoliageColor::init(loadTexturePixels(TN_MISC_FOLIAGECOLOR, L"misc/foliagecolor.png"));
 
 	stitch();
 

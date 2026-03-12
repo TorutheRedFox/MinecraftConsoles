@@ -306,20 +306,20 @@ void Biome::decorate(Level *level, Random *random, int xo, int zo)
 
 int Biome::getGrassColor()
 {
-	//double temp = Mth::clamp(getTemperature(), 0.0f, 1.0f);
-	//double rain = Mth::clamp(getDownfall(), 0.0f, 1.0f);
+	double temp = Mth::clamp(getTemperature(), 0.0f, 1.0f);
+	double rain = Mth::clamp(getDownfall(), 0.0f, 1.0f);
 
-	//return GrassColor::get(temp, rain);
-	return Minecraft::GetInstance()->getColourTable()->getColor( m_grassColor );
+	return GrassColor::get(temp, rain);
+	//return Minecraft::GetInstance()->getColourTable()->getColor( m_grassColor );
 }
 
 int Biome::getFolageColor()
 {
-	//double temp = Mth::clamp(getTemperature(), 0.0f, 1.0f);
-	//double rain = Mth::clamp(getDownfall(), 0.0f, 1.0f);
+	double temp = Mth::clamp(getTemperature(), 0.0f, 1.0f);
+	double rain = Mth::clamp(getDownfall(), 0.0f, 1.0f);
 
-	//return FoliageColor::get(temp, rain);
-	return Minecraft::GetInstance()->getColourTable()->getColor( m_foliageColor );
+	return FoliageColor::get(temp, rain);
+	//return Minecraft::GetInstance()->getColourTable()->getColor( m_foliageColor );
 }
 
 // 4J Added

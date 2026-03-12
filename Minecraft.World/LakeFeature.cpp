@@ -158,17 +158,17 @@ bool LakeFeature::place(Level *level, Random *random, int x, int y, int z)
 	}
 
 	// 4J - brought forward from 1.8.2
-	if (Tile::tiles[tile]->material == Material::water)
-	{
-		for (int xx = 0; xx < 16; xx++)
-		{
-			for (int zz = 0; zz < 16; zz++)
-			{
-				int yy = 4;
-				if (level->shouldFreezeIgnoreNeighbors(x + xx, y + yy, z + zz)) level->setTileAndData(x + xx, y + yy, z + zz, Tile::ice_Id, 0, Tile::UPDATE_CLIENTS);
-			}
-		}
-	}
+	//if (Tile::tiles[tile]->material == Material::water)
+	//{
+	//	for (int xx = 0; xx < 16; xx++)
+	//	{
+	//		for (int zz = 0; zz < 16; zz++)
+	//		{
+	//			int yy = 4;
+	//			if (level->shouldFreezeIgnoreNeighbors(x + xx, y + yy, z + zz)) level->setTileAndData(x + xx, y + yy, z + zz, Tile::ice_Id, 0, Tile::UPDATE_CLIENTS);
+	//		}
+	//	}
+	//}
 
 	return true;
 }
