@@ -23,31 +23,26 @@ public:
 
 	static Biome *biomes[256];
 
-	static Biome *ocean;
-	static Biome *plains;
-	static Biome *desert;
-	static Biome *extremeHills;
-	static Biome *forest;
-	static Biome *taiga;
+	static Biome *rainForest;
 	static Biome *swampland;
-	static Biome *river;
+	static Biome *seasonalForest;
+	static Biome *forest;
+	static Biome *savanna;
+	static Biome *shrubland;
+	static Biome *taiga;
+	static Biome *desert;
+	static Biome *plains;
+	static Biome *iceDesert;
+	static Biome *tundra;
 	static Biome *hell;
 	static Biome *sky;
-	static Biome *frozenOcean;
-	static Biome *frozenRiver;
-	static Biome *iceFlats;
-	static Biome *iceMountains;
-	static Biome *mushroomIsland;
-	static Biome *mushroomIslandShore ;
-	static Biome *beaches;
-	static Biome *desertHills;
-	static Biome *forestHills;
-	static Biome *taigaHills;
-	static Biome *smallerExtremeHills;
-	static Biome *jungle;
-	static Biome *jungleHills;
 
-	static const int BIOME_COUNT = 23; // 4J Stu added
+	static Biome *map[4096];
+
+	static const int BIOME_COUNT = 13; // 4J Stu added
+
+	static Biome* getBiome(double x, double z);
+	static Biome* _getBiome(float x, float z);
 
 public:
 	wstring m_name;

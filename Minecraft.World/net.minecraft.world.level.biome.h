@@ -22,7 +22,7 @@
 #include "DesertBiome.h"
 #include "ExtremeHillsBiome.h"
 #include "OceanBiome.h"
-#include "PlainsBiome.h"
+#include "FlatBiome.h"
 #include "RiverBiome.h"
 
 // 1.1

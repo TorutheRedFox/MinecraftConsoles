@@ -2389,12 +2389,21 @@
     <ClInclude Include="AddEntityPacket.h" />
     <ClInclude Include="AddExperienceOrbPacket.h" />
     <ClInclude Include="AddGlobalEntityPacket.h" />
-    <ClInclude Include="AddIslandLayer.h" />
+    <ClInclude Include="AddIslandLayer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="AddMobPacket.h" />
-    <ClInclude Include="AddMushroomIslandLayer.h" />
+    <ClInclude Include="AddMushroomIslandLayer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="AddPaintingPacket.h" />
     <ClInclude Include="AddPlayerPacket.h" />
-    <ClInclude Include="AddSnowLayer.h" />
+    <ClInclude Include="AddSnowLayer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="AdminLogCommand.h" />
     <ClInclude Include="AgableMob.h" />
     <ClInclude Include="AirTile.h" />
@@ -2440,8 +2449,14 @@
     <ClInclude Include="Biome.h" />
     <ClInclude Include="BiomeCache.h" />
     <ClInclude Include="BiomeDecorator.h" />
-    <ClInclude Include="BiomeInitLayer.h" />
-    <ClInclude Include="BiomeOverrideLayer.h" />
+    <ClInclude Include="BiomeInitLayer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BiomeOverrideLayer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="BiomeSource.h" />
     <ClInclude Include="BirchFeature.h" />
     <ClInclude Include="Blaze.h" />
@@ -2649,7 +2664,10 @@
     <ClInclude Include="GoldenAppleItem.h" />
     <ClInclude Include="Golem.h" />
     <ClInclude Include="GroundBushFeature.h" />
-    <ClInclude Include="GrowMushroomIslandLayer.h" />
+    <ClInclude Include="GrowMushroomIslandLayer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="HalfSlabTile.h" />
     <ClInclude Include="HangingEntity.h" />
     <ClInclude Include="HangingEntityItem.h" />
@@ -2781,7 +2799,10 @@
     <ClInclude Include="RangedAttribute.h" />
     <ClInclude Include="Rarity.h" />
     <ClInclude Include="RedlightTile.h" />
-    <ClInclude Include="RegionHillsLayer.h" />
+    <ClInclude Include="RegionHillsLayer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="RepairContainer.h" />
     <ClInclude Include="AnvilMenu.h" />
     <ClInclude Include="RepairResultSlot.h" />
@@ -2815,7 +2836,10 @@
     <ClInclude Include="StoneButtonTile.h" />
     <ClInclude Include="StructureFeatureIO.h" />
     <ClInclude Include="StructureFeatureSavedData.h" />
-    <ClInclude Include="SwampRiversLayer.h" />
+    <ClInclude Include="SwampRiversLayer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="SwellGoal.h" />
     <ClInclude Include="TakeFlowerGoal.h" />
     <ClInclude Include="TamableAnimal.h" />
@@ -2867,7 +2891,10 @@
     <ClInclude Include="x64headers\xuiapp.h" />
     <ClInclude Include="x64headers\xuiresource.h" />
     <ClInclude Include="XZPacket.h" />
-    <ClInclude Include="ShoreLayer.h" />
+    <ClInclude Include="ShoreLayer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="SmallFireball.h" />
     <ClInclude Include="SnowMan.h" />
     <ClInclude Include="NetherBridgeFeature.h" />
@@ -2891,25 +2918,43 @@
     <ClInclude Include="TileEntityDataPacket.h" />
     <ClInclude Include="UntouchingEnchantment.h" />
     <ClInclude Include="UpdateGameRuleProgressPacket.h" />
-    <ClInclude Include="DownfallLayer.h" />
-    <ClInclude Include="DownfallMixerLayer.h" />
+    <ClInclude Include="DownfallLayer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="DownfallMixerLayer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="EnderMan.h" />
     <ClInclude Include="EntityDamageSource.h" />
     <ClInclude Include="ExperienceOrb.h" />
     <ClInclude Include="ExtremeHillsBiome.h" />
     <ClInclude Include="FenceGateTile.h" />
-    <ClInclude Include="FlatLayer.h" />
+    <ClInclude Include="FlatLayer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="FlatLevelSource.h" />
     <ClInclude Include="FoodConstants.h" />
     <ClInclude Include="FoodData.h" />
-    <ClInclude Include="FuzzyZoomLayer.h" />
+    <ClInclude Include="FuzzyZoomLayer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="GetInfoPacket.h" />
     <ClInclude Include="HugeMushroomFeature.h" />
     <ClInclude Include="HugeMushroomTile.h" />
     <ClInclude Include="IndirectEntityDamageSource.h" />
     <ClInclude Include="InstantenousMobEffect.h" />
-    <ClInclude Include="IntCache.h" />
-    <ClInclude Include="IslandLayer.h" />
+    <ClInclude Include="IntCache.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="IslandLayer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Layer.h" />
     <ClInclude Include="LeafTileItem.h" />
     <ClInclude Include="LevelSettings.h" />
@@ -2932,13 +2977,22 @@
     <ClInclude Include="PistonMovingPiece.h" />
     <ClInclude Include="PistonPieceEntity.h" />
     <ClInclude Include="PistonTileItem.h" />
-    <ClInclude Include="PlainsBiome.h" />
+    <ClInclude Include="FlatBiome.h" />
     <ClInclude Include="PlayerInfoPacket.h" />
     <ClInclude Include="RemoveMobEffectPacket.h" />
     <ClInclude Include="RiverBiome.h" />
-    <ClInclude Include="RiverInitLayer.h" />
-    <ClInclude Include="RiverLayer.h" />
-    <ClInclude Include="RiverMixerLayer.h" />
+    <ClInclude Include="RiverInitLayer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="RiverLayer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="RiverMixerLayer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="SandFeature.h" />
     <ClInclude Include="ServerSettingsChangedPacket.h" />
     <ClInclude Include="ChatPacket.h" />
@@ -3354,9 +3408,15 @@
     <ClInclude Include="Slime.h" />
     <ClInclude Include="Slot.h" />
     <ClInclude Include="SmoothFloat.h" />
-    <ClInclude Include="SmoothLayer.h" />
+    <ClInclude Include="SmoothLayer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="SmoothStoneBrickTile.h" />
-    <ClInclude Include="SmoothZoomLayer.h" />
+    <ClInclude Include="SmoothZoomLayer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Snowball.h" />
     <ClInclude Include="SnowballItem.h" />
     <ClInclude Include="SnowTile.h" />
@@ -3395,8 +3455,14 @@
     <ClInclude Include="TallGrass.h" />
     <ClInclude Include="TallGrassFeature.h" />
     <ClInclude Include="TeleportEntityPacket.h" />
-    <ClInclude Include="TemperatureLayer.h" />
-    <ClInclude Include="TemperatureMixerLayer.h" />
+    <ClInclude Include="TemperatureLayer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="TemperatureMixerLayer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="TextureChangePacket.h" />
     <ClInclude Include="TexturePacket.h" />
     <ClInclude Include="ThinFenceTile.h" />
@@ -3428,7 +3494,10 @@
     <ClInclude Include="VillagePieces.h" />
     <ClInclude Include="Villager.h" />
     <ClInclude Include="VineTile.h" />
-    <ClInclude Include="VoronoiZoom.h" />
+    <ClInclude Include="VoronoiZoom.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="WaterColor.h" />
     <ClInclude Include="WaterLevelChunk.h" />
     <ClInclude Include="WaterlilyFeature.h" />
@@ -3453,7 +3522,10 @@
     <ClInclude Include="ZonedChunkStorage.h" />
     <ClInclude Include="ZoneFile.h" />
     <ClInclude Include="ZoneIo.h" />
-    <ClInclude Include="ZoomLayer.h" />
+    <ClInclude Include="ZoomLayer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AABB.cpp" />
@@ -3465,12 +3537,21 @@
     <ClCompile Include="AddEntityPacket.cpp" />
     <ClCompile Include="AddExperienceOrbPacket.cpp" />
     <ClCompile Include="AddGlobalEntityPacket.cpp" />
-    <ClCompile Include="AddIslandLayer.cpp" />
+    <ClCompile Include="AddIslandLayer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="AddMobPacket.cpp" />
-    <ClCompile Include="AddMushroomIslandLayer.cpp" />
+    <ClCompile Include="AddMushroomIslandLayer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="AddPaintingPacket.cpp" />
     <ClCompile Include="AddPlayerPacket.cpp" />
-    <ClCompile Include="AddSnowLayer.cpp" />
+    <ClCompile Include="AddSnowLayer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="AgableMob.cpp" />
     <ClCompile Include="AirTile.cpp" />
     <ClCompile Include="AmbientCreature.cpp" />
@@ -3512,8 +3593,14 @@
     <ClCompile Include="Biome.cpp" />
     <ClCompile Include="BiomeCache.cpp" />
     <ClCompile Include="BiomeDecorator.cpp" />
-    <ClCompile Include="BiomeInitLayer.cpp" />
-    <ClCompile Include="BiomeOverrideLayer.cpp" />
+    <ClCompile Include="BiomeInitLayer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BiomeOverrideLayer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="BiomeSource.cpp" />
     <ClCompile Include="BirchFeature.cpp" />
     <ClCompile Include="Blaze.cpp" />
@@ -3835,7 +3922,10 @@
     <ClCompile Include="GoldenAppleItem.cpp" />
     <ClCompile Include="Golem.cpp" />
     <ClCompile Include="GroundBushFeature.cpp" />
-    <ClCompile Include="GrowMushroomIslandLayer.cpp" />
+    <ClCompile Include="GrowMushroomIslandLayer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="HalfSlabTile.cpp" />
     <ClCompile Include="HangingEntity.cpp" />
     <ClCompile Include="HangingEntityItem.cpp" />
@@ -3904,7 +3994,10 @@
     <ClCompile Include="RandomStrollGoal.cpp" />
     <ClCompile Include="Rarity.cpp" />
     <ClCompile Include="RedlightTile.cpp" />
-    <ClCompile Include="RegionHillsLayer.cpp" />
+    <ClCompile Include="RegionHillsLayer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="RepairContainer.cpp" />
     <ClCompile Include="AnvilMenu.cpp" />
     <ClCompile Include="RepairResultSlot.cpp" />
@@ -3919,7 +4012,10 @@
     <ClCompile Include="SkullTile.cpp" />
     <ClCompile Include="SkullTileEntity.cpp" />
     <ClCompile Include="SparseDataStorage.cpp" />
-    <ClCompile Include="SwampRiversLayer.cpp" />
+    <ClCompile Include="SwampRiversLayer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="SwellGoal.cpp" />
     <ClCompile Include="TakeFlowerGoal.cpp" />
     <ClCompile Include="TamableAnimal.cpp" />
@@ -3962,7 +4058,10 @@
     <ClCompile Include="WoodTile.cpp" />
     <ClCompile Include="WoolCarpetTile.cpp" />
     <ClCompile Include="XZPacket.cpp" />
-    <ClCompile Include="ShoreLayer.cpp" />
+    <ClCompile Include="ShoreLayer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="SparseLightStorage.cpp" />
     <ClCompile Include="SpikeFeature.cpp" />
     <ClCompile Include="NetherSphere.cpp" />
@@ -3987,8 +4086,14 @@
     <ClCompile Include="Distort.cpp" />
     <ClCompile Include="DoorItem.cpp" />
     <ClCompile Include="DoorTile.cpp" />
-    <ClCompile Include="DownfallLayer.cpp" />
-    <ClCompile Include="DownfallMixerLayer.cpp" />
+    <ClCompile Include="DownfallLayer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="DownfallMixerLayer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="DungeonFeature.cpp" />
     <ClCompile Include="DyePowderItem.cpp" />
     <ClCompile Include="EggItem.cpp" />
@@ -4021,7 +4126,10 @@
     <ClCompile Include="FishingHook.cpp" />
     <ClCompile Include="FishingRodItem.cpp" />
     <ClCompile Include="FixedBiomeSource.cpp" />
-    <ClCompile Include="FlatLayer.cpp" />
+    <ClCompile Include="FlatLayer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="FlatLevelSource.cpp" />
     <ClCompile Include="FlintAndSteelItem.cpp" />
     <ClCompile Include="FloatBuffer.cpp" />
@@ -4038,7 +4146,10 @@
     <ClCompile Include="FurnaceResultSlot.cpp" />
     <ClCompile Include="FurnaceTile.cpp" />
     <ClCompile Include="FurnaceTileEntity.cpp" />
-    <ClCompile Include="FuzzyZoomLayer.cpp" />
+    <ClCompile Include="FuzzyZoomLayer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="GameEventPacket.cpp" />
     <ClCompile Include="GeneralStat.cpp" />
     <ClCompile Include="GetInfoPacket.cpp" />
@@ -4074,11 +4185,17 @@
     <ClCompile Include="InputStreamReader.cpp" />
     <ClCompile Include="InstantenousMobEffect.cpp" />
     <ClCompile Include="IntBuffer.cpp" />
-    <ClCompile Include="IntCache.cpp" />
+    <ClCompile Include="IntCache.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="InteractPacket.cpp" />
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="InventoryMenu.cpp" />
-    <ClCompile Include="IslandLayer.cpp" />
+    <ClCompile Include="IslandLayer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="ItemEntity.cpp" />
     <ClCompile Include="ItemInstance.cpp" />
@@ -4090,7 +4207,9 @@
     <ClCompile Include="LargeCaveFeature.cpp" />
     <ClCompile Include="LargeFeature.cpp" />
     <ClCompile Include="LargeHellCaveFeature.cpp" />
-    <ClCompile Include="Layer.cpp" />
+    <ClCompile Include="Layer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="LeafTile.cpp" />
     <ClCompile Include="LeafTileItem.cpp" />
     <ClCompile Include="LevelConflictException.cpp" />
@@ -4420,7 +4539,7 @@
     <ClCompile Include="PistonMovingPiece.cpp" />
     <ClCompile Include="PistonPieceEntity.cpp" />
     <ClCompile Include="PistonTileItem.cpp" />
-    <ClCompile Include="PlainsBiome.cpp" />
+    <ClCompile Include="FlatBiome.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerActionPacket.cpp" />
     <ClCompile Include="PlayerCommandPacket.cpp" />
@@ -4512,9 +4631,18 @@
     <ClCompile Include="RespawnPacket.cpp" />
     <ClCompile Include="ResultContainer.cpp" />
     <ClCompile Include="ResultSlot.cpp" />
-    <ClCompile Include="RiverInitLayer.cpp" />
-    <ClCompile Include="RiverLayer.cpp" />
-    <ClCompile Include="RiverMixerLayer.cpp" />
+    <ClCompile Include="RiverInitLayer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="RiverLayer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="RiverMixerLayer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Rotate.cpp" />
     <ClCompile Include="SaddleItem.cpp" />
     <ClCompile Include="SandFeature.cpp" />
@@ -4626,9 +4754,15 @@
     <ClCompile Include="Slime.cpp" />
     <ClCompile Include="Slot.cpp" />
     <ClCompile Include="SmoothFloat.cpp" />
-    <ClCompile Include="SmoothLayer.cpp" />
+    <ClCompile Include="SmoothLayer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="SmoothStoneBrickTile.cpp" />
-    <ClCompile Include="SmoothZoomLayer.cpp" />
+    <ClCompile Include="SmoothZoomLayer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Snowball.cpp" />
     <ClCompile Include="SnowballItem.cpp" />
     <ClCompile Include="SnowTile.cpp" />
@@ -4753,8 +4887,14 @@
     <ClCompile Include="TallGrass.cpp" />
     <ClCompile Include="TallGrassFeature.cpp" />
     <ClCompile Include="TeleportEntityPacket.cpp" />
-    <ClCompile Include="TemperatureLayer.cpp" />
-    <ClCompile Include="TemperatureMixerLayer.cpp" />
+    <ClCompile Include="TemperatureLayer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="TemperatureMixerLayer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="TextureChangePacket.cpp" />
     <ClCompile Include="TexturePacket.cpp" />
     <ClCompile Include="ThinFenceTile.cpp" />
@@ -4784,7 +4924,10 @@
     <ClCompile Include="VillagePieces.cpp" />
     <ClCompile Include="Villager.cpp" />
     <ClCompile Include="VineTile.cpp" />
-    <ClCompile Include="VoronoiZoom.cpp" />
+    <ClCompile Include="VoronoiZoom.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="WaterColor.cpp" />
     <ClCompile Include="WaterLevelChunk.cpp" />
     <ClCompile Include="WaterlilyFeature.cpp" />
@@ -4979,7 +5122,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ContentPackage_NO_TU|ORBIS'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|ORBIS'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="ZoomLayer.cpp" />
+    <ClCompile Include="ZoomLayer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

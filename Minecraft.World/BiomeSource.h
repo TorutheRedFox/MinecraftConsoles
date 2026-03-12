@@ -13,8 +13,14 @@ class LevelType;
 class BiomeSource
 {
 private:
-	shared_ptr<Layer> layer;
-	shared_ptr<Layer> zoomedLayer;
+	//shared_ptr<Layer> layer;
+	//shared_ptr<Layer> zoomedLayer;
+	doubleArray temperatures;
+	doubleArray downfalls;
+	doubleArray noises;
+	shared_ptr<PerlinSimplexNoise> temperatureMap;
+	shared_ptr<PerlinSimplexNoise> downfallMap;
+	shared_ptr<PerlinSimplexNoise> noiseMap;
 public:
 	static const int CACHE_DIAMETER = 256;
 

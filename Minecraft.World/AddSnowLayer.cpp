@@ -29,8 +29,9 @@ intArray AddSnowLayer::getArea(int xo, int yo, int w, int h)
 			else
 			{
                 int r = nextRandom(5);
-                if (r == 0) r = Biome::iceFlats->id;
-                else r = 1;
+                //if (r == 0) r = Biome::iceFlats->id;
+                //else r = 1;
+                r = 1;
                 result[x + y * w] = r;
             }
         }

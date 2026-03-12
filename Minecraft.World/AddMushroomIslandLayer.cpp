@@ -27,14 +27,14 @@ intArray AddMushroomIslandLayer::getArea(int xo, int yo, int w, int h)
             int n4 = p[(x + 2) + (y + 2) * pw];
             int c = p[(x + 1) + (y + 1) * pw];
             initRandom(x + xo, y + yo);
-            if (c == 0 && (n1 == 0 && n2 == 0 && n3 == 0 && n4 == 0) && nextRandom(100) == 0)
-			{
-                result[x + y * w] = Biome::mushroomIsland->id;
-            }
-			else
-			{
+            //if (c == 0 && (n1 == 0 && n2 == 0 && n3 == 0 && n4 == 0) && nextRandom(100) == 0)
+			//{
+            //    result[x + y * w] = Biome::mushroomIsland->id;
+            //}
+			//else
+			//{
                 result[x + y * w] = c;
-            }
+            //}
         }
     }
     return result;

@@ -2,9 +2,9 @@
 
 #include "Biome.h"
 
-class PlainsBiome : public Biome
+class FlatBiome : public Biome
 {
 	friend class Biome;
 protected:
-	PlainsBiome(int id);
+	FlatBiome(int id);
 };

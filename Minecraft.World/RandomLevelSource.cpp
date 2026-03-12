@@ -46,6 +46,7 @@ RandomLevelSource::RandomLevelSource(Level *level, int64_t seed, bool generateSt
 	lperlinNoise1 = new PerlinNoise(random, 16);
 	lperlinNoise2 = new PerlinNoise(random, 16);
 	perlinNoise1 = new PerlinNoise(random, 8);
+	perlinNoise2 = new PerlinNoise(random, 4);
 	perlinNoise3 = new PerlinNoise(random, 4);
 
 	scaleNoise = new PerlinNoise(random, 10);
@@ -80,6 +81,7 @@ RandomLevelSource::~RandomLevelSource()
 	delete lperlinNoise1;
 	delete lperlinNoise2;
 	delete perlinNoise1;
+	delete perlinNoise2;
 	delete perlinNoise3;
 
 	delete scaleNoise;
@@ -595,29 +597,40 @@ doubleArray RandomLevelSource::getHeights(doubleArray buffer, int x, int y, int 
 			float ddd = 0;
 			float pow = 0;
 
-			int rr = 2;
+			//int rr = 2;
 
-			Biome *mb = biomes[(xx + 2) + (zz + 2) * (xSize + 5)];
-			for (int xb = -rr; xb <= rr; xb++)
-			{
-				for (int zb = -rr; zb <= rr; zb++)
-				{
-					Biome *b = biomes[(xx + xb + 2) + (zz + zb + 2) * (xSize + 5)];
-					float ppp = pows[xb + 2 + (zb + 2) * 5] / (b->depth + 2);
-					if (b->depth > mb->depth)
-					{
-						ppp /= 2;
-					}
-					sss += b->scale * ppp;
-					ddd += b->depth * ppp;
-					pow += ppp;
-				}
-			}
-			sss /= pow;
-			ddd /= pow;
+			//Biome *mb = biomes[(xx + 2) + (zz + 2) * (xSize + 5)];
+			//for (int xb = -rr; xb <= rr; xb++)
+			//{
+			//	for (int zb = -rr; zb <= rr; zb++)
+			//	{
+			//		Biome *b = biomes[(xx + xb + 2) + (zz + zb + 2) * (xSize + 5)];
+			//		float ppp = pows[xb + 2 + (zb + 2) * 5] / (b->depth + 2);
+			//		if (b->depth > mb->depth)
+			//		{
+			//			ppp /= 2;
+			//		}
+			//		sss += b->scale * ppp;
+			//		ddd += b->depth * ppp;
+			//		pow += ppp;
+			//	}
+			//}
+			//sss /= pow;
+			//ddd /= pow;
+			//
+			//sss = sss * 0.9f + 0.1f;
+			//ddd = (ddd * 4 - 1) / 8.0f;
 
-			sss = sss * 0.9f + 0.1f;
-			ddd = (ddd * 4 - 1) / 8.0f;
+			double temperature = level->getBiomeSource()->getTemperature(xx, 0, zz);
+			double downfall = level->getBiomeSource()->getDownfall(xx, zz) * temperature;
+
+			pow = 1.0 - downfall;
+			pow *= pow;
+			pow *= pow;
+			pow = 1.0 - pow;
+
+			sss = ((sr[pp] + 256) / 512.0) * pow;
+			if (sss > 1.0) sss = 1.0;
 
 			double rdepth = (dr[pp] / 8000.0);
 			if (rdepth < 0) rdepth = -rdepth * 0.3;
@@ -629,12 +642,17 @@ doubleArray RandomLevelSource::getHeights(doubleArray buffer, int x, int y, int 
 				if (rdepth < -1) rdepth = -1;
 				rdepth = rdepth / 1.4;
 				rdepth /= 2;
+
+				sss = 0.0;
 			}
 			else
 			{
 				if (rdepth > 1) rdepth = 1;
 				rdepth = rdepth / 8;
 			}
+
+			if (sss < 0) sss = 0;
+			sss += 0.5;
 
 			pp++;
 
@@ -773,17 +791,17 @@ void RandomLevelSource::postProcess(ChunkSource *parent, int xt, int zt)
 	bool hasVillage = false;
 
 	PIXBeginNamedEvent(0,"Structure postprocessing");
-	if (generateStructures)
-	{
-		mineShaftFeature->postProcess(level, pprandom, xt, zt);
-		hasVillage = villageFeature->postProcess(level, pprandom, xt, zt);
-		strongholdFeature->postProcess(level, pprandom, xt, zt);
-		scatteredFeature->postProcess(level, random, xt, zt);
-	}
+	//if (generateStructures)
+	//{
+	//	mineShaftFeature->postProcess(level, pprandom, xt, zt);
+	//	hasVillage = villageFeature->postProcess(level, pprandom, xt, zt);
+	//	strongholdFeature->postProcess(level, pprandom, xt, zt);
+	//	scatteredFeature->postProcess(level, random, xt, zt);
+	//}
 	PIXEndNamedEvent();
 
 	PIXBeginNamedEvent(0,"Lakes");
-	if (biome != Biome::desert && biome != Biome::desertHills)
+	//if (biome != Biome::desert && biome != Biome::desertHills)
 	{
 		if (!hasVillage && pprandom->nextInt(4) == 0)
 		{
@@ -819,6 +837,17 @@ void RandomLevelSource::postProcess(ChunkSource *parent, int xt, int zt)
 		int z = zo + pprandom->nextInt(16) + 8;
 		MonsterRoomFeature mrf;
 		mrf.place(level, pprandom, x, y, z);
+	}
+	PIXEndNamedEvent();
+
+	PIXBeginNamedEvent(0, "Clay");
+	for (int i = 0; i < 8; i++)
+	{
+		int x = xo + pprandom->nextInt(16);
+		int y = pprandom->nextInt(Level::genDepth);
+		int z = zo + pprandom->nextInt(16);
+		ClayFeature cf(32);
+		cf.place(level, pprandom, x, y, z);
 	}
 	PIXEndNamedEvent();
 

@@ -27,6 +27,7 @@ private:
 	PerlinNoise *lperlinNoise1;
 	PerlinNoise *lperlinNoise2;
 	PerlinNoise *perlinNoise1;
+	PerlinNoise *perlinNoise2;
 	PerlinNoise *perlinNoise3;
 
 public:

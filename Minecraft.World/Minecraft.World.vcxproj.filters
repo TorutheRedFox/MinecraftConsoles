@@ -1832,7 +1832,7 @@
     <ClInclude Include="OceanBiome.h">
       <Filter>net\minecraft\world\level\biome</Filter>
     </ClInclude>
-    <ClInclude Include="PlainsBiome.h">
+    <ClInclude Include="FlatBiome.h">
       <Filter>net\minecraft\world\level\biome</Filter>
     </ClInclude>
     <ClInclude Include="RiverBiome.h">
@@ -4483,7 +4483,7 @@
     <ClCompile Include="DesertBiome.cpp">
       <Filter>net\minecraft\world\level\biome</Filter>
     </ClCompile>
-    <ClCompile Include="PlainsBiome.cpp">
+    <ClCompile Include="FlatBiome.cpp">
       <Filter>net\minecraft\world\level\biome</Filter>
     </ClCompile>
     <ClCompile Include="SwampBiome.cpp">

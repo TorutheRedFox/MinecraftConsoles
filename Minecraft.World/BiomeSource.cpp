@@ -11,8 +11,8 @@
 // 4J - removal of separate temperature & downfall layers brought forward from 1.2.3
 void BiomeSource::_init()
 {
-	layer = nullptr;
-	zoomedLayer = nullptr;
+	//layer = nullptr;
+	//zoomedLayer = nullptr;
 
 	cache = new BiomeCache(this);
 
@@ -20,21 +20,26 @@ void BiomeSource::_init()
 	playerSpawnBiomes.push_back(Biome::taiga);
 	// 4J-PB - Moving forward plains as a spawnable biome (mainly for the Superflat world)
 	playerSpawnBiomes.push_back(Biome::plains);
-	playerSpawnBiomes.push_back(Biome::taigaHills);
-	playerSpawnBiomes.push_back(Biome::forestHills);
-	playerSpawnBiomes.push_back(Biome::jungle);
-	playerSpawnBiomes.push_back(Biome::jungleHills);
+	//playerSpawnBiomes.push_back(Biome::taigaHills);
+	//playerSpawnBiomes.push_back(Biome::forestHills);
+	//playerSpawnBiomes.push_back(Biome::jungle);
+	//playerSpawnBiomes.push_back(Biome::jungleHills);
 }
 
 void BiomeSource::_init(int64_t seed, LevelType *generator)
 {
 	_init();
 
-	LayerArray layers = Layer::getDefaultLayers(seed, generator);
-	layer = layers[0];
-	zoomedLayer = layers[1];
+	//LayerArray layers = Layer::getDefaultLayers(seed, generator);
+	//layer = layers[0];
+	//zoomedLayer = layers[1];
+	//
+	//delete [] layers.data;
 
-	delete [] layers.data;
+
+	temperatureMap = make_shared<PerlinSimplexNoise>(new Random(seed * 9871), 4);
+	downfallMap = make_shared<PerlinSimplexNoise>(new Random(seed * 39811), 4);
+	noiseMap = make_shared<PerlinSimplexNoise>(new Random(seed * 543321), 4);
 }
 
 BiomeSource::BiomeSource()
@@ -66,12 +71,16 @@ Biome *BiomeSource::getBiome(ChunkPos *cp)
 
 Biome *BiomeSource::getBiome(int x, int z)
 {
-	return cache->getBiome(x, z);
+	return getBiomeBlock(x, z, 1, 1)[0];
 }
 
 float BiomeSource::getDownfall(int x, int z) const
 {
-	return cache->getDownfall(x, z);
+	//return cache->getDownfall(x, z);
+	floatArray downfalls = getDownfallBlock(x, z, 1, 1);
+	float downfall = downfalls[0];
+	delete [] downfalls.data;
+	return downfall;
 }
 
 // 4J - note that caller is responsible for deleting returned array. temperatures array is for output only.
@@ -86,21 +95,18 @@ floatArray BiomeSource::getDownfallBlock(int x, int z, int w, int h) const
 // 4J - removal of separate temperature & downfall layers brought forward from 1.2.3
 void BiomeSource::getDownfallBlock(floatArray &downfalls, int x, int z, int w, int h) const
 {
-	IntCache::releaseAll();
-	//if (downfalls == nullptr || downfalls->length < w * h)
-	if (downfalls.data == nullptr || downfalls.length < w * h)
+	doubleArray buffer(w * h);
+
+	buffer = downfallMap->getRegion(buffer, x, z, w, h, 0.05, 0.05, 0.5);
+
+	if (downfalls.data == nullptr || static_cast<int>(downfalls.length) < w * h)
 	{
-		if(downfalls.data != nullptr) delete [] downfalls.data;
+		if (downfalls.data) delete[] downfalls.data;
 		downfalls = floatArray(w * h);
 	}
-
-	intArray result = zoomedLayer->getArea(x, z, w, h);
-	for (int i = 0; i < w * h; i++)
-	{
-		float d = static_cast<float>(Biome::biomes[result[i]]->getDownfallInt()) / 65536.0f;
-		if (d > 1) d = 1;
-		downfalls[i] = d;
-	}
+	
+	for (unsigned int i = 0; i < downfalls.length; i++)
+		downfalls[i] = (float)buffer[i];
 }
 
 BiomeCache::Block *BiomeSource::getBlockAt(int x, int y)
@@ -130,20 +136,37 @@ floatArray BiomeSource::getTemperatureBlock(int x, int z, int w, int h) const
 // 4J - removal of separate temperature & downfall layers brought forward from 1.2.3
 void BiomeSource::getTemperatureBlock(floatArray& temperatures, int x, int z, int w, int h) const
 {
-	IntCache::releaseAll();
-	//if (temperatures == null || temperatures.length < w * h) {
-	if (temperatures.data == nullptr || temperatures.length < w * h)
+	doubleArray _temperatures(w * h);
+	doubleArray noises(w * h);
+	_temperatures = temperatureMap->getRegion(_temperatures, x, z, w, h, 0.025, 0.025, 0.25);
+	noises = noiseMap->getRegion(noises, x, z, w, h, 0.25, 0.25, 1.0 / 1.7);
+
+	if (temperatures.data == nullptr || static_cast<int>(temperatures.length) < w * h)
 	{
-		if( temperatures.data != nullptr ) delete [] temperatures.data;
+		if (temperatures.data) delete[] temperatures.data;
 		temperatures = floatArray(w * h);
 	}
+	
+	int s = 0;
 
-	intArray result = zoomedLayer->getArea(x, z, w, h);
-	for (int i = 0; i < w * h; i++)
-	{
-		float t = static_cast<float>(Biome::biomes[result[i]]->getTemperatureInt()) / 65536.0f;
-		if (t > 1) t = 1;
-		temperatures[i] = t;
+	for (int xx = 0; xx < w; xx++) {
+		for (int zz = 0; zz < h; zz++) {
+			double noise = noises[s] * 1.1 + 0.5;
+			double amp = 0.01;
+			double tempoffset = 1.0 - amp;
+			double temp = (_temperatures[s] * 0.15 + 0.7) * tempoffset + noise * amp;
+			temp = 1.0 - (1.0 - temp) * (1.0 - temp);
+			if (temp < 0.0) {
+				temp = 0.0;
+			}
+
+			if (temp > 1.0) {
+				temp = 1.0;
+			}
+
+			temperatures[s] = temp;
+			s++;
+		}
 	}
 }
 
@@ -157,13 +180,13 @@ BiomeArray BiomeSource::getRawBiomeBlock(int x, int z, int w, int h) const
 // 4J added
 void BiomeSource::getRawBiomeIndices(intArray &biomes, int x, int z, int w, int h) const
 {
-	IntCache::releaseAll();
-
-	intArray result = layer->getArea(x, z, w, h);
-	for (int i = 0; i < w * h; i++)
-	{
-		biomes[i] = result[i];
-	}
+	//IntCache::releaseAll();
+	//
+	//intArray result = layer->getArea(x, z, w, h);
+	//for (int i = 0; i < w * h; i++)
+	//{
+	//	biomes[i] = result[i];
+	//}
 }
 
 void BiomeSource::getRawBiomeBlock(BiomeArray &biomes, int x, int z, int w, int h) const
@@ -176,17 +199,26 @@ void BiomeSource::getRawBiomeBlock(BiomeArray &biomes, int x, int z, int w, int 
 		biomes = BiomeArray(w * h);
 	}
 
-	intArray result = layer->getArea(x, z, w, h);
-	for (int i = 0; i < w * h; i++)
+//	intArray result = layer->getArea(x, z, w, h);
+//	for (int i = 0; i < w * h; i++)
+//	{
+//		biomes[i] = Biome::biomes[result[i]];
+//#ifndef _CONTENT_PACKAGE
+//		if(biomes[i] == nullptr)
+//		{
+//			app.DebugPrintf("Tried to assign null biome %d\n", result[i]);
+//			__debugbreak();
+//		}
+//#endif
+//	}
+	int s = 0;
+
+	for (int xx = x; xx < x + w; xx++)
 	{
-		biomes[i] = Biome::biomes[result[i]];
-#ifndef _CONTENT_PACKAGE
-		if(biomes[i] == nullptr)
+		for (int zz = z; zz < z + h; zz++)
 		{
-			app.DebugPrintf("Tried to assign null biome %d\n", result[i]);
-			__debugbreak();
+			biomes[s++] = Biome::getBiome(xx, zz);
 		}
-#endif
 	}
 }
 
@@ -222,11 +254,51 @@ void BiomeSource::getBiomeBlock(BiomeArray& biomes, int x, int z, int w, int h, 
 		//return biomes;
 	}
 
-	intArray result = zoomedLayer->getArea(x, z, w, h);
-	for (int i = 0; i < w * h; i++)
-	{
-		biomes[i] = Biome::biomes[result[i]];
+	doubleArray temperatures(w * h);
+	doubleArray downfalls(w * h);
+	doubleArray noises(w * h);
+
+	temperatures = temperatureMap->getRegion(temperatures, x, z, w, h, 0.025, 0.025, 1.0 / 4.0);
+	downfalls = downfallMap->getRegion(downfalls, x, z, w, h, 0.005, 0.05, 1.0 / 3.0);
+	noises = noiseMap->getRegion(noises, x, z, w, h, 0.25, 0.25, 1.0 / 1.7);
+
+	int s = 0;
+
+	for (int xx = 0; xx < w; xx++) {
+		for (int zz = 0; zz < h; zz++) {
+			double noise = noises[s] * 1.1 + 0.5;
+			double noiseAmp = 0.01;
+			double amp = 1.0 - noiseAmp;
+			double temp = (temperatures[s] * 0.15 + 0.7) * amp + noise * noiseAmp;
+			double downfall = (downfalls[s] * 0.15 + 0.5) * amp + noise * noiseAmp;
+			temp = 1.0 - (1.0 - temp) * (1.0 - temp);
+			if (temp < 0.0) {
+				temp = 0.0;
+			}
+
+			if (downfall < 0.0) {
+				downfall = 0.0;
+			}
+
+			if (temp > 1.0) {
+				temp = 1.0;
+			}
+
+			if (downfall > 1.0) {
+				downfall = 1.0;
+			}
+
+			temperatures.data[s] = temp;
+			downfalls.data[s] = downfall;
+			biomes[s++] = Biome::getBiome(temp, downfall);
+		}
 	}
+
+	//intArray result = zoomedLayer->getArea(x, z, w, h);
+	//for (int i = 0; i < w * h; i++)
+	//{
+	//	biomes[i] = Biome::biomes[result[i]];
+	//}
 }
 
 
@@ -261,11 +333,52 @@ void BiomeSource::getBiomeIndexBlock(byteArray& biomeIndices, int x, int z, int 
 		//return biomes;
 	}
 
-	intArray result = zoomedLayer->getArea(x, z, w, h);
-	for (int i = 0; i < w * h; i++)
-	{
-		biomeIndices[i] = static_cast<byte>(result[i]);
+
+	doubleArray temperatures(w * h);
+	doubleArray downfalls(w * h);
+	doubleArray noises(w * h);
+
+	temperatures = temperatureMap->getRegion(temperatures, x, z, w, h, 0.025, 0.025, 0.25);
+	downfalls = downfallMap->getRegion(downfalls, x, z, w, h, 0.025, 0.025, 0.25);
+	noises = noiseMap->getRegion(noises, x, z, w, h, 0.25, 0.25, 1.0 / 1.7);
+
+	int s = 0;
+
+	for (int xx = 0; xx < w; xx++) {
+		for (int zz = 0; zz < h; zz++) {
+			double noise = noises[s] * 1.1 + 0.5;
+			double noiseAmp = 0.01;
+			double amp = 1.0 - noiseAmp;
+			double temp = (temperatures[s] * 0.15 + 0.7) * amp + noise * noiseAmp;
+			double downfall = (downfalls[s] * 0.15 + 0.5) * amp + noise * noiseAmp;
+			temp = 1.0 - (1.0 - temp) * (1.0 - temp);
+			if (temp < 0.0) {
+				temp = 0.0;
+			}
+
+			if (downfall < 0.0) {
+				downfall = 0.0;
+			}
+
+			if (temp > 1.0) {
+				temp = 1.0;
+			}
+
+			if (downfall > 1.0) {
+				downfall = 1.0;
+			}
+
+			temperatures.data[s] = temp;
+			downfalls.data[s] = downfall;
+			biomeIndices[s++] = Biome::getBiome(temp, downfall)->id;
+		}
 	}
+
+	//intArray result = zoomedLayer->getArea(x, z, w, h);
+	//for (int i = 0; i < w * h; i++)
+	//{
+	//	biomeIndices[i] = static_cast<byte>(result[i]);
+	//}
 }
 
 /**
@@ -286,12 +399,12 @@ bool BiomeSource::containsOnly(int x, int z, int r, vector<Biome *> allowed)
 	int w = x1 - x0 + 1;
 	int h = z1 - z0 + 1;
 
-	intArray biomes = layer->getArea(x0, z0, w, h);
-	for (int i = 0; i < w * h; i++)
-	{
-		Biome *b = Biome::biomes[biomes[i]];
-		if (find(allowed.begin(), allowed.end(), b) == allowed.end()) return false;
-	}
+	//intArray biomes = layer->getArea(x0, z0, w, h);
+	//for (int i = 0; i < w * h; i++)
+	//{
+	//	Biome *b = Biome::biomes[biomes[i]];
+	//	if (find(allowed.begin(), allowed.end(), b) == allowed.end()) return false;
+	//}
 
 	return true;
 }
@@ -314,12 +427,12 @@ bool BiomeSource::containsOnly(int x, int z, int r, Biome *allowed)
 	int w = x1 - x0;
 	int h = z1 - z0;
 	int biomesCount = w*h;
-	intArray biomes = layer->getArea(x0, z0, w, h);
-	for (unsigned int i = 0; i < biomesCount; i++)
-	{
-		Biome *b = Biome::biomes[biomes[i]];
-		if (allowed != b) return false;
-	}
+	//intArray biomes = layer->getArea(x0, z0, w, h);
+	//for (unsigned int i = 0; i < biomesCount; i++)
+	//{
+	//	Biome *b = Biome::biomes[biomes[i]];
+	//	if (allowed != b) return false;
+	//}
 
 	return true;
 }
@@ -340,24 +453,24 @@ TilePos *BiomeSource::findBiome(int x, int z, int r, Biome *toFind, Random *rand
 
 	int w = x1 - x0 + 1;
 	int h = z1 - z0 + 1;
-	intArray biomes = layer->getArea(x0, z0, w, h);
+	//intArray biomes = layer->getArea(x0, z0, w, h);
 	TilePos *res = nullptr;
-	int found = 0;
-	int biomesCount = w*h;
-	for (unsigned int i = 0; i < biomesCount; i++)
-	{
-		int xx = x0 + i % w;
-		int zz = z0 + i / w;
-		Biome *b = Biome::biomes[biomes[i]];
-		if (b == toFind)
-		{
-			if (res == nullptr || random->nextInt(found + 1) == 0)
-			{
-				res = new TilePos(xx, 0, zz);
-				found++;
-			}
-		}
-	}
+	//int found = 0;
+	//int biomesCount = w*h;
+	//for (unsigned int i = 0; i < biomesCount; i++)
+	//{
+	//	int xx = x0 + i % w;
+	//	int zz = z0 + i / w;
+	//	Biome *b = Biome::biomes[biomes[i]];
+	//	if (b == toFind)
+	//	{
+	//		if (res == nullptr || random->nextInt(found + 1) == 0)
+	//		{
+	//			res = new TilePos(xx, 0, zz);
+	//			found++;
+	//		}
+	//	}
+	//}
 
 	return res;
 }
@@ -379,24 +492,24 @@ TilePos *BiomeSource::findBiome(int x, int z, int r, vector<Biome *> allowed, Ra
 	int w = x1 - x0 + 1;
 	int h = z1 - z0 + 1;
 	MemSect(50);
-	intArray biomes = layer->getArea(x0, z0, w, h);
+	//intArray biomes = layer->getArea(x0, z0, w, h);
 	TilePos *res = nullptr;
-	int found = 0;
-	for (unsigned int i = 0; i < w * h; i++)
-	{
-		int xx = (x0 + i % w) << 2;
-		int zz = (z0 + i / w) << 2;
-		Biome *b = Biome::biomes[biomes[i]];
-		if (find(allowed.begin(), allowed.end(), b) != allowed.end())
-		{
-			if (res == nullptr || random->nextInt(found + 1) == 0)
-			{
-				delete res;
-				res = new TilePos(xx, 0, zz);
-				found++;
-			}
-		}
-	}
+	//int found = 0;
+	//for (unsigned int i = 0; i < w * h; i++)
+	//{
+	//	int xx = (x0 + i % w) << 2;
+	//	int zz = (z0 + i / w) << 2;
+	//	Biome *b = Biome::biomes[biomes[i]];
+	//	if (find(allowed.begin(), allowed.end(), b) != allowed.end())
+	//	{
+	//		if (res == nullptr || random->nextInt(found + 1) == 0)
+	//		{
+	//			delete res;
+	//			res = new TilePos(xx, 0, zz);
+	//			found++;
+	//		}
+	//	}
+	//}
 	MemSect(0);
 
 	return res;
@@ -453,27 +566,27 @@ int64_t BiomeSource::findSeed(LevelType *generator)
 			int tryCount = 0;
 
 			// Just keeping trying to generate seeds until we find one that matches our criteria
-			do
-			{
-				int64_t seed = pr->nextLong();
-				BiomeSource *biomeSource = new BiomeSource(seed,generator);
-
-				biomeSource->getRawBiomeIndices(indices, biomeOffset, biomeOffset, biomeWidth, biomeWidth);
-				getFracs(indices, toCompare);
-
-				matchFound = getIsMatch( toCompare );
-
-				if( matchFound ) bestSeed = seed;
-
-				delete biomeSource;
-				tryCount++;
-
-				mcprogress->progressStagePercentage( tryCount % 100 );
-#ifdef __PSVITA__
-			} while (!matchFound && *pServerRunning);
-#else
-			} while (!matchFound);
-#endif
+//			do
+//			{
+//				int64_t seed = pr->nextLong();
+//				BiomeSource *biomeSource = new BiomeSource(seed,generator);
+//
+//				biomeSource->getRawBiomeIndices(indices, biomeOffset, biomeOffset, biomeWidth, biomeWidth);
+//				getFracs(indices, toCompare);
+//
+//				matchFound = getIsMatch( toCompare );
+//
+//				if( matchFound ) bestSeed = seed;
+//
+//				delete biomeSource;
+//				tryCount++;
+//
+//				mcprogress->progressStagePercentage( tryCount % 100 );
+//#ifdef __PSVITA__
+//			} while (!matchFound && *pServerRunning);
+//#else
+//			} while (!matchFound);
+//#endif
 
 			// Clean up
 			delete pr;
@@ -564,29 +677,18 @@ bool BiomeSource::getIsMatch(float *frac)
 {
 	// A true for a particular biome type here marks it as one that *has* to be present
 	static const bool critical[Biome::BIOME_COUNT] = {
-		true,	// ocean
-		true,	// plains
-		true,	// desert
-		false,	// extreme hills
-		true,	// forest
-		true,	// taiga
-		true,	// swamps
-		false,	// river
-		false,	// hell
-		false,	// end biome
-		false,	// frozen ocean
-		false,	// frozen river
-		false,	// ice flats
-		false,	// ice mountains
-		true,	// mushroom island / shore
-		false,  // mushroom shore (combined with above)
-		false,	// beach
-		false,	// desert hills (combined with desert)
-		false,	// forest hills (combined with forest)
-		false,	// taiga hills (combined with taga)
-		false,	// small extreme hills
-		true,	// jungle
-		false,	// jungle hills (combined with jungle)
+		false,
+		false,
+		false,
+		false,
+		false,
+		false,
+		false,
+		false,
+		false,
+		false,
+		false,
+		false
 	};
 
 

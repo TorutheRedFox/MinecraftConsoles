@@ -10,11 +10,11 @@ vector<Biome *> RandomScatteredLargeFeature::allowedBiomes;
 
 void RandomScatteredLargeFeature::staticCtor()
 {
-	allowedBiomes.push_back( Biome::desert );
-	allowedBiomes.push_back( Biome::desertHills );
-	allowedBiomes.push_back( Biome::jungle );
-	allowedBiomes.push_back( Biome::jungleHills );
-	allowedBiomes.push_back( Biome::swampland );
+	//allowedBiomes.push_back( Biome::desert );
+	//allowedBiomes.push_back( Biome::desertHills );
+	//allowedBiomes.push_back( Biome::jungle );
+	//allowedBiomes.push_back( Biome::jungleHills );
+	//allowedBiomes.push_back( Biome::swampland );
 }
 
 void RandomScatteredLargeFeature::_init()
@@ -100,24 +100,24 @@ RandomScatteredLargeFeature::ScatteredFeatureStart::ScatteredFeatureStart()
 
 RandomScatteredLargeFeature::ScatteredFeatureStart::ScatteredFeatureStart(Level *level, Random *random, int chunkX, int chunkZ) : StructureStart(chunkX, chunkZ)
 {
-	Biome *biome = level->getBiome(chunkX * 16 + 8, chunkZ * 16 + 8);
-	if (biome == Biome::jungle || biome == Biome::jungleHills)
-	{
-		ScatteredFeaturePieces::JunglePyramidPiece *startRoom = new ScatteredFeaturePieces::JunglePyramidPiece(random, chunkX * 16, chunkZ * 16);
-		pieces.push_back(startRoom);
-	}
-	else if (biome == Biome::swampland)
-	{
-		ScatteredFeaturePieces::SwamplandHut *startRoom = new ScatteredFeaturePieces::SwamplandHut(random, chunkX * 16, chunkZ * 16);
-		pieces.push_back(startRoom);
-	}
-	else
-	{
-		ScatteredFeaturePieces::DesertPyramidPiece *startRoom = new ScatteredFeaturePieces::DesertPyramidPiece(random, chunkX * 16, chunkZ * 16);
-		pieces.push_back(startRoom);
-	}
-
-	calculateBoundingBox();
+	//Biome *biome = level->getBiome(chunkX * 16 + 8, chunkZ * 16 + 8);
+	//if (biome == Biome::jungle || biome == Biome::jungleHills)
+	//{
+	//	ScatteredFeaturePieces::JunglePyramidPiece *startRoom = new ScatteredFeaturePieces::JunglePyramidPiece(random, chunkX * 16, chunkZ * 16);
+	//	pieces.push_back(startRoom);
+	//}
+	//else if (biome == Biome::swampland)
+	//{
+	//	ScatteredFeaturePieces::SwamplandHut *startRoom = new ScatteredFeaturePieces::SwamplandHut(random, chunkX * 16, chunkZ * 16);
+	//	pieces.push_back(startRoom);
+	//}
+	//else
+	//{
+	//	ScatteredFeaturePieces::DesertPyramidPiece *startRoom = new ScatteredFeaturePieces::DesertPyramidPiece(random, chunkX * 16, chunkZ * 16);
+	//	pieces.push_back(startRoom);
+	//}
+	//
+	//calculateBoundingBox();
 }
 
 bool RandomScatteredLargeFeature::isSwamphut(int cellX, int cellY, int cellZ)
