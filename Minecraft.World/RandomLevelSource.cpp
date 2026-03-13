@@ -317,7 +317,7 @@ void RandomLevelSource::prepareHeights(int xOffs, int zOffs, byteArray blocks)
 
 							if (yc * CHUNK_HEIGHT + y < waterHeight)
 							{
-								if (level->getBiomeSource()->getTemperature(x, y, z) < 0.5 && yc * CHUNK_HEIGHT + y >= waterHeight - 1)
+								if (level->getBiomeSource()->getTemperature(xxx, y, zzz) < 0.5 && yc * CHUNK_HEIGHT + y >= waterHeight - 1)
 									tileId = static_cast<byte>(Tile::ice_Id);
 								else
 									tileId = static_cast<byte>(Tile::calmWater_Id);
@@ -995,22 +995,27 @@ void RandomLevelSource::postProcess(ChunkSource *parent, int xt, int zt)
 	// 4J - brought forward from 1.2.3 to get snow back in taiga biomes
 	xo += 8;
 	zo += 8;
-	for (int x = 0; x < 16; x++)
-	{
-		for (int z = 0; z < 16; z++)
-		{
-			int y = level->getTopSolidBlock(xo + x, zo + z);
 
-			//if (level->shouldFreezeIgnoreNeighbors(x + xo, y - 1, z + zo))
-			//{
-			//	level->setTileAndData(x + xo, y - 1, z + zo, Tile::ice_Id, 0, Tile::UPDATE_CLIENTS);
-			//}
-			if (level->shouldSnow(x + xo, y, z + zo))
+	floatArray temperatures;
+	level->getBiomeSource()->getTemperatureBlock(temperatures, xo, zo, 16, 16);
+
+	for (int x = xo; x < xo + 16; x++)
+	{
+		for (int z = zo; z < zo + 16; z++)
+		{
+			int y = level->getTopSolidBlock(x, z);
+
+			double temperature = temperatures[(x - xo) * 16 + (z - zo)] - (y - 64.0) / 64.0 * 0.3;
+			if (temperature < 0.5 && y > 0 && y < Level::genDepth &&
+				level->isEmptyTile(x, y, z) && level->getMaterial(x, y-1, z)->blocksMotion() &&
+				level->getMaterial(x, y - 1, z) != Material::ice)
 			{
-				level->setTileAndData(x + xo, y, z + zo, Tile::topSnow_Id, 0, Tile::UPDATE_CLIENTS);
+				level->setTileAndData(x, y, z, Tile::topSnow_Id, 0, Tile::UPDATE_CLIENTS);
 			}
 		}
 	}
+
+	delete[] temperatures.data;
 	PIXEndNamedEvent();
 
 	HeavyTile::instaFall = false;
