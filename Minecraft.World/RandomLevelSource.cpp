@@ -811,7 +811,7 @@ void RandomLevelSource::postProcess(ChunkSource *parent, int xt, int zt)
 	double forestDensity = 0.25;
 	bool hasVillage = false;
 
-	PIXBeginNamedEvent(0,"Structure postprocessing");
+	////PIXBeginNamedEvent(0,"Structure postprocessing");
 	//if (generateStructures)
 	//{
 	//	mineShaftFeature->postProcess(level, pprandom, xt, zt);
@@ -819,9 +819,9 @@ void RandomLevelSource::postProcess(ChunkSource *parent, int xt, int zt)
 	//	strongholdFeature->postProcess(level, pprandom, xt, zt);
 	//	scatteredFeature->postProcess(level, random, xt, zt);
 	//}
-	PIXEndNamedEvent();
+	////PIXEndNamedEvent();
 
-	PIXBeginNamedEvent(0,"Lakes");
+	//PIXBeginNamedEvent(0,"Lakes");
 	//if (biome != Biome::desert && biome != Biome::desertHills)
 	{
 		if (!hasVillage && pprandom->nextInt(4) == 0)
@@ -834,9 +834,9 @@ void RandomLevelSource::postProcess(ChunkSource *parent, int xt, int zt)
 			calmWater.place(level, pprandom, x, y, z);
 		}
 	}
-	PIXEndNamedEvent();
+	//PIXEndNamedEvent();
 
-	PIXBeginNamedEvent(0,"Lava");
+	//PIXBeginNamedEvent(0,"Lava");
 	if (!hasVillage && pprandom->nextInt(8) == 0)
 	{
 		int x = xo + pprandom->nextInt(16) + 8;
@@ -848,9 +848,9 @@ void RandomLevelSource::postProcess(ChunkSource *parent, int xt, int zt)
 			calmLava.place(level, pprandom, x, y, z);
 		}
 	}
-	PIXEndNamedEvent();
+	//PIXEndNamedEvent();
 
-	PIXBeginNamedEvent(0,"Monster rooms");
+	//PIXBeginNamedEvent(0,"Monster rooms");
 	for (int i = 0; i < 8; i++)
 	{
 		int x = xo + pprandom->nextInt(16) + 8;
@@ -859,9 +859,9 @@ void RandomLevelSource::postProcess(ChunkSource *parent, int xt, int zt)
 		MonsterRoomFeature mrf;
 		mrf.place(level, pprandom, x, y, z);
 	}
-	PIXEndNamedEvent();
+	//PIXEndNamedEvent();
 
-	PIXBeginNamedEvent(0, "Clay");
+	//PIXBeginNamedEvent(0, "Clay");
 	for (int i = 0; i < 8; i++)
 	{
 		int x = xo + pprandom->nextInt(16);
@@ -870,7 +870,106 @@ void RandomLevelSource::postProcess(ChunkSource *parent, int xt, int zt)
 		ClayFeature cf(32);
 		cf.place(level, pprandom, x, y, z);
 	}
-	PIXEndNamedEvent();
+	//PIXEndNamedEvent();
+
+	//PIXBeginNamedEvent(0, "Clay");
+	for (int i = 0; i < 10; i++)
+	{
+		int x = xo + pprandom->nextInt(16);
+		int y = pprandom->nextInt(Level::genDepth);
+		int z = zo + pprandom->nextInt(16);
+		ClayFeature cf(32);
+		cf.place(level, pprandom, x, y, z);
+	}
+	//PIXEndNamedEvent();
+
+	//PIXBeginNamedEvent(0, "Dirt");
+	for (int i = 0; i < 20; i++)
+	{
+		int x = xo + pprandom->nextInt(16);
+		int y = pprandom->nextInt(Level::genDepth);
+		int z = zo + pprandom->nextInt(16);
+		OreFeature of(Tile::dirt_Id, 32);
+		of.place(level, pprandom, x, y, z);
+	}
+	//PIXEndNamedEvent();
+
+	//PIXBeginNamedEvent(0, "Gravel");
+	for (int i = 0; i < 10; i++)
+	{
+		int x = xo + pprandom->nextInt(16);
+		int y = pprandom->nextInt(Level::genDepth);
+		int z = zo + pprandom->nextInt(16);
+		OreFeature of(Tile::gravel_Id, 32);
+		of.place(level, pprandom, x, y, z);
+	}
+	//PIXEndNamedEvent();
+
+	//PIXBeginNamedEvent(0, "Coal");
+	for (int i = 0; i < 20; i++)
+	{
+		int x = xo + pprandom->nextInt(16);
+		int y = pprandom->nextInt(Level::genDepth);
+		int z = zo + pprandom->nextInt(16);
+		OreFeature of(Tile::coalOre_Id, 16);
+		of.place(level, pprandom, x, y, z);
+	}
+	//PIXEndNamedEvent();
+
+	//PIXBeginNamedEvent(0, "Iron");
+	for (int i = 0; i < 20; i++)
+	{
+		int x = xo + pprandom->nextInt(16);
+		int y = pprandom->nextInt(Level::genDepth >> 1);
+		int z = zo + pprandom->nextInt(16);
+		OreFeature of(Tile::ironOre_Id, 8);
+		of.place(level, pprandom, x, y, z);
+	}
+	//PIXEndNamedEvent();
+
+	//PIXBeginNamedEvent(0, "Gold");
+	for (int i = 0; i < 2; i++)
+	{
+		int x = xo + pprandom->nextInt(16);
+		int y = pprandom->nextInt(Level::genDepth >> 2);
+		int z = zo + pprandom->nextInt(16);
+		OreFeature of(Tile::goldOre_Id, 8);
+		of.place(level, pprandom, x, y, z);
+	}
+	//PIXEndNamedEvent();
+
+	//PIXBeginNamedEvent(0, "Redstone");
+	for (int i = 0; i < 8; i++)
+	{
+		int x = xo + pprandom->nextInt(16);
+		int y = pprandom->nextInt(Level::genDepth >> 3);
+		int z = zo + pprandom->nextInt(16);
+		OreFeature of(Tile::redStoneOre_Id, 7);
+		of.place(level, pprandom, x, y, z);
+	}
+	//PIXEndNamedEvent();
+
+	//PIXBeginNamedEvent(0, "Diamond");
+	for (int i = 0; i < 1; i++)
+	{
+		int x = xo + pprandom->nextInt(16);
+		int y = pprandom->nextInt(Level::genDepth >> 3);
+		int z = zo + pprandom->nextInt(16);
+		OreFeature of(Tile::diamondOre_Id, 7);
+		of.place(level, pprandom, x, y, z);
+	}
+	//PIXEndNamedEvent();
+
+	//PIXBeginNamedEvent(0, "Lapis");
+	for (int i = 0; i < 1; i++)
+	{
+		int x = xo + pprandom->nextInt(16);
+		int y = pprandom->nextInt(Level::genDepth >> 3) + pprandom->nextInt(Level::genDepth >> 3);
+		int z = zo + pprandom->nextInt(16);
+		OreFeature of(Tile::lapisOre_Id, 6);
+		of.place(level, pprandom, x, y, z);
+	}
+	//PIXEndNamedEvent();
 
 	forestDensity = 0.5;
 	int forestNoiseVal = (int)((forestNoise->getValue((double)xo * forestDensity, (double)zo * forestDensity) / 8.0 + random->nextDouble() * 4.0 + 4.0) / 3.0);
@@ -886,6 +985,7 @@ void RandomLevelSource::postProcess(ChunkSource *parent, int xt, int zt)
 	if (biome == Biome::tundra) numTrees -= 20;
 	if (biome == Biome::plains) numTrees -= 20;
 
+	//PIXBeginNamedEvent(0, "Trees");
 	for (int i = 0; i < numTrees; i++)
 	{
 		int x = xo + pprandom->nextInt(16) + 8;
@@ -894,43 +994,53 @@ void RandomLevelSource::postProcess(ChunkSource *parent, int xt, int zt)
 		tf->init(1, 1, 1);
 		tf->place(level, pprandom, x, level->getHeightmap(x, z), z);
 	}
-
+	//PIXEndNamedEvent();
+	
+	//PIXBeginNamedEvent(0, "Flowers");
 	for (int i = 0; i < 2; i++)
 	{
 		int x = xo + pprandom->nextInt(16) + 8;
 		int y = pprandom->nextInt(Level::genDepth);
 		int z = zo + pprandom->nextInt(16) + 8;
-		FlowerFeature ff(Tile::flower->id);
+		FlowerFeature ff(Tile::flower_Id);
 		ff.place(level, pprandom, x, y, z);
 	}
+	//PIXEndNamedEvent();
 
+	//PIXBeginNamedEvent(0, "Roses");
 	if (random->nextInt(2) == 0)
 	{
 		int x = xo + pprandom->nextInt(16) + 8;
 		int y = pprandom->nextInt(Level::genDepth);
 		int z = zo + pprandom->nextInt(16) + 8;
-		FlowerFeature ff(Tile::rose->id);
+		FlowerFeature ff(Tile::rose_Id);
 		ff.place(level, pprandom, x, y, z);
 	}
+	//PIXEndNamedEvent();
 
+	//PIXBeginNamedEvent(0, "Mushrooms");
 	if (random->nextInt(4) == 0)
 	{
 		int x = xo + pprandom->nextInt(16) + 8;
 		int y = pprandom->nextInt(Level::genDepth);
 		int z = zo + pprandom->nextInt(16) + 8;
-		FlowerFeature ff(Tile::mushroom_brown->id);
+		FlowerFeature ff(Tile::mushroom_brown_Id);
 		ff.place(level, pprandom, x, y, z);
 	}
+	//PIXEndNamedEvent();
 
+	//PIXBeginNamedEvent(0, "Red Mushrooms");
 	if (random->nextInt(8) == 0)
 	{
 		int x = xo + pprandom->nextInt(16) + 8;
 		int y = pprandom->nextInt(Level::genDepth);
 		int z = zo + pprandom->nextInt(16) + 8;
-		FlowerFeature ff(Tile::mushroom_red->id);
+		FlowerFeature ff(Tile::mushroom_red_Id);
 		ff.place(level, pprandom, x, y, z);
 	}
+	//PIXEndNamedEvent();
 
+	//PIXBeginNamedEvent(0, "Reeds");
 	for (int i = 0; i < 10; i++)
 	{
 		int x = xo + pprandom->nextInt(16) + 8;
@@ -939,7 +1049,9 @@ void RandomLevelSource::postProcess(ChunkSource *parent, int xt, int zt)
 		ReedsFeature rf;
 		rf.place(level, pprandom, x, y, z);
 	}
+	//PIXEndNamedEvent();
 
+	//PIXBeginNamedEvent(0, "Pumpkins");
 	if (random->nextInt(32) == 0)
 	{
 		int x = xo + pprandom->nextInt(16) + 8;
@@ -948,10 +1060,12 @@ void RandomLevelSource::postProcess(ChunkSource *parent, int xt, int zt)
 		PumpkinFeature pf;
 		pf.place(level, pprandom, x, y, z);
 	}
+	//PIXEndNamedEvent();
 
 	int numCacti = 0;
 	if (biome == Biome::desert) numCacti += 10;
 
+	//PIXBeginNamedEvent(0, "Cacti");
 	for (int i = 0; i < numCacti; i++)
 	{
 		int x = xo + pprandom->nextInt(16) + 8;
@@ -960,38 +1074,43 @@ void RandomLevelSource::postProcess(ChunkSource *parent, int xt, int zt)
 		CactusFeature cf;
 		cf.place(level, pprandom, x, y, z);
 	}
+	//PIXEndNamedEvent();
 
+	//PIXBeginNamedEvent(0, "Water Springs");
 	for (int i = 0; i < 50; i++)
 	{
 		int x = xo + pprandom->nextInt(16) + 8;
 		int y = pprandom->nextInt(pprandom->nextInt(Level::genDepth - 8) + 8);
 		int z = zo + pprandom->nextInt(16) + 8;
-		SpringFeature sf(Tile::water->id);
+		SpringFeature sf(Tile::water_Id);
 		sf.place(level, pprandom, x, y, z);
 	}
+	//PIXEndNamedEvent();
 
+	//PIXBeginNamedEvent(0, "Lava Springs");
 	for (int i = 0; i < 20; i++)
 	{
 		int x = xo + pprandom->nextInt(16) + 8;
 		int y = pprandom->nextInt(pprandom->nextInt(Level::genDepth - 16) + 8);
 		int z = zo + pprandom->nextInt(16) + 8;
-		SpringFeature sf(Tile::lava->id);
+		SpringFeature sf(Tile::lava_Id);
 		sf.place(level, pprandom, x, y, z);
 	}
+	//PIXEndNamedEvent();
 
-	//PIXBeginNamedEvent(0,"Biome decorate");
+	////PIXBeginNamedEvent(0,"Biome decorate");
 	//biome->decorate(level, pprandom, xo, zo);
-	//PIXEndNamedEvent();
+	////PIXEndNamedEvent();
 
-	//PIXBeginNamedEvent(0,"Process Schematics");
+	////PIXBeginNamedEvent(0,"Process Schematics");
 	//app.processSchematics(parent->getChunk(xt,zt));
-	//PIXEndNamedEvent();
+	////PIXEndNamedEvent();
 
-	PIXBeginNamedEvent(0,"Post process mobs");
-	MobSpawner::postProcessSpawnMobs(level, biome, xo + 8, zo + 8, 16, 16, pprandom);
-	PIXEndNamedEvent();
+	////PIXBeginNamedEvent(0,"Post process mobs");
+	//MobSpawner::postProcessSpawnMobs(level, biome, xo + 8, zo + 8, 16, 16, pprandom);
+	////PIXEndNamedEvent();
 
-	PIXBeginNamedEvent(0,"Update ice and snow");
+	//PIXBeginNamedEvent(0,"Update ice and snow");
 	// 4J - brought forward from 1.2.3 to get snow back in taiga biomes
 	xo += 8;
 	zo += 8;
@@ -1017,7 +1136,7 @@ void RandomLevelSource::postProcess(ChunkSource *parent, int xt, int zt)
 	}
 
 	delete[] temperatures.data;
-	PIXEndNamedEvent();
+	//PIXEndNamedEvent();
 
 	HeavyTile::instaFall = false;
 }
