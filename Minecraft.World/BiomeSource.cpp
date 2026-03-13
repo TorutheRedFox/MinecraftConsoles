@@ -71,7 +71,10 @@ Biome *BiomeSource::getBiome(ChunkPos *cp)
 
 Biome *BiomeSource::getBiome(int x, int z)
 {
-	return getBiomeBlock(x, z, 1, 1)[0];
+	BiomeArray biomes;
+	Biome* biome = getBiomeBlock(x, z, 1, 1)[0];
+	delete[] biomes.data;
+	return biome;
 }
 
 float BiomeSource::getDownfall(int x, int z) const
