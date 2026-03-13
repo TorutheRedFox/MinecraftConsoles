@@ -378,8 +378,8 @@ void RandomLevelSource::buildSurfaces(int xOffs, int zOffs, byteArray blocks, Bi
 	doubleArray gravelBuffer(16*16);
 	doubleArray depthBuffer(16*16); // 4J - used to be declared with class level scope but moved here for thread safety
 
-	depthBuffer = perlinNoise2->getRegion(depthBuffer, xOffs * 16, zOffs * 16, 0, 16, 16, 1, s, s, 1);
-	depthBuffer = perlinNoise2->getRegion(depthBuffer, zOffs * 16, 109.0134, xOffs * 16, 16, 1, 16, s, 1, s);
+	sandBuffer = perlinNoise2->getRegion(sandBuffer, xOffs * 16, zOffs * 16, 0, 16, 16, 1, s, s, 1);
+	gravelBuffer = perlinNoise2->getRegion(gravelBuffer, zOffs * 16, 109.0134, xOffs * 16, 16, 1, 16, s, 1, s);
 	depthBuffer = perlinNoise3->getRegion(depthBuffer, xOffs * 16, zOffs * 16, 0, 16, 16, 1, s * 2, s * 2, s * 2);
 
 	for (int x = 0; x < 16; x++)
@@ -460,11 +460,11 @@ void RandomLevelSource::buildSurfaces(int xOffs, int zOffs, byteArray blocks, Bi
 							blocks[offs] = material;
 
 							// place a few sandstone blocks beneath sand runs
-							if (run == 0 && material == Tile::sand_Id)
-							{
-								run = random->nextInt(4);
-								material = static_cast<byte>(Tile::sandStone_Id);
-							}
+							//if (run == 0 && material == Tile::sand_Id)
+							//{
+							//	run = random->nextInt(4);
+							//	material = static_cast<byte>(Tile::sandStone_Id);
+							//}
 						}
 					}
 				}
@@ -1003,7 +1003,8 @@ void RandomLevelSource::postProcess(ChunkSource *parent, int xt, int zt)
 	{
 		for (int z = zo; z < zo + 16; z++)
 		{
-			int y = level->getTopSolidBlock(x, z);
+			// leaves are no longer solid
+			int y = level->getTopRainBlock(x, z);//level->getTopSolidBlock(x, z);
 
 			double temperature = temperatures[(x - xo) * 16 + (z - zo)] - (y - 64.0) / 64.0 * 0.3;
 			if (temperature < 0.5 && y > 0 && y < Level::genDepth &&
