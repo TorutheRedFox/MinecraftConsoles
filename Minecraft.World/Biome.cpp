@@ -43,7 +43,7 @@ void Biome::staticCtor()
 	Biome::savanna = (new FlatBiome(4))->setColor(0xd9e023)->setName(L"Savanna");
 	Biome::shrubland = (new Biome(5))->setColor(0xa1ad20)->setName(L"Shrubland");
 	Biome::taiga = (new TaigaBiome(6))->setColor(0x0b6659)->setName(L"Taiga")->setSnowCovered()->setLeafColor(0x7bb731);
-	Biome::desert = (new DesertBiome(7))->setColor(0xfa9418)->setName(L"Desert");
+	Biome::desert = (new FlatBiome(7))->setColor(0xfa9418)->setName(L"Desert");
 	Biome::plains = (new FlatBiome(8))->setColor(0xffd910)->setName(L"Plains");
 	Biome::iceDesert = (new FlatBiome(9))->setColor(0xffed93)->setName(L"Ice Desert")->setSnowCovered()->setLeafColor(0xc4d339);
 	Biome::tundra = (new Biome(10))->setColor(0x57ebf9)->setName(L"Tundra")->setSnowCovered()->setLeafColor(0xc4d339);
@@ -51,9 +51,9 @@ void Biome::staticCtor()
 	Biome::hell = (new HellBiome(11))->setColor(0xff0000)->setName(L"Hell")->setNoRain()->setTemperatureAndDownfall(2, 0)->setLeafFoliageWaterSkyColor(eMinecraftColour_Grass_Hell, eMinecraftColour_Foliage_Hell, eMinecraftColour_Water_Hell,eMinecraftColour_Sky_Hell);
 	Biome::sky = (new TheEndBiome(12))->setColor(0x8080ff)->setName(L"Sky")->setNoRain()->setLeafFoliageWaterSkyColor(eMinecraftColour_Grass_Sky, eMinecraftColour_Foliage_Sky, eMinecraftColour_Water_Sky,eMinecraftColour_Sky_Sky);
 
-	for (int xx = 0; xx < 64; xx++) {
-		for (int zz = 0; zz < 64; zz++) {
-			Biome::map[xx + zz * 64] = _getBiome((float)xx / 63.0f, (float)zz / 63.0f);
+	for (int temp = 0; temp < 64; temp++) {
+		for (int rain = 0; rain < 64; rain++) {
+			Biome::map[temp + rain * 64] = _getBiome(temp / 63.0, rain / 63.0);
 		}
 	}
 
@@ -61,40 +61,40 @@ void Biome::staticCtor()
 	iceDesert->topMaterial = iceDesert->material = (byte)Tile::sand->id;
 }
 
-Biome *Biome::getBiome(double x, double z) {
-	int xx = (int)(x * 63.0);
-	int zz = (int)(z * 63.0);
-	return Biome::map[(xx + zz * 64) % 4096];
+Biome *Biome::getBiome(double temp, double rain) {
+	int t = (int)(temp * 63.0);
+	int r = (int)(rain * 63.0);
+	return Biome::map[t + r * 64];
 }
 
-Biome *Biome::_getBiome(float x, float y)
+Biome *Biome::_getBiome(float temp, float rain)
 {
-	y *= x;
-	if (x < 0.1f) {
+	rain *= temp;
+	if (temp < 0.1) {
 		return tundra;
 	}
-	else if (y < 0.2f) {
-		if (x < 0.5f) {
+	else if (rain < 0.2) {
+		if (temp < 0.5) {
 			return tundra;
 		}
 		else {
-			return x < 0.95f ? savanna : desert;
+			return temp < 0.95 ? savanna : desert;
 		}
 	}
-	else if (y > 0.5f && x < 0.7f) {
+	else if (rain > 0.5 && temp < 0.7) {
 		return swampland;
 	}
-	else if (x < 0.5f) {
+	else if (rain < 0.5) {
 		return taiga;
 	}
-	else if (x < 0.97f) {
-		return y < 0.35f ? shrubland : forest;
+	else if (rain < 0.97) {
+		return rain < 0.35 ? shrubland : forest;
 	}
-	else if (y < 0.45f) {
+	else if (rain < 0.45) {
 		return plains;
 	}
 	else {
-		return y < 0.9f ? seasonalForest : rainForest;
+		return rain < 0.9 ? seasonalForest : rainForest;
 	}
 }
 

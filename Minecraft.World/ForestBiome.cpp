@@ -18,7 +18,7 @@ Feature *ForestBiome::getTreeFeature(Random *random)
 	{
         return new BirchFeature(false); // 4J used to return member birchTree, now returning newly created object so that caller can be consistently resposible for cleanup
     }
-    if (random->nextInt(10) == 0)
+    if (random->nextInt(3) == 0)
 	{
         return new BasicTree(false); // 4J used to return member fancyTree, now returning newly created object so that caller can be consistently resposible for cleanup
     }

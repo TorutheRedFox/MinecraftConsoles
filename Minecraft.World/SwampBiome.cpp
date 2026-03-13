@@ -5,23 +5,23 @@
 
 SwampBiome::SwampBiome(int id) : Biome(id)
 {
-	decorator->treeCount = 2;
-	decorator->flowerCount = -999;
-	decorator->deadBushCount = 1;
-	decorator->mushroomCount = 8;
-	decorator->reedsCount = 10;
-	decorator->clayCount = 1;
-	decorator->waterlilyCount = 4;
-	
-	// waterColor = 0xe0ffae;
-
-	enemies.push_back(new MobSpawnerData(eTYPE_SLIME, 1, 1, 1));
+	//decorator->treeCount = 2;
+	//decorator->flowerCount = -999;
+	//decorator->deadBushCount = 1;
+	//decorator->mushroomCount = 8;
+	//decorator->reedsCount = 10;
+	//decorator->clayCount = 1;
+	//decorator->waterlilyCount = 4;
+	//
+	//// waterColor = 0xe0ffae;
+	//
+	//enemies.push_back(new MobSpawnerData(eTYPE_SLIME, 1, 1, 1));
 }
 
 
 Feature *SwampBiome::getTreeFeature(Random *random)
 {
-	return new SwampTreeFeature(); // 4J used to return member swampTree, now returning newly created object so that caller can be consistently resposible for cleanup
+	return Biome::getTreeFeature(random);//new SwampTreeFeature(); // 4J used to return member swampTree, now returning newly created object so that caller can be consistently resposible for cleanup
 }
 
 // 4J Stu - Not using these any more

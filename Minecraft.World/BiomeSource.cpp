@@ -97,7 +97,7 @@ void BiomeSource::getDownfallBlock(floatArray &downfalls, int x, int z, int w, i
 {
 	doubleArray _downfalls(w * h);
 	doubleArray noises(w * h);
-	_downfalls = downfallMap->getRegion(_downfalls, x, z, w, h, 0.005, 0.05, 1.0 / 3.0);
+	_downfalls = downfallMap->getRegion(_downfalls, x, z, w, h, 0.05, 0.05, 1.0 / 3.0);
 	noises = noiseMap->getRegion(noises, x, z, w, h, 0.25, 0.25, 1.0 / 1.7);
 
 	if (downfalls.data == nullptr || static_cast<int>(downfalls.length) < w * h)
@@ -240,15 +240,51 @@ void BiomeSource::getRawBiomeBlock(BiomeArray &biomes, int x, int z, int w, int 
 //		}
 //#endif
 //	}
+	doubleArray temperatures(w * h);
+	doubleArray downfalls(w * h);
+	doubleArray noises(w * h);
+
+	temperatures = temperatureMap->getRegion(temperatures, x, z, w, h, 0.025, 0.025, 1.0 / 4.0);
+	downfalls = downfallMap->getRegion(downfalls, x, z, w, h, 0.05, 0.05, 1.0 / 3.0);
+	noises = noiseMap->getRegion(noises, x, z, w, h, 0.25, 0.25, 1.0 / 1.7);
+
 	int s = 0;
 
-	for (int xx = x; xx < x + w; xx++)
-	{
-		for (int zz = z; zz < z + h; zz++)
-		{
-			biomes[s++] = Biome::getBiome(xx, zz);
+	for (int xx = 0; xx < w; xx++) {
+		for (int zz = 0; zz < h; zz++) {
+			double noise = noises[s] * 1.1 + 0.5;
+			double noiseAmp = 0.01;
+			double amp = 1.0 - noiseAmp;
+			double temp = (temperatures[s] * 0.15 + 0.7) * amp + noise * noiseAmp;
+			noiseAmp = 0.002f;
+			amp = 1.0 - noiseAmp;
+			double downfall = (downfalls[s] * 0.15 + 0.5) * amp + noise * noiseAmp;
+			temp = 1.0 - (1.0 - temp) * (1.0 - temp);
+			if (temp < 0.0) {
+				temp = 0.0;
+			}
+
+			if (downfall < 0.0) {
+				downfall = 0.0;
+			}
+
+			if (temp > 1.0) {
+				temp = 1.0;
+			}
+
+			if (downfall > 1.0) {
+				downfall = 1.0;
+			}
+
+			temperatures.data[s] = temp;
+			downfalls.data[s] = downfall;
+			biomes[s++] = Biome::getBiome(temp, downfall);
 		}
 	}
+	
+	delete[] temperatures.data;
+	delete[] downfalls.data;
+	delete[] noises.data;
 }
 
 
@@ -288,7 +324,7 @@ void BiomeSource::getBiomeBlock(BiomeArray& biomes, int x, int z, int w, int h, 
 	doubleArray noises(w * h);
 
 	temperatures = temperatureMap->getRegion(temperatures, x, z, w, h, 0.025, 0.025, 1.0 / 4.0);
-	downfalls = downfallMap->getRegion(downfalls, x, z, w, h, 0.005, 0.05, 1.0 / 3.0);
+	downfalls = downfallMap->getRegion(downfalls, x, z, w, h, 0.05, 0.05, 1.0 / 3.0);
 	noises = noiseMap->getRegion(noises, x, z, w, h, 0.25, 0.25, 1.0 / 1.7);
 
 	int s = 0;
@@ -324,6 +360,10 @@ void BiomeSource::getBiomeBlock(BiomeArray& biomes, int x, int z, int w, int h, 
 			biomes[s++] = Biome::getBiome(temp, downfall);
 		}
 	}
+
+	delete[] temperatures.data;
+	delete[] downfalls.data;
+	delete[] noises.data;
 
 	//intArray result = zoomedLayer->getArea(x, z, w, h);
 	//for (int i = 0; i < w * h; i++)
@@ -404,6 +444,10 @@ void BiomeSource::getBiomeIndexBlock(byteArray& biomeIndices, int x, int z, int 
 			biomeIndices[s++] = Biome::getBiome(temp, downfall)->id;
 		}
 	}
+
+	delete[] temperatures.data;
+	delete[] downfalls.data;
+	delete[] noises.data;
 
 	//intArray result = zoomedLayer->getArea(x, z, w, h);
 	//for (int i = 0; i < w * h; i++)

@@ -89,81 +89,9 @@ bool TreeFeature::place(Level *level, Random *random, int x, int y, int z)
 		if (t == 0 || t == Tile::leaves_Id)
 		{
 			placeBlock(level, x, y + hh, z, Tile::treeTrunk_Id, trunkType);
-			if (addJungleFeatures && hh > 0)
-			{
-				if (random->nextInt(3) > 0 && level->isEmptyTile(x - 1, y + hh, z))
-				{
-					placeBlock(level, x - 1, y + hh, z, Tile::vine_Id, VineTile::VINE_EAST);
-				}
-				if (random->nextInt(3) > 0 && level->isEmptyTile(x + 1, y + hh, z))
-				{
-					placeBlock(level, x + 1, y + hh, z, Tile::vine_Id, VineTile::VINE_WEST);
-				}
-				if (random->nextInt(3) > 0 && level->isEmptyTile(x, y + hh, z - 1))
-				{
-					placeBlock(level, x, y + hh, z - 1, Tile::vine_Id, VineTile::VINE_SOUTH);
-				}
-				if (random->nextInt(3) > 0 && level->isEmptyTile(x, y + hh, z + 1))
-				{
-					placeBlock(level, x, y + hh, z + 1, Tile::vine_Id, VineTile::VINE_NORTH);
-				}
-			}
 		}
 	}
 	PIXEndNamedEvent();
-	if (addJungleFeatures)
-	{
-		PIXBeginNamedEvent(0,"TreeFeature adding vines");
-		for (int yy = y - 3 + treeHeight; yy <= y + treeHeight; yy++)
-		{
-			int yo = yy - (y + treeHeight);
-			int offs = 2 - yo / 2;
-			for (int xx = x - offs; xx <= x + offs; xx++)
-			{
-				for (int zz = z - offs; zz <= z + offs; zz++)
-				{
-					if (level->getTile(xx, yy, zz) == Tile::leaves_Id)
-					{
-						if (random->nextInt(4) == 0 && level->getTile(xx - 1, yy, zz) == 0)
-						{
-							addVine(level, xx - 1, yy, zz, VineTile::VINE_EAST);
-						}
-						if (random->nextInt(4) == 0 && level->getTile(xx + 1, yy, zz) == 0)
-						{
-							addVine(level, xx + 1, yy, zz, VineTile::VINE_WEST);
-						}
-						if (random->nextInt(4) == 0 && level->getTile(xx, yy, zz - 1) == 0)
-						{
-							addVine(level, xx, yy, zz - 1, VineTile::VINE_SOUTH);
-						}
-						if (random->nextInt(4) == 0 && level->getTile(xx, yy, zz + 1) == 0)
-						{
-							addVine(level, xx, yy, zz + 1, VineTile::VINE_NORTH);
-						}
-					}
-				}
-			}
-		}
-		PIXEndNamedEvent();
-		// also chance for cocoa plants around stem
-		if (random->nextInt(5) == 0 && treeHeight > 5)
-		{
-		PIXBeginNamedEvent(0,"TreeFeature adding cocoa");
-			for (int rows = 0; rows < 2; rows++)
-			{
-				for (int dir = 0; dir < 4; dir++)
-				{
-					if (random->nextInt(4 - rows) == 0)
-					{
-						int age = random->nextInt(3);
-						placeBlock(level, x + Direction::STEP_X[Direction::DIRECTION_OPPOSITE[dir]], y + treeHeight - 5 + rows, z + Direction::STEP_Z[Direction::DIRECTION_OPPOSITE[dir]],
-							Tile::cocoa_Id, (age << 2) | dir);
-					}
-				}
-			}
-			PIXEndNamedEvent();
-		}
-	}
 
 	return true;
 }

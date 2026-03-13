@@ -990,9 +990,10 @@ void RandomLevelSource::postProcess(ChunkSource *parent, int xt, int zt)
 	{
 		int x = xo + pprandom->nextInt(16) + 8;
 		int z = zo + pprandom->nextInt(16) + 8;
-		Feature* tf = biome->getTreeFeature(random);
+		Feature* tf = biome->getTreeFeature(pprandom);
 		tf->init(1, 1, 1);
 		tf->place(level, pprandom, x, level->getHeightmap(x, z), z);
+		delete tf;
 	}
 	//PIXEndNamedEvent();
 	

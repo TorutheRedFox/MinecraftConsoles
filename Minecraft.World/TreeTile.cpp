@@ -15,9 +15,9 @@ const unsigned int TreeTile::TREE_NAMES[ TreeTile::TREE_NAMES_LENGTH] = {	IDS_TI
 
 const wstring  TreeTile::TREE_STRING_NAMES[ TreeTile::TREE_NAMES_LENGTH] = {L"oak", L"spruce", L"birch", L"jungle"};
 
-const wstring TreeTile::TREE_TEXTURES[] = {L"tree_side", L"tree_spruce", L"tree_birch", L"tree_jungle"};
+const wstring TreeTile::TREE_TEXTURES[] = {L"tree_side", L"tree_spruce", L"tree_birch", L"tree_side"};
 
-TreeTile::TreeTile(int id) : RotatedPillarTile(id, Material::wood)
+TreeTile::TreeTile(int id) : Tile(id, Material::wood)
 {
 }
 
@@ -70,7 +70,14 @@ Icon *TreeTile::getTypeTexture(int type)
 
 Icon *TreeTile::getTopTexture(int type)
 {
-	return icons_top[type];
+	return icons_top[0];
+}
+
+Icon * TreeTile::getTexture(int face, int data)
+{
+	if (face == Facing::UP) return icons_top[0];
+	if (face == Facing::DOWN) return icons_top[0];
+	else return icons_side[data & RotatedPillarTile::MASK_TYPE];
 }
 
 int TreeTile::getWoodType(int data)

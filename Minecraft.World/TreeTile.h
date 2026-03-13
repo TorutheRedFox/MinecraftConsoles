@@ -5,7 +5,7 @@
 class ChunkRebuildData;
 class Player;
 
-class TreeTile : public RotatedPillarTile
+class TreeTile : public Tile
 {	
 	friend class Tile;
 	friend class ChunkRebuildData;
@@ -41,6 +41,7 @@ public:
 	virtual int getResource(int data, Random *random, int playerBonusLevel);
 	virtual void onRemove(Level *level, int x, int y, int z, int id, int data);
 	virtual unsigned int getDescriptionId(int iData = -1);
+	virtual Icon *getTexture(int face, int data);
 
 protected:
 	virtual Icon *getTypeTexture(int type);
