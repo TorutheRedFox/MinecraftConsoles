@@ -1,0 +1,46 @@
+name: Nightly Release (Beta)
+
+on:
+  workflow_dispatch: 
+  push:
+    branches:
+    - 'beta'
+    paths-ignore:
+      - '.gitignore'
+      - '*.md'
+      - '.github/*.md'
+
+jobs:
+  build:
+    name: Build Windows64
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+
+    - name: Setup msbuild
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Build
+      run: MSBuild.exe MinecraftConsoles.sln /p:Configuration=Release /p:Platform="Windows64"
+
+    - name: Zip Build
+      run: 7z a -r LCEWindows64.zip ./x64/Release/*
+
+    - name: Update release
+      uses: andelf/nightly-release@main
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: beta-nightly
+        name: Nightly Release (Beta)
+        body: |
+          Requires at least Windows 7 and DirectX 11 compatible GPU to run. Compiled with MSVC v14.44.35207 in Release mode with Whole Program Optimization, as well as `/O2 /Ot /Oi /Ob3 /GF /fp:precise`.
+          
+          # 🚨 First time here? 🚨
+          If you've never downloaded the game before, you need to download `LCEWindows64.zip` and extract it to the folder where you'd like to keep the game. The other files are included in this `.zip` file!
+        files: |
+            LCEWindows64.zip
+            ./x64/Release/Minecraft.Client.exe
+            ./x64/Release/Minecraft.Client.pdb
