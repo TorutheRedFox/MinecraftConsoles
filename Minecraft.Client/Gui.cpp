@@ -73,7 +73,7 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 	}
 	
 	int splitYOffset;// = 20;	// This offset is applied when doing the 2X scaling above to move the gui out of the way of the tool tips
-	int guiScale;// = ( minecraft->player->m_iScreenSection == C4JRender::VIEWPORT_TYPE_FULLSCREEN ? 3 : 2 );
+	int guiScale = minecraft->options->guiScale;// = ( minecraft->player->m_iScreenSection == C4JRender::VIEWPORT_TYPE_FULLSCREEN ? 3 : 2 );
 	int iPad=minecraft->player->GetXboxPad();
 	int iWidthOffset=0,iHeightOffset=0; // used to get the interface looking right on a 2 player split screen game
 
@@ -88,7 +88,7 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 	}
 
 
-	ScreenSizeCalculator ssc(minecraft->options, minecraft->width, minecraft->height, guiScale );
+	ScreenSizeCalculator ssc(minecraft->options, minecraft->width, minecraft->height );
 	int screenWidth = ssc.getWidth();
 	int screenHeight = ssc.getHeight();
 	int iSafezoneXHalf=0,iSafezoneYHalf=0,iSafezoneTopYHalf=0;
@@ -1052,10 +1052,10 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
             break;
         }
 
-        glMatrixMode(GL_PROJECTION);
-        glPushMatrix();
-        glLoadIdentity();
-        glOrtho(0, vpW, vpH, 0, 1000, 3000);
+        //glMatrixMode(GL_PROJECTION);
+        //glPushMatrix();
+        //glLoadIdentity();
+        //glOrtho(0, vpW, vpH, 0, 1000, 3000);
         glMatrixMode(GL_MODELVIEW);
         glPushMatrix();
         glLoadIdentity();
@@ -1063,7 +1063,7 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 
         // Font was designed for guiScale px/unit; scale up so characters appear
         // at the same physical size as the rest of the HUD at 0.5x.
-        const float fontScale = static_cast<float>(guiScale) * 1.0f;
+		const float fontScale = 1.0;// static_cast<float>(guiScale) * 1.0f;
         const int debugLeft = 1;
         const int debugTop = 1;
 
@@ -1077,7 +1077,7 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
         if (iPad == 0)
         {
             lines.push_back(ClientConstants::VERSION_STRING);
-            lines.push_back(ClientConstants::BRANCH_STRING);
+            //lines.push_back(ClientConstants::BRANCH_STRING);
         }
         if (minecraft->options->renderDebug && minecraft->player != nullptr && minecraft->level != nullptr)
         {
@@ -1193,8 +1193,8 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 
         glMatrixMode(GL_MODELVIEW);
         glPopMatrix();
-        glMatrixMode(GL_PROJECTION);
-        glPopMatrix();
+        //glMatrixMode(GL_PROJECTION);
+        //glPopMatrix();
         glMatrixMode(GL_MODELVIEW);
     }
 	MemSect(0);
