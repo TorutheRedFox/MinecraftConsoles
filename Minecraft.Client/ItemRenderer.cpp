@@ -733,10 +733,10 @@ void ItemRenderer::blit(float x, float y, int sx, int sy, float w, float h)
 	yy0 = ceilf(yy0);
 	yy1 = floorf(yy1);
 	// Offset by half to get actual centre of pixel - again moving inwards to avoid overlap with surrounding graphics
-	xx0 += 0.5f;
-	xx1 -= 0.5f;
-	yy0 += 0.5f;
-	yy1 -= 0.5f;
+	//xx0 += 0.5f;
+	//xx1 -= 0.5f;
+	//yy0 += 0.5f;
+	//yy1 -= 0.5f;
 	// Convert back to game coordinate space
 	float xx0f = xx0 / sfx;
 	float xx1f = xx1 / sfx;
@@ -744,7 +744,7 @@ void ItemRenderer::blit(float x, float y, int sx, int sy, float w, float h)
 	float yy1f = yy1 / sfy;
 
 	// 4J - subtracting 0.5f (actual screen pixels, so need to compensate for physical & game width) from each x & y coordinate to compensate for centre of pixels in directx vs openGL
-	float f = ( 0.5f * static_cast<float>(Minecraft::GetInstance()->width) ) / static_cast<float>(Minecraft::GetInstance()->width_phys);
+	//float f = ( 0.5f * static_cast<float>(Minecraft::GetInstance()->width) ) / static_cast<float>(Minecraft::GetInstance()->width_phys);
 
 	t->vertexUV(xx0f, yy1f, (float)( blitOffset), (float)( (sx + 0) * us), (float)( (sy + 16) * vs));
 	t->vertexUV(xx1f, yy1f, (float)( blitOffset), (float)( (sx + 16) * us), (float)( (sy + 16) * vs));
