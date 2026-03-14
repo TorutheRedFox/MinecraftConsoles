@@ -255,12 +255,15 @@ void RandomLevelSource::prepareHeights(int xOffs, int zOffs, byteArray blocks)
 	int ySize = Level::genDepth / CHUNK_HEIGHT + 1;
 	int zSize = xChunks + 1;
 
-	BiomeArray biomes;	// 4J created locally here for thread safety, java has this as a class member
+	//BiomeArray biomes;	// 4J created locally here for thread safety, java has this as a class member
 
-	level->getBiomeSource()->getRawBiomeBlock(biomes, xOffs * CHUNK_WIDTH - 2, zOffs * CHUNK_WIDTH - 2, xSize + 5, zSize + 5);
+	//level->getBiomeSource()->getRawBiomeBlock(biomes, xOffs * CHUNK_WIDTH - 2, zOffs * CHUNK_WIDTH - 2, xSize + 5, zSize + 5);
+
+	floatArray temperatures = level->getBiomeSource()->getTemperatureBlock(xOffs, zOffs, 16, 16);
+	floatArray downfalls = level->getBiomeSource()->getDownfallBlock(xOffs, zOffs, 16, 16);
 
 	doubleArray buffer;	// 4J - used to be declared with class level scope but tidying up for thread safety reasons
-	buffer = getHeights(buffer, xOffs * xChunks, 0, zOffs * xChunks, xSize, ySize, zSize, biomes);
+	buffer = getHeights(buffer, xOffs * xChunks, 0, zOffs * xChunks, xSize, ySize, zSize, temperatures, downfalls);
 
 	QueryPerformanceCounter(&startTime);
 	for (int xc = 0; xc < xChunks; xc++)
@@ -317,7 +320,7 @@ void RandomLevelSource::prepareHeights(int xOffs, int zOffs, byteArray blocks)
 
 							if (yc * CHUNK_HEIGHT + y < waterHeight)
 							{
-								if (level->getBiomeSource()->getTemperature(xxx, y, zzz) < 0.5 && yc * CHUNK_HEIGHT + y >= waterHeight - 1)
+								if (level->getBiomeSource()->getTemperature(xxx, y, zzz) < SNOW_CUTOFF && yc * CHUNK_HEIGHT + y >= waterHeight - 1)
 									tileId = static_cast<byte>(Tile::ice_Id);
 								else
 									tileId = static_cast<byte>(Tile::calmWater_Id);
@@ -362,13 +365,13 @@ void RandomLevelSource::prepareHeights(int xOffs, int zOffs, byteArray blocks)
 	g_averagePrepareHeightsTime.QuadPart = g_totalPrepareHeightsTime.QuadPart / g_numPrepareHeightCalls;
 
 	delete [] buffer.data;
-	delete [] biomes.data;
-
-
+	//delete [] biomes.data;
+	delete [] temperatures.data;
+	delete [] downfalls.data;
 }
 
 
-void RandomLevelSource::buildSurfaces(int xOffs, int zOffs, byteArray blocks, BiomeArray biomes)
+void RandomLevelSource::buildSurfaces(int xOffs, int zOffs, byteArray blocks, BiomeArray& biomes)
 {
 	int waterHeight = 64;// level->seaLevel;
 
@@ -541,7 +544,7 @@ void RandomLevelSource::lightChunk(LevelChunk *lc)
 }
 
 
-doubleArray RandomLevelSource::getHeights(doubleArray buffer, int x, int y, int z, int xSize, int ySize, int zSize, BiomeArray& biomes)
+doubleArray RandomLevelSource::getHeights(doubleArray buffer, int x, int y, int z, int xSize, int ySize, int zSize, floatArray& temperatures, floatArray& downfalls)//BiomeArray& biomes)
 {
 	if (buffer.data == nullptr)
 	{
@@ -603,8 +606,8 @@ doubleArray RandomLevelSource::getHeights(doubleArray buffer, int x, int y, int 
 			float scale = 0;
 			float dd = 0;
 
-			double temperature = level->getBiomeSource()->getTemperature(xx, 1, zz);
-			double downfall = level->getBiomeSource()->getDownfall(xx, zz) * temperature;
+			double temperature = temperatures[xp * 16 + zp];
+			double downfall = downfalls[xp * 16 + zp] * temperature;
 
 			dd = 1.0 - downfall;
 			dd *= dd;
@@ -935,10 +938,14 @@ void RandomLevelSource::postProcess(ChunkSource *parent, int xt, int zt)
 	{
 		int x = xo + pprandom->nextInt(16) + 8;
 		int z = zo + pprandom->nextInt(16) + 8;
-		Feature* tf = biome->getTreeFeature(pprandom);
-		tf->init(1, 1, 1);
-		tf->place(level, pprandom, x, level->getHeightmap(x, z), z);
-		delete tf;
+		int y = level->getHeightmap(x, z);
+		Feature* tree = biome->getTreeFeature(pprandom);
+		if (tree)
+		{
+			tree->init(1, 1, 1);
+			tree->place(level, pprandom, x, y, z);
+			delete tree;
+		}
 	}
 	//PIXEndNamedEvent();
 	
@@ -1074,8 +1081,8 @@ void RandomLevelSource::postProcess(ChunkSource *parent, int xt, int zt)
 			// leaves are no longer solid
 			int y = level->getTopRainBlock(x, z);//level->getTopSolidBlock(x, z);
 
-			double temp = temp = temperatures[xp * 16 + zp] - (y - 64) / 64.0f * 0.3;
-			if (temp < 0.5 && y > 0 && y < Level::genDepth &&
+			double temp = temp = temperatures[xp * 16 + zp] - (y - 64) / 64.0f * SNOW_SCALE;
+			if (temp < SNOW_CUTOFF && y > 0 && y < Level::genDepth &&
 				level->isEmptyTile(x, y, z) && level->getMaterial(x, y-1, z)->blocksMotion() &&
 				level->getMaterial(x, y - 1, z) != Material::ice)
 			{

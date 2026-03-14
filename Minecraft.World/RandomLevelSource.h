@@ -60,7 +60,7 @@ public:
 	void prepareHeights(int xOffs, int zOffs, byteArray blocks);
 
 public:
-	void buildSurfaces(int xOffs, int zOffs, byteArray blocks, BiomeArray biomes);
+	void buildSurfaces(int xOffs, int zOffs, byteArray blocks, BiomeArray &biomes);
 
 private:
 	LargeFeature *caveFeature;
@@ -77,7 +77,7 @@ public:
 	virtual void lightChunk(LevelChunk *lc);	// 4J added
 
 private:
-	doubleArray getHeights(doubleArray buffer, int x, int y, int z, int xSize, int ySize, int zSize, BiomeArray& biomes);
+	doubleArray getHeights(doubleArray buffer, int x, int y, int z, int xSize, int ySize, int zSize, floatArray &temperatures, floatArray &downfalls);//BiomeArray& biomes);
 
 public:
 	virtual bool hasChunk(int x, int y);

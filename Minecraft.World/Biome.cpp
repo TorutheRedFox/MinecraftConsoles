@@ -51,50 +51,54 @@ void Biome::staticCtor()
 	Biome::hell = (new HellBiome(11))->setColor(0xff0000)->setName(L"Hell")->setNoRain()->setTemperatureAndDownfall(2, 0)->setLeafFoliageWaterSkyColor(eMinecraftColour_Grass_Hell, eMinecraftColour_Foliage_Hell, eMinecraftColour_Water_Hell,eMinecraftColour_Sky_Hell);
 	Biome::sky = (new TheEndBiome(12))->setColor(0x8080ff)->setName(L"Sky")->setNoRain()->setLeafFoliageWaterSkyColor(eMinecraftColour_Grass_Sky, eMinecraftColour_Foliage_Sky, eMinecraftColour_Water_Sky,eMinecraftColour_Sky_Sky);
 
-	for (int temp = 0; temp < 64; temp++) {
-		for (int rain = 0; rain < 64; rain++) {
-			Biome::map[temp + rain * 64] = _getBiome(temp / 63.0, rain / 63.0);
+	// recalc
+	for (int a = 0; a < 64; a++) {
+		for (int b = 0; b < 64; b++) {
+			map[a + b * 64] = _getBiome(a / 63.0f, b / 63.0f);
 		}
 	}
 
-	desert->topMaterial = desert->material = (byte)Tile::sand->id;
-	iceDesert->topMaterial = iceDesert->material = (byte)Tile::sand->id;
+	Biome::desert->topMaterial = Biome::desert->material = (byte)Tile::sand->id;
+	Biome::iceDesert->topMaterial = Biome::iceDesert->material = (byte)Tile::sand->id;
 }
 
-Biome *Biome::getBiome(double temp, double rain) {
-	int t = (int)(temp * 63.0);
-	int r = (int)(rain * 63.0);
-	return Biome::map[t + r * 64];
+Biome *Biome::getBiome(double temperature, double downfall) {
+	int a = (int)(temperature * 63.0);
+	int b = (int)(downfall * 63.0);
+	return Biome::map[a + b * 64];
 }
 
-Biome *Biome::_getBiome(float temp, float rain)
+Biome *Biome::_getBiome(float temperature, float downfall)
 {
-	rain *= temp;
-	if (temp < 0.1) {
-		return tundra;
-	}
-	else if (rain < 0.2) {
-		if (temp < 0.5) {
-			return tundra;
+	downfall *= (temperature);
+	if (temperature < 0.10f) {
+		return Biome::tundra;
+	} else if (downfall < 0.20f) {
+		if (temperature < 0.50f) {
+			return Biome::tundra;
+		} else if (temperature < 0.95f) {
+			return Biome::savanna;
+		} else {
+			return Biome::desert;
 		}
-		else {
-			return temp < 0.95 ? savanna : desert;
+	} else if (downfall > 0.5f && temperature < 0.7f) {
+		return Biome::swampland;
+	} else if (temperature < 0.50f) {
+		return Biome::taiga;
+	} else if (temperature < 0.97f) {
+		if (downfall < 0.35f) {
+			return Biome::shrubland;
+		} else {
+			return Biome::forest;
 		}
-	}
-	else if (rain > 0.5 && temp < 0.7) {
-		return swampland;
-	}
-	else if (rain < 0.5) {
-		return taiga;
-	}
-	else if (rain < 0.97) {
-		return rain < 0.35 ? shrubland : forest;
-	}
-	else if (rain < 0.45) {
-		return plains;
-	}
-	else {
-		return rain < 0.9 ? seasonalForest : rainForest;
+	} else {
+		if (downfall < 0.45f) {
+			return Biome::plains;
+		} else if (downfall < 0.90f) {
+			return Biome::seasonalForest;
+		} else {
+			return Biome::rainForest;
+		}
 	}
 }
 

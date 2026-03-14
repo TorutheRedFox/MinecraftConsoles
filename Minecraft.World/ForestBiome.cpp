@@ -7,9 +7,9 @@
 
 ForestBiome::ForestBiome(int id) : Biome(id)
 {
-	friendlies_wolf.push_back(new MobSpawnerData(eTYPE_WOLF, 5, 4, 4));		// 4J - moved to their own category
-	decorator->treeCount = 10;
-	decorator->grassCount = 2;
+	//friendlies_wolf.push_back(new MobSpawnerData(eTYPE_WOLF, 5, 4, 4));		// 4J - moved to their own category
+	//decorator->treeCount = 10;
+	//decorator->grassCount = 2;
 }
 
 Feature *ForestBiome::getTreeFeature(Random *random)

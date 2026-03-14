@@ -41,8 +41,8 @@ public:
 
 	static const int BIOME_COUNT = 13; // 4J Stu added
 
-	static Biome* getBiome(double temp, double rain);
-	static Biome* _getBiome(float temp, float rain);
+	static Biome* getBiome(double temperature, double downfall);
+	static Biome* _getBiome(float temperature, float downfall);
 
 public:
 	wstring m_name;
