@@ -6,11 +6,11 @@ using namespace std;
 
 #include "miniaudio.h"
 
-constexpr float SFX_3D_MIN_DISTANCE = 1.0f;
+constexpr float SFX_3D_MIN_DISTANCE = 0.0001f;
 constexpr float SFX_3D_MAX_DISTANCE = 16.0f;
-constexpr float SFX_3D_ROLLOFF = 0.5f;
-constexpr float SFX_VOLUME_MULTIPLIER = 1.5f;
-constexpr float SFX_MAX_GAIN = 1.5f;
+constexpr float SFX_3D_ROLLOFF = 1.0f;
+constexpr float SFX_VOLUME_MULTIPLIER = 1.0f;
+constexpr float SFX_MAX_GAIN = 1.0f;
 
 enum eMUSICFILES
 {
@@ -23,27 +23,27 @@ enum eMUSICFILES
 	eStream_Overworld_hal4,
 	eStream_Overworld_nuance1,
 	eStream_Overworld_nuance2,
-#ifndef _XBOX
-	// Add the new music tracks
-	eStream_Overworld_Creative1,
-	eStream_Overworld_Creative2,
-	eStream_Overworld_Creative3,
-	eStream_Overworld_Creative4,
-	eStream_Overworld_Creative5,
-	eStream_Overworld_Creative6,
-	eStream_Overworld_Menu1,
-	eStream_Overworld_Menu2,
-	eStream_Overworld_Menu3,
-	eStream_Overworld_Menu4,
-#endif
+//#ifndef _XBOX
+//	// Add the new music tracks
+//	eStream_Overworld_Creative1,
+//	eStream_Overworld_Creative2,
+//	eStream_Overworld_Creative3,
+//	eStream_Overworld_Creative4,
+//	eStream_Overworld_Creative5,
+//	eStream_Overworld_Creative6,
+//	eStream_Overworld_Menu1,
+//	eStream_Overworld_Menu2,
+//	eStream_Overworld_Menu3,
+//	eStream_Overworld_Menu4,
+//#endif
 	eStream_Overworld_piano1,
 	eStream_Overworld_piano2,
 	eStream_Overworld_piano3, // <-- make piano3 the last overworld one
 	// Nether
-	eStream_Nether1,
-	eStream_Nether2,
-	eStream_Nether3,
-	eStream_Nether4,
+	//eStream_Nether1,
+	//eStream_Nether2,
+	//eStream_Nether3,
+	//eStream_Nether4,
 	// The End
 	eStream_end_dragon,
 	eStream_end_end,

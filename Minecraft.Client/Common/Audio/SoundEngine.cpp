@@ -115,32 +115,32 @@ const char *SoundEngine::m_szStreamFileA[eStream_Max]=
 	"nuance1",
 	"nuance2",
 
-#ifndef _XBOX
-	"creative1",
-	"creative2",
-	"creative3",
-	"creative4",
-	"creative5",
-	"creative6",
-	"menu1",
-	"menu2",
-	"menu3",
-	"menu4",
-#endif
+//#ifndef _XBOX
+//	"creative1",
+//	"creative2",
+//	"creative3",
+//	"creative4",
+//	"creative5",
+//	"creative6",
+//	"menu1",
+//	"menu2",
+//	"menu3",
+//	"menu4",
+//#endif
 
 	"piano1",
 	"piano2",
 	"piano3",
 
-	// Nether
-	"nether1",
-	"nether2",
-	"nether3",
-	"nether4",
-
-	// The End
-	"the_end_dragon_alive",
-	"the_end_end",
+	//// Nether
+	//"nether1",
+	//"nether2",
+	//"nether3",
+	//"nether4",
+	//
+	//// The End
+	//"the_end_dragon_alive",
+	//"the_end_end",
 	
 	// CDs
 	"11",
@@ -405,8 +405,8 @@ SoundEngine::SoundEngine()
 
 	// Start the streaming music playing some music from the overworld
 	SetStreamingSounds(eStream_Overworld_Calm1,eStream_Overworld_piano3,
-		eStream_Nether1,eStream_Nether4,
-		eStream_end_dragon,eStream_end_end,
+		eStream_Overworld_Calm1, eStream_Overworld_piano3,
+		eStream_Overworld_Calm1, eStream_Overworld_piano3,
 		eStream_CD_1);
 
 	m_musicID=getMusicID(LevelData::DIMENSION_OVERWORLD);
@@ -560,6 +560,7 @@ void SoundEngine::play(int iSound, float x, float y, float z, float volume, floa
     ma_sound_set_min_distance(&s->sound, SFX_3D_MIN_DISTANCE);
     ma_sound_set_max_distance(&s->sound, SFX_3D_MAX_DISTANCE);
     ma_sound_set_rolloff(&s->sound, SFX_3D_ROLLOFF);
+	ma_sound_set_attenuation_model(&s->sound, ma_attenuation_model_linear);
 
     float finalVolume = volume * m_MasterEffectsVolume * SFX_VOLUME_MULTIPLIER;
     if (finalVolume > SFX_MAX_GAIN)
@@ -664,6 +665,9 @@ void SoundEngine::playUI(int iSound, float volume, float pitch)
     float finalVolume = volume * m_MasterEffectsVolume;
     if (finalVolume > 1.0f)
         finalVolume = 1.0f;
+
+	finalVolume *= 0.25f; // java multiplies this by 0.25
+
 	printf("UI Sound volume set to %f\nEffects volume: %f\n", finalVolume, m_MasterEffectsVolume);
 
     ma_sound_set_volume(&s->sound, finalVolume);
@@ -1240,6 +1244,10 @@ void SoundEngine::playMusicUpdate()
 			if (m_StreamingAudioInfo.bIs3D)
 			{
 				ma_sound_set_spatialization_enabled(&m_musicStream, MA_TRUE);
+				ma_sound_set_min_distance(&m_musicStream, SFX_3D_MIN_DISTANCE);
+				ma_sound_set_max_distance(&m_musicStream, SFX_3D_MAX_DISTANCE * 4.0f);
+				ma_sound_set_rolloff(&m_musicStream, SFX_3D_ROLLOFF);
+				ma_sound_set_attenuation_model(&m_musicStream, ma_attenuation_model_linear);
 				ma_sound_set_position(&m_musicStream, m_StreamingAudioInfo.x, m_StreamingAudioInfo.y, m_StreamingAudioInfo.z);
 			}
 			else
