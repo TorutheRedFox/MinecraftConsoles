@@ -71,8 +71,8 @@ Biome *BiomeSource::getBiome(ChunkPos *cp)
 
 Biome *BiomeSource::getBiome(int x, int z)
 {
-	BiomeArray biomes;
-	Biome* biome = getBiomeBlock(x, z, 1, 1)[0];
+	BiomeArray biomes = getBiomeBlock(x, z, 1, 1);
+	Biome* biome = biomes[0];
 	delete[] biomes.data;
 	return biome;
 }

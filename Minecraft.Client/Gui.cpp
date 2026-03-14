@@ -453,9 +453,9 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 				double absorption;
 				double totalAbsorption = minecraft->localplayers[iPad]->getAbsorptionAmount();
 				const double healthHalves = (maxHealth + totalAbsorption) / 2.0;
-				int numHealthRows = Mth.ceil(healthHalves / (float) NUM_HEARTS_PER_ROW);
-				int healthRowHeight = Math.max(10 - (numHealthRows - 2), 3);
-				int yLine2 = yLine1 - (numHealthRows - 1) * healthRowHeight - 10;
+				int numHealthRows = Mth::ceil(healthHalves / (float) NUM_HEARTS_PER_ROW);
+				int healthRowHeight = max(10 - (numHealthRows - 2), 3);
+				//int yLine2 = yLine1 - (numHealthRows - 1) * healthRowHeight - 10;
 				absorption = totalAbsorption;
 
 				int armor = minecraft->player->getArmorValue();
@@ -479,7 +479,7 @@ void Gui::render(float a, bool mouseFree, int xMouse, int yMouse)
 				}
 
 				//minecraft.profiler.popPush("health");
-				for (int i = (int)Mth.ceil(healthHalves) - 1; i >= 0; i--)
+				for (int i = (int)Mth::ceil(healthHalves) - 1; i >= 0; i--)
 				{
 					int healthTexBaseX = 16;
 					if (minecraft->player->hasEffect(MobEffect::poison))

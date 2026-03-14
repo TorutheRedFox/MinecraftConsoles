@@ -324,7 +324,7 @@ void RandomLevelSource::prepareHeights(int xOffs, int zOffs, byteArray blocks)
 							}
 
 							// 4J - this comparison used to just be with 0.0f but is now varied by block above
-							if ((val += vala) > 0)
+							if ((val += vala) > comp)
 							{
 								tileId = static_cast<byte>(Tile::stone_Id);
 							}
@@ -547,18 +547,6 @@ doubleArray RandomLevelSource::getHeights(doubleArray buffer, int x, int y, int 
 	{
 		buffer = doubleArray(xSize * ySize * zSize);
 	}
-	//if (pows.data == nullptr)
-	//{
-	//	pows = floatArray(5 * 5);
-	//	for (int xb = -2; xb <= 2; xb++)
-	//	{
-	//		for (int zb = -2; zb <= 2; zb++)
-	//		{
-	//			float ppp = 10.0f / Mth::sqrt(xb * xb + zb * zb + 0.2f);
-	//			pows[xb + 2 + (zb + 2) * 5] = ppp;
-	//		}
-	//	}
-	//}
 
 	double s = 1 * 684.412;
 	double hs = 1 * 684.412;
@@ -597,7 +585,6 @@ doubleArray RandomLevelSource::getHeights(doubleArray buffer, int x, int y, int 
 	pnr = perlinNoise1->getRegion(pnr, x, y, z, xSize, ySize, zSize, s / 80.0, hs / 160.0, s / 80.0);
 	ar = lperlinNoise1->getRegion(ar, x, y, z, xSize, ySize, zSize, s, hs, s);
 	br = lperlinNoise2->getRegion(br, x, y, z, xSize, ySize, zSize, s, hs, s);
-
 #endif
 
 	x = z = 0;
@@ -605,87 +592,56 @@ doubleArray RandomLevelSource::getHeights(doubleArray buffer, int x, int y, int 
 	int p = 0;
 	int pp = 0;
 
-	int bs = 16 / xSize;
-
+	int wScale = 16 / xSize;
 	for (int xx = 0; xx < xSize; xx++)
 	{
-		int bx = xx * bs + bs / 2;
+		int xp = xx * wScale + wScale / 2;
 		for (int zz = 0; zz < zSize; zz++)
 		{
-			int bz = zz * bs + bs / 2;
+			int zp = zz * wScale + wScale / 2;
 
-			float sss = 0;
-			float ddd = 0;
-			float pow = 0;
-
-			//int rr = 2;
-
-			//Biome *mb = biomes[(xx + 2) + (zz + 2) * (xSize + 5)];
-			//for (int xb = -rr; xb <= rr; xb++)
-			//{
-			//	for (int zb = -rr; zb <= rr; zb++)
-			//	{
-			//		Biome *b = biomes[(xx + xb + 2) + (zz + zb + 2) * (xSize + 5)];
-			//		float ppp = pows[xb + 2 + (zb + 2) * 5] / (b->depth + 2);
-			//		if (b->depth > mb->depth)
-			//		{
-			//			ppp /= 2;
-			//		}
-			//		sss += b->scale * ppp;
-			//		ddd += b->depth * ppp;
-			//		pow += ppp;
-			//	}
-			//}
-			//sss /= pow;
-			//ddd /= pow;
-			//
-			//sss = sss * 0.9f + 0.1f;
-			//ddd = (ddd * 4 - 1) / 8.0f;
+			float scale = 0;
+			float dd = 0;
 
 			double temperature = level->getBiomeSource()->getTemperature(xx, 1, zz);
 			double downfall = level->getBiomeSource()->getDownfall(xx, zz) * temperature;
 
-			pow = 1.0 - downfall;
-			pow *= pow;
-			pow *= pow;
-			pow = 1.0 - pow;
+			dd = 1.0 - downfall;
+			dd *= dd;
+			dd *= dd;
+			dd = 1.0 - dd;
 
-			sss = ((sr[pp] + 256) / 512.0) * pow;
-			if (sss > 1.0) sss = 1.0;
+			scale = ((sr[pp] + 256) / 512.0) * dd;
+			if (scale > 1.0) scale = 1.0;
 
-			double rdepth = (dr[pp] / 8000.0);
-			if (rdepth < 0) rdepth = -rdepth * 0.3;
-			rdepth = rdepth * 3.0 - 2.0;
+			double depth = (dr[pp] / 8000.0);
+			if (depth < 0) depth = -depth * 0.3;
+			depth = depth * 3.0 - 2.0;
 
-			if (rdepth < 0)
+			if (depth < 0)
 			{
-				rdepth = rdepth / 2;
-				if (rdepth < -1) rdepth = -1;
-				rdepth = rdepth / 1.4;
-				rdepth /= 2;
+				depth = depth / 2;
+				if (depth < -1) depth = -1;
+				depth = depth / 1.4;
+				depth /= 2;
 
-				sss = 0.0;
+				scale = 0.0;
 			}
 			else
 			{
-				if (rdepth > 1) rdepth = 1;
-				rdepth = rdepth / 8;
+				if (depth > 1) depth = 1;
+				depth = depth / 8;
 			}
 
-			if (sss < 0) sss = 0;
-			sss += 0.5;
+			if (scale < 0) scale = 0;
+			scale = (scale)+0.5f;
+			depth = depth * ySize / 16.0;
+			double yCenter = ySize / 2.0 + depth * 4;
 
 			pp++;
 
 			for (int yy = 0; yy < ySize; yy++)
 			{
-				double depth = rdepth;
-				double scale = sss;
-
-				depth = depth * ySize / 16.0;
-
-				double yCenter = ySize / 2.0 + depth * 4;
-
 				double val = 0;
 
 				double yOffs = (yy - (yCenter)) * 12 * 128 / Level::genDepth / scale;
@@ -808,7 +764,7 @@ void RandomLevelSource::postProcess(ChunkSource *parent, int xt, int zt)
 	int64_t zScale = pprandom->nextLong() / 2 * 2 + 1;
 	pprandom->setSeed(((xt * xScale) + (zt * zScale)) ^ level->getSeed());
 
-	double forestDensity = 0.25;
+	double ss = 0.25;
 	bool hasVillage = false;
 
 	////PIXBeginNamedEvent(0,"Structure postprocessing");
@@ -858,17 +814,6 @@ void RandomLevelSource::postProcess(ChunkSource *parent, int xt, int zt)
 		int z = zo + pprandom->nextInt(16) + 8;
 		MonsterRoomFeature mrf;
 		mrf.place(level, pprandom, x, y, z);
-	}
-	//PIXEndNamedEvent();
-
-	//PIXBeginNamedEvent(0, "Clay");
-	for (int i = 0; i < 8; i++)
-	{
-		int x = xo + pprandom->nextInt(16);
-		int y = pprandom->nextInt(Level::genDepth);
-		int z = zo + pprandom->nextInt(16);
-		ClayFeature cf(32);
-		cf.place(level, pprandom, x, y, z);
 	}
 	//PIXEndNamedEvent();
 
@@ -971,22 +916,22 @@ void RandomLevelSource::postProcess(ChunkSource *parent, int xt, int zt)
 	}
 	//PIXEndNamedEvent();
 
-	forestDensity = 0.5;
-	int forestNoiseVal = (int)((forestNoise->getValue((double)xo * forestDensity, (double)zo * forestDensity) / 8.0 + random->nextDouble() * 4.0 + 4.0) / 3.0);
-	int numTrees = 0;
+	ss = 0.5;
+	int oFor = (int)((forestNoise->getValue((double)xo * ss, (double)zo * ss) / 8.0 + random->nextDouble() * 4.0 + 4.0) / 3.0);
+	int forests = 0;
 
-	if (random->nextInt(10) == 0) numTrees++;
+	if (random->nextInt(10) == 0) forests++;
 
-	if (biome == Biome::forest) numTrees += forestNoiseVal + 5;
-	if (biome == Biome::rainForest) numTrees += forestNoiseVal + 5;
-	if (biome == Biome::seasonalForest) numTrees += forestNoiseVal + 2;
-	if (biome == Biome::taiga) numTrees += forestNoiseVal + 5;
-	if (biome == Biome::desert) numTrees -= 20;
-	if (biome == Biome::tundra) numTrees -= 20;
-	if (biome == Biome::plains) numTrees -= 20;
+	if (biome == Biome::forest) forests += oFor + 5;
+	if (biome == Biome::rainForest) forests += oFor + 5;
+	if (biome == Biome::seasonalForest) forests += oFor + 2;
+	if (biome == Biome::taiga) forests += oFor + 5;
+	if (biome == Biome::desert) forests -= 20;
+	if (biome == Biome::tundra) forests -= 20;
+	if (biome == Biome::plains) forests -= 20;
 
 	//PIXBeginNamedEvent(0, "Trees");
-	for (int i = 0; i < numTrees; i++)
+	for (int i = 0; i < forests; i++)
 	{
 		int x = xo + pprandom->nextInt(16) + 8;
 		int z = zo + pprandom->nextInt(16) + 8;
@@ -1063,11 +1008,11 @@ void RandomLevelSource::postProcess(ChunkSource *parent, int xt, int zt)
 	}
 	//PIXEndNamedEvent();
 
-	int numCacti = 0;
-	if (biome == Biome::desert) numCacti += 10;
+	int cacti = 0;
+	if (biome == Biome::desert) cacti += 10;
 
 	//PIXBeginNamedEvent(0, "Cacti");
-	for (int i = 0; i < numCacti; i++)
+	for (int i = 0; i < cacti; i++)
 	{
 		int x = xo + pprandom->nextInt(16) + 8;
 		int y = pprandom->nextInt(Level::genDepth) + 8;
@@ -1117,17 +1062,20 @@ void RandomLevelSource::postProcess(ChunkSource *parent, int xt, int zt)
 	zo += 8;
 
 	floatArray temperatures;
-	level->getBiomeSource()->getTemperatureBlock(temperatures, xo, zo, 16, 16);
+	level->getBiomeSource()->getTemperatureBlock(temperatures, xo + 8, zo + 8, 16, 16);
 
-	for (int x = xo; x < xo + 16; x++)
+	for (int x = xo + 8; x < xo + 8 + 16; x++)
 	{
-		for (int z = zo; z < zo + 16; z++)
+		for (int z = zo + 8; z < zo + 8 + 16; z++)
 		{
+			int xp = x - (xo + 8);
+			int zp = z - (zo + 8);
+
 			// leaves are no longer solid
 			int y = level->getTopRainBlock(x, z);//level->getTopSolidBlock(x, z);
 
-			double temperature = temperatures[(x - xo) * 16 + (z - zo)] - (y - 64.0) / 64.0 * 0.3;
-			if (temperature < 0.5 && y > 0 && y < Level::genDepth &&
+			double temp = temp = temperatures[xp * 16 + zp] - (y - 64) / 64.0f * 0.3;
+			if (temp < 0.5 && y > 0 && y < Level::genDepth &&
 				level->isEmptyTile(x, y, z) && level->getMaterial(x, y-1, z)->blocksMotion() &&
 				level->getMaterial(x, y - 1, z) != Material::ice)
 			{
