@@ -30,7 +30,7 @@ Biome *Biome::tundra = nullptr;
 Biome *Biome::hell = nullptr;
 Biome *Biome::sky = nullptr;
 
-Biome *Biome::map[4096];
+Biome *Biome::map[64 * 64];
 
 void Biome::staticCtor()
 {
@@ -65,6 +65,10 @@ void Biome::staticCtor()
 Biome *Biome::getBiome(double temperature, double downfall) {
 	int a = (int)(temperature * 63.0);
 	int b = (int)(downfall * 63.0);
+
+	if ((a + b * 64) >= 64 * 64)
+		__debugbreak();
+
 	return Biome::map[a + b * 64];
 }
 

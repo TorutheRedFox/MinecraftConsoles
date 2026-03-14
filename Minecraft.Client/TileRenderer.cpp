@@ -4560,10 +4560,10 @@ bool TileRenderer::tesselateWaterInWorld( Tile* tt, int x, int y, int z )
 	// TODO: This all needs to change. Somehow.
 	Tesselator* t = Tesselator::getInstance();
 
-	int			col = tt->getColor( level, x, y, z );
-	float		r = ( col >> 16 & 0xff ) / 255.0f;
-	float		g = ( col >> 8 & 0xff ) / 255.0f;
-	float		b = ( col & 0xff ) / 255.0f;
+	//int			col = tt->getColor( level, x, y, z );
+	//float		r = ( col >> 16 & 0xff ) / 255.0f;
+	//float		g = ( col >> 8 & 0xff ) / 255.0f;
+	//float		b = ( col & 0xff ) / 255.0f;
 	bool		up = tt->shouldRenderFace( level, x, y + 1, z, 1 );
 	bool		down = tt->shouldRenderFace( level, x, y - 1, z, 0 );
 	bool		dirs[4];
@@ -4671,7 +4671,8 @@ bool TileRenderer::tesselateWaterInWorld( Tile* tt, int x, int y, int z )
 		{
 			br = tt->getBrightness( level, x, y, z );
 		}
-		t->color( c11 * br * r, c11 * br * g, c11 * br * b );
+		//t->color( c11 * br * r, c11 * br * g, c11 * br * b );
+		t->color( c11 * br, c11 * br, c11 * br );
 		t->vertexUV( ( float )( x + 0.0f ), ( float )( y + h0 ), ( float )( z + 0.0f ), u00, v00 );
 		t->vertexUV( ( float )( x + 0.0f ), ( float )( y + h1 ), ( float )( z + 1.0f ), u01, v01 );
 		t->vertexUV( ( float )( x + 1.0f ), ( float )( y + h2 ), ( float )( z + 1.0f ), u10, v10 );
@@ -4774,7 +4775,8 @@ bool TileRenderer::tesselateWaterInWorld( Tile* tt, int x, int y, int z )
 			else
 				br *= c3;
 
-			t->color( c11 * br * r, c11 * br * g, c11 * br * b );
+			//t->color( c11 * br * r, c11 * br * g, c11 * br * b );
+			t->color( c11 * br, c11 * br, c11 * br );
 			t->vertexUV( ( float )( x0 ), ( float )( y + hh0 ), ( float )( z0 ), ( float )( u0 ), ( float )( v01 ) );
 			t->vertexUV( ( float )( x1 ), ( float )( y + hh1 ), ( float )( z1 ), ( float )( u1 ), ( float )( v02 ) );
 			t->vertexUV( ( float )( x1 ), static_cast<float>(y + 0), ( float )( z1 ), ( float )( u1 ), ( float )( v1 ) );

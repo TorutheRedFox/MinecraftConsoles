@@ -32,10 +32,10 @@ BiomeCache::Block::~Block()
 
 Biome *BiomeCache::Block::getBiome(int x, int z)
 {
-	return biomes[(x & ZONE_SIZE_MASK) | ((z & ZONE_SIZE_MASK) << ZONE_SIZE_BITS)];
+	//return biomes[(x & ZONE_SIZE_MASK) | ((z & ZONE_SIZE_MASK) << ZONE_SIZE_BITS)];
 
-	//const int biomeIndex = biomeIndices[(x & ZONE_SIZE_MASK) | ((z & ZONE_SIZE_MASK) << ZONE_SIZE_BITS)];
-	//return Biome::biomes[biomeIndex];
+	const int biomeIndex = biomeIndices[(x & ZONE_SIZE_MASK) | ((z & ZONE_SIZE_MASK) << ZONE_SIZE_BITS)];
+	return Biome::biomes[biomeIndex];
 }
 
 float BiomeCache::Block::getTemperature(int x, int z)
@@ -152,11 +152,12 @@ void BiomeCache::update()
 
 BiomeArray BiomeCache::getBiomeBlockAt(int x, int z)
 {
-	//byteArray indices = getBlockAt(x, z)->biomes;
-	//BiomeArray biomes(indices.length);
-	//for(int i=0;i<indices.length;i++)
-	//	biomes[i] = Biome::biomes[indices[i]];
-	return getBlockAt(x, z)->biomes;
+	byteArray indices = getBlockAt(x, z)->biomeIndices;
+	BiomeArray biomes(indices.length);
+	for(int i=0;i<indices.length;i++)
+		biomes[i] = Biome::biomes[indices[i]];
+	return biomes;
+	//return getBlockAt(x, z)->biomes;
 }
 
 byteArray BiomeCache::getBiomeIndexBlockAt(int x, int z)
