@@ -306,7 +306,7 @@ void ChestTileEntity::tick()
 			if (e.lock() != nullptr) xc += 0.5;
 
 			// 4J-PB - Seems the chest open volume is much louder than other sounds from user reports. We'll tone it down a bit
-			level->playSound(xc, y + 0.5, zc, eSoundType_RANDOM_CHEST_OPEN, 0.2f, level->random->nextFloat() * 0.1f + 0.9f);
+			//level->playSound(xc, y + 0.5, zc, eSoundType_RANDOM_CHEST_OPEN, 0.2f, level->random->nextFloat() * 0.1f + 0.9f);
 		}
 	}
 	if ((openCount == 0 && openness > 0) || (openCount > 0 && openness < 1))
@@ -331,7 +331,7 @@ void ChestTileEntity::tick()
 				if (e.lock() != nullptr) xc += 0.5;
 
 				// 4J-PB - Seems the chest open volume is much louder than other sounds from user reports. We'll tone it down a bit
-				level->playSound(xc, y + 0.5, zc, eSoundType_RANDOM_CHEST_CLOSE, 0.2f, level->random->nextFloat() * 0.1f + 0.9f);
+				//level->playSound(xc, y + 0.5, zc, eSoundType_RANDOM_CHEST_CLOSE, 0.2f, level->random->nextFloat() * 0.1f + 0.9f);
 			}
 		}
 		if (openness < 0)

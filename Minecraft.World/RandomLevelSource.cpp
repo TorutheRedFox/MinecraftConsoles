@@ -1065,8 +1065,6 @@ void RandomLevelSource::postProcess(ChunkSource *parent, int xt, int zt)
 
 	//PIXBeginNamedEvent(0,"Update ice and snow");
 	// 4J - brought forward from 1.2.3 to get snow back in taiga biomes
-	xo += 8;
-	zo += 8;
 
 	floatArray temperatures;
 	level->getBiomeSource()->getTemperatureBlock(temperatures, xo + 8, zo + 8, 16, 16);
