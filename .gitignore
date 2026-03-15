@@ -379,11 +379,8 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # VS Code files for those working on multiple tools
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+.vscode/
+!.vscode/*.example.json
 *.code-workspace
 
 # Local History for Visual Studio Code
@@ -423,6 +420,12 @@ Minecraft.World/x64_Debug/
 Minecraft.World/Release/
 Minecraft.World/x64_Release/
 
+Minecraft.Server/x64/
+Minecraft.Server/Debug/
+Minecraft.Server/x64_Debug/
+Minecraft.Server/Release/
+Minecraft.Server/x64_Release/
+
 build/*
 
 # Existing build output files
@@ -434,6 +437,9 @@ build/*
 # Local saves
 Minecraft.Client/Saves/
 
+tmp*/
+_server_asset_probe/
+server-data/
 # Visual Studio Per-User Config
 *.user
 /out
