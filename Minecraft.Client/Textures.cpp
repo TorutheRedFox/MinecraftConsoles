@@ -1407,7 +1407,7 @@ BufferedImage *Textures::readImage(TEXTURE_NAME texId, const wstring& name)	// 4
 	BufferedImage *img=nullptr;
 	MemSect(32);
 	// is this image one of the Title Update ones?
-	bool isTu = IsTUImage(texId, name);
+	bool isTu = false;// IsTUImage(texId, name);
 	wstring drive = L"";
 
 	if(!skins->isUsingDefaultSkin() && skins->getSelected()->hasFile(L"res/" + name,false))
@@ -1442,7 +1442,7 @@ BufferedImage *Textures::readImage(TEXTURE_NAME texId, const wstring& name)	// 4
 
 		const char *pchDrive=wstringtofilename(drive);
 
-		if(IsOriginalImage(texId, name) || isTu)
+		if (true)//if(IsOriginalImage(texId, name) || isTu)
 		{
 			img = skins->getDefault()->getImageResource(name,false,isTu,drive); //new BufferedImage(name,false,isTu,drive);
 		}
