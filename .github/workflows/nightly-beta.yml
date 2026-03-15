@@ -28,6 +28,9 @@ jobs:
     - name: Zip Build
       run: 7z a -r LCEWindows64.zip ./x64/Release/*
 
+    - name: Zip Dedicated Server Build
+      run: 7z a -r LCEServerWindows64.zip ./x64/Minecraft.Server/Release/*
+
     - name: Update release
       uses: andelf/nightly-release@main
       env:
@@ -44,3 +47,19 @@ jobs:
             LCEWindows64.zip
             ./x64/Release/Minecraft.Client.exe
             ./x64/Release/Minecraft.Client.pdb
+
+    - name: Update Dedicated Server release
+      uses: andelf/nightly-release@main
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: beta-nightly-dedicated-server
+        name: Nightly Dedicated Server Release (Beta)
+        body: |
+          Dedicated Server runtime for Windows64.
+
+          Download `LCEServerWindows64.zip` and extract it to a folder where you'd like to keep the server runtime.
+        files: |
+            LCEServerWindows64.zip
+            ./x64/Minecraft.Server/Release/Minecraft.Server.exe
+            ./x64/Minecraft.Server/Release/Minecraft.Server.pdb
