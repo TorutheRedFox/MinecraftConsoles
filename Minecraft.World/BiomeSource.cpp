@@ -79,43 +79,37 @@ Biome *BiomeSource::getBiome(int x, int z)
 
 float BiomeSource::getDownfall(int x, int z) const
 {
-	floatArray downfalls = getDownfallBlock(x, z, 1, 1);
+	doubleArray downfalls = getDownfallBlock(x, z, 1, 1);
 	float downfall = downfalls[0];
 	delete[] downfalls.data;
 	return downfall;
 }
 
 // 4J - note that caller is responsible for deleting returned array. temperatures array is for output only.
-floatArray BiomeSource::getDownfallBlock(int x, int z, int w, int h) const
+doubleArray BiomeSource::getDownfallBlock(int x, int z, int w, int h) const
 {
-	floatArray downfalls;
+	doubleArray downfalls;
 	getDownfallBlock(downfalls, x, z, w, h);
 	return downfalls;
 }
 
 // 4J - note that caller is responsible for deleting returned array. temperatures array is for output only.
 // 4J - removal of separate temperature & downfall layers brought forward from 1.2.3
-void BiomeSource::getDownfallBlock(floatArray &downfalls, int x, int z, int w, int h) const
+void BiomeSource::getDownfallBlock(doubleArray &downfalls, int x, int z, int w, int h) const
 {
-	doubleArray _downfalls(w * h);
 	doubleArray noises(w * h);
-	_downfalls = downfallMap->getRegion(_downfalls, x, z, w, h, 0.05, 0.05, 1.0 / 3.0);
-	noises = noiseMap->getRegion(noises, x, z, w, h, 0.25, 0.25, 1.0 / 1.7);
+	downfalls = downfallMap->getRegion(downfalls, x, z, w, h, 0.05f, 0.05f, 1.0 / 3.0);
+	noises = noiseMap->getRegion(noises, x, z, w, h, 0.25, 0.25, 0.5882352941176471);
 
-	if (downfalls.data == nullptr || static_cast<int>(downfalls.length) < w * h)
-	{
-		if (downfalls.data) delete[] downfalls.data;
-		downfalls = floatArray(w * h);
-	}
 
 	int pp = 0;
 	for (int yy = 0; yy < w; yy++) {
 		for (int xx = 0; xx < h; xx++) {
-			float noise = (noises[pp] * 1.1f + 0.5f);
+			double noise = (noises[pp] * 1.1 + 0.5);
 
-			float split2 = 0.002f;
-			float split1 = 1 - split2;
-			float downfall = (_downfalls[pp] * 0.15f + 0.5f) * split1 + noise * split2;
+			double split2 = 0.002;
+			double split1 = 1 - split2;
+			double downfall = (downfalls[pp] * 0.15 + 0.5) * split1 + noise * split2;
 			downfall = 1 - ((1 - downfall) * (1 - downfall));
 
 			if (downfall < 0) downfall = 0;
@@ -126,7 +120,6 @@ void BiomeSource::getDownfallBlock(floatArray &downfalls, int x, int z, int w, i
 		}
 	}
 
-	delete[] _downfalls.data;
 	delete[] noises.data;
 }
 
@@ -137,7 +130,11 @@ BiomeCache::Block *BiomeSource::getBlockAt(int x, int y)
 
 float BiomeSource::getTemperature(int x, int y, int z) const
 {
-	return scaleTemp(cache->getTemperature(x, z), y);;
+	doubleArray temperatures(1);
+	temperatures = temperatureMap->getRegion(temperatures, x, z, 1, 1, 0.025, 0.025, 0.25);
+	float temperature = temperatures[0];
+	delete [] temperatures.data;
+	return temperature;
 }
 
 // 4J - brought forward from 1.2.3
@@ -146,36 +143,29 @@ float BiomeSource::scaleTemp(float temp, int y ) const
 	return temp;
 }
 
-floatArray BiomeSource::getTemperatureBlock(int x, int z, int w, int h) const
+doubleArray BiomeSource::getTemperatureBlock(int x, int z, int w, int h) const
 {
-	floatArray temperatures;
+	doubleArray temperatures;
 	getTemperatureBlock(temperatures, x, z, w, h);
 	return temperatures;
 }
 
 // 4J - note that caller is responsible for deleting returned array. temperatures array is for output only.
 // 4J - removal of separate temperature & downfall layers brought forward from 1.2.3
-void BiomeSource::getTemperatureBlock(floatArray& temperatures, int x, int z, int w, int h) const
+void BiomeSource::getTemperatureBlock(doubleArray& temperatures, int x, int z, int w, int h) const
 {
-	doubleArray _temperatures(w * h);
 	doubleArray noises(w * h);
-	_temperatures = temperatureMap->getRegion(_temperatures, x, z, w, h, 0.025, 0.025, 0.25);
-	noises = noiseMap->getRegion(noises, x, z, w, h, 0.25, 0.25, 1.0 / 1.7);
-
-	if (temperatures.data == nullptr || static_cast<int>(temperatures.length) < w * h)
-	{
-		if (temperatures.data) delete[] temperatures.data;
-		temperatures = floatArray(w * h);
-	}
+	temperatures = temperatureMap->getRegion(temperatures, x, z, w, h, 0.025f, 0.025f, 0.25);
+	noises = noiseMap->getRegion(noises, x, z, w, h, 0.25, 0.25, 0.5882352941176471);
 	
 	int pp = 0;
 	for (int yy = 0; yy < w; yy++) {
 		for (int xx = 0; xx < h; xx++) {
-			float noise = (noises[pp] * 1.1f + 0.5f);
+			double noise = (noises[pp] * 1.1 + 0.5);
 
-			float split2 = 0.01f;
-			float split1 = 1 - split2;
-			float temperature = (_temperatures[pp] * 0.15f + 0.7f) * split1 + noise * split2;
+			double split2 = 0.01;
+			double split1 = 1 - split2;
+			double temperature = (temperatures[pp] * 0.15 + 0.7) * split1 + noise * split2;
 			temperature = 1 - ((1 - temperature) * (1 - temperature));
 
 			if (temperature < 0) temperature = 0;
@@ -186,7 +176,6 @@ void BiomeSource::getTemperatureBlock(floatArray& temperatures, int x, int z, in
 		}
 	}
 
-	delete [] _temperatures.data;
 	delete [] noises.data;
 }
 
@@ -244,21 +233,21 @@ void BiomeSource::getRawBiomeBlock(BiomeArray &biomes, int x, int z, int w, int 
 	doubleArray downfalls(w * h);
 	doubleArray noises(w * h);
 
-	temperatures = temperatureMap->getRegion(temperatures, x, z, w, h, 0.025, 0.025, 1.0 / 4.0);
-	downfalls = downfallMap->getRegion(downfalls, x, z, w, h, 0.05, 0.05, 1.0 / 3.0);
-	noises = noiseMap->getRegion(noises, x, z, w, h, 0.25, 0.25, 1.0 / 1.7);
+	temperatures = temperatureMap->getRegion(temperatures, x, z, w, h, 0.025f, 0.025f, 1.0 / 4.0);
+	downfalls = downfallMap->getRegion(downfalls, x, z, w, h, 0.05f, 0.05f, 1.0 / 3.0);
+	noises = noiseMap->getRegion(noises, x, z, w, h, 0.25, 0.25, 0.5882352941176471);
 
 	int pp = 0;
 	for (int yy = 0; yy < w; yy++) {
 		for (int xx = 0; xx < h; xx++) {
-			float noise = (noises[pp] * 1.1f + 0.5f);
+			double noise = (noises[pp] * 1.1f + 0.5f);
 
-			float split2 = 0.01f;
-			float split1 = 1 - split2;
-			float temperature = (temperatures[pp] * 0.15f + 0.7f) * split1 + noise * split2;
-			split2 = 0.002f;
+			double split2 = 0.01;
+			double split1 = 1 - split2;
+			double temperature = (temperatures[pp] * 0.15 + 0.7) * split1 + noise * split2;
+			split2 = 0.002;
 			split1 = 1 - split2;
-			float downfall = (downfalls[pp] * 0.15f + 0.5f) * split1 + noise * split2;
+			double downfall = (downfalls[pp] * 0.15 + 0.5) * split1 + noise * split2;
 			temperature = 1 - ((1 - temperature) * (1 - temperature));
 			if (temperature < 0) temperature = 0;
 			if (downfall < 0) downfall = 0;
@@ -315,19 +304,19 @@ void BiomeSource::getBiomeBlock(BiomeArray& biomes, int x, int z, int w, int h, 
 
 	temperatures = temperatureMap->getRegion(temperatures, x, z, w, h, 0.025, 0.025, 1.0 / 4.0);
 	downfalls = downfallMap->getRegion(downfalls, x, z, w, h, 0.05, 0.05, 1.0 / 3.0);
-	noises = noiseMap->getRegion(noises, x, z, w, h, 0.25, 0.25, 1.0 / 1.7);
+	noises = noiseMap->getRegion(noises, x, z, w, h, 0.25, 0.25, 0.5882352941176471);
 
 	int pp = 0;
 	for (int yy = 0; yy < w; yy++) {
 		for (int xx = 0; xx < h; xx++) {
-			float noise = (noises[pp] * 1.1f + 0.5f);
+			double noise = (noises[pp] * 1.1 + 0.5);
 
-			float split2 = 0.01f;
-			float split1 = 1 - split2;
-			float temperature = (temperatures[pp] * 0.15f + 0.7f) * split1 + noise * split2;
+			double split2 = 0.01f;
+			double split1 = 1 - split2;
+			double temperature = (temperatures[pp] * 0.15 + 0.7) * split1 + noise * split2;
 			split2 = 0.002f;
 			split1 = 1 - split2;
-			float downfall = (downfalls[pp] * 0.15f + 0.5f) * split1 + noise * split2;
+			double downfall = (downfalls[pp] * 0.15 + 0.5) * split1 + noise * split2;
 			temperature = 1 - ((1 - temperature) * (1 - temperature));
 			if (temperature < 0) temperature = 0;
 			if (downfall < 0) downfall = 0;
@@ -392,19 +381,19 @@ void BiomeSource::getBiomeIndexBlock(byteArray& biomeIndices, int x, int z, int 
 
 	temperatures = temperatureMap->getRegion(temperatures, x, z, w, h, 0.025, 0.025, 0.25);
 	downfalls = downfallMap->getRegion(downfalls, x, z, w, h, 0.025, 0.025, 0.25);
-	noises = noiseMap->getRegion(noises, x, z, w, h, 0.25, 0.25, 1.0 / 1.7);
+	noises = noiseMap->getRegion(noises, x, z, w, h, 0.25, 0.25, 0.5882352941176471);
 
 	int pp = 0;
 	for (int yy = 0; yy < w; yy++) {
 		for (int xx = 0; xx < h; xx++) {
-			float noise = (noises[pp] * 1.1f + 0.5f);
+			double noise = (noises[pp] * 1.1 + 0.5);
 
-			float split2 = 0.01f;
-			float split1 = 1 - split2;
-			float temperature = (temperatures[pp] * 0.15f + 0.7f) * split1 + noise * split2;
-			split2 = 0.002f;
+			double split2 = 0.01f;
+			double split1 = 1 - split2;
+			double temperature = (temperatures[pp] * 0.15 + 0.7) * split1 + noise * split2;
+			split2 = 0.002;
 			split1 = 1 - split2;
-			float downfall = (downfalls[pp] * 0.15f + 0.5f) * split1 + noise * split2;
+			double downfall = (downfalls[pp] * 0.15 + 0.5) * split1 + noise * split2;
 			temperature = 1 - ((1 - temperature) * (1 - temperature));
 			if (temperature < 0) temperature = 0;
 			if (downfall < 0) downfall = 0;

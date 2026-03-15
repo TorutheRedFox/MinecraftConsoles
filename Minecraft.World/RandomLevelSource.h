@@ -77,7 +77,7 @@ public:
 	virtual void lightChunk(LevelChunk *lc);	// 4J added
 
 private:
-	doubleArray getHeights(doubleArray buffer, int x, int y, int z, int xSize, int ySize, int zSize, floatArray &temperatures, floatArray &downfalls);//BiomeArray& biomes);
+	doubleArray getHeights(doubleArray buffer, int x, int y, int z, int xSize, int ySize, int zSize, doubleArray &temperatures, doubleArray &downfalls);//BiomeArray& biomes);
 
 public:
 	virtual bool hasChunk(int x, int y);

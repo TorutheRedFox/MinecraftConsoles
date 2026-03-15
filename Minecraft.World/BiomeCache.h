@@ -17,8 +17,8 @@ public:
 	{
 	public:
 		// MGH - changed this to just cache biome indices, as we have direct access to the data if we know the index.
- 		floatArray temps;
- 		floatArray downfall;
+		doubleArray temps;
+		doubleArray downfall;
  		BiomeArray biomes;
 		byteArray biomeIndices;
 		int x, z;

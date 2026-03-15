@@ -615,6 +615,13 @@
     <ClCompile Include="Console\commands\whitelist\CliCommandWhitelist.cpp">
       <Filter>Server\Console\Commands</Filter>
     </ClCompile>
+    <ClCompile Include="..\Minecraft.Client\AbstractContainerScreen.cpp" />
+    <ClCompile Include="..\Minecraft.Client\ContainerScreen.cpp" />
+    <ClCompile Include="..\Minecraft.Client\CraftingScreen.cpp" />
+    <ClCompile Include="..\Minecraft.Client\FurnaceScreen.cpp" />
+    <ClCompile Include="..\Minecraft.Client\InventoryScreen.cpp" />
+    <ClCompile Include="..\Minecraft.Client\TextEditScreen.cpp" />
+    <ClCompile Include="..\Minecraft.Client\TrapScreen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Console\ServerCli.h">
@@ -734,4 +741,3 @@
     <MASM Include="..\Minecraft.Client\iob_shim.asm" />
   </ItemGroup>
 </Project>
-

@@ -259,8 +259,8 @@ void RandomLevelSource::prepareHeights(int xOffs, int zOffs, byteArray blocks)
 
 	//level->getBiomeSource()->getRawBiomeBlock(biomes, xOffs * CHUNK_WIDTH - 2, zOffs * CHUNK_WIDTH - 2, xSize + 5, zSize + 5);
 
-	floatArray temperatures = level->getBiomeSource()->getTemperatureBlock(xOffs, zOffs, 16, 16);
-	floatArray downfalls = level->getBiomeSource()->getDownfallBlock(xOffs, zOffs, 16, 16);
+	doubleArray temperatures = level->getBiomeSource()->getTemperatureBlock(xOffs * 16, zOffs * 16, 16, 16);
+	doubleArray downfalls = level->getBiomeSource()->getDownfallBlock(xOffs * 16, zOffs * 16, 16, 16);
 
 	doubleArray buffer;	// 4J - used to be declared with class level scope but tidying up for thread safety reasons
 	buffer = getHeights(buffer, xOffs * xChunks, 0, zOffs * xChunks, xSize, ySize, zSize, temperatures, downfalls);
@@ -301,7 +301,7 @@ void RandomLevelSource::prepareHeights(int xOffs, int zOffs, byteArray blocks)
 
 						double val = _s0;
 						double vala = (_s1 - _s0) * zStep;
-						val -= vala;
+						//val -= vala;
 						for (int z = 0; z < CHUNK_WIDTH; z++)
 						{
 // 4J Stu - I have removed all uses of the new getHeightFalloff function for now as we had some problems with PS3/PSVita world generation
@@ -312,6 +312,7 @@ void RandomLevelSource::prepareHeights(int xOffs, int zOffs, byteArray blocks)
 							int emin;
 							float comp = getHeightFalloff(xxx, zzz, &emin);
 
+							double temp = temperatures[(xc * CHUNK_WIDTH + x) * 16 + (zc * CHUNK_WIDTH + z)];
 
 							// 4J - slightly rearranged this code (as of java 1.0.1 merge) to better fit with
 							// changes we've made edge-of-world things - original sets blocks[offs += step] directly
@@ -320,7 +321,7 @@ void RandomLevelSource::prepareHeights(int xOffs, int zOffs, byteArray blocks)
 
 							if (yc * CHUNK_HEIGHT + y < waterHeight)
 							{
-								if (level->getBiomeSource()->getTemperature(xxx, y, zzz) < SNOW_CUTOFF && yc * CHUNK_HEIGHT + y >= waterHeight - 1)
+								if (temp < SNOW_CUTOFF && yc * CHUNK_HEIGHT + y >= waterHeight - 1)
 									tileId = static_cast<byte>(Tile::ice_Id);
 								else
 									tileId = static_cast<byte>(Tile::calmWater_Id);
@@ -390,9 +391,9 @@ void RandomLevelSource::buildSurfaces(int xOffs, int zOffs, byteArray blocks, Bi
 		for (int z = 0; z < 16; z++)
 		{
 			Biome *b = biomes[z + x * 16];
-			float temp = b->getTemperature();
-			bool runSand = sandBuffer[x + z * 16] + random->nextDouble() * 0.2 > 0.0;
-			bool runGravel = gravelBuffer[x + z * 16] + random->nextDouble() * 0.2 > 3.0;
+			//float temp = b->getTemperature();
+			bool sand = sandBuffer[x + z * 16] + random->nextDouble() * 0.2 > 0.0;
+			bool gravel = gravelBuffer[x + z * 16] + random->nextDouble() * 0.2 > 3.0;
 			int runDepth = static_cast<int>(depthBuffer[x + z * 16] / 3 + 3 + random->nextDouble() * 0.25);
 
 			int run = -1;
@@ -441,11 +442,11 @@ void RandomLevelSource::buildSurfaces(int xOffs, int zOffs, byteArray blocks, Bi
 								//	lgo->getBiomeOverride(b->id,material,top);
 								//}
 
-								if (runGravel) top = 0;
-								if (runGravel) material = static_cast<byte>(Tile::gravel->id);
+								if (gravel) top = 0;
+								if (gravel) material = static_cast<byte>(Tile::gravel->id);
 
-								if (runSand) top = static_cast<byte>(Tile::sand->id);
-								if (runSand) material = static_cast<byte>(Tile::sand->id);
+								if (sand) top = static_cast<byte>(Tile::sand->id);
+								if (sand) material = static_cast<byte>(Tile::sand->id);
 							}
 
 							if (y < waterHeight && top == 0)
@@ -544,7 +545,7 @@ void RandomLevelSource::lightChunk(LevelChunk *lc)
 }
 
 
-doubleArray RandomLevelSource::getHeights(doubleArray buffer, int x, int y, int z, int xSize, int ySize, int zSize, floatArray& temperatures, floatArray& downfalls)//BiomeArray& biomes)
+doubleArray RandomLevelSource::getHeights(doubleArray buffer, int x, int y, int z, int xSize, int ySize, int zSize, doubleArray& temperatures, doubleArray& downfalls)//BiomeArray& biomes)
 {
 	if (buffer.data == nullptr)
 	{
@@ -1066,7 +1067,7 @@ void RandomLevelSource::postProcess(ChunkSource *parent, int xt, int zt)
 	//PIXBeginNamedEvent(0,"Update ice and snow");
 	// 4J - brought forward from 1.2.3 to get snow back in taiga biomes
 
-	floatArray temperatures;
+	doubleArray temperatures;
 	level->getBiomeSource()->getTemperatureBlock(temperatures, xo + 8, zo + 8, 16, 16);
 
 	for (int x = xo + 8; x < xo + 8 + 16; x++)
@@ -1079,7 +1080,7 @@ void RandomLevelSource::postProcess(ChunkSource *parent, int xt, int zt)
 			// leaves are no longer solid
 			int y = level->getTopRainBlock(x, z);//level->getTopSolidBlock(x, z);
 
-			double temp = temp = temperatures[xp * 16 + zp] - (y - 64) / 64.0f * SNOW_SCALE;
+			double temp = temperatures[xp * 16 + zp] - (y - 64) / 64.0 * SNOW_SCALE;
 			if (temp < SNOW_CUTOFF && y > 0 && y < Level::genDepth &&
 				level->isEmptyTile(x, y, z) && level->getMaterial(x, y-1, z)->blocksMotion() &&
 				level->getMaterial(x, y - 1, z) != Material::ice)

@@ -55,15 +55,15 @@ public:
 
 	// 4J - changed the interface for these methods, mainly for thread safety
 	virtual float getDownfall(int x, int z) const;
-    virtual floatArray getDownfallBlock(int x, int z, int w, int h) const;
-    virtual void getDownfallBlock(floatArray &downfalls, int x, int z, int w, int h) const;
+    virtual doubleArray getDownfallBlock(int x, int z, int w, int h) const;
+    virtual void getDownfallBlock(doubleArray&downfalls, int x, int z, int w, int h) const;
 
 	// 4J - changed the interface for these methods, mainly for thread safety
 	virtual BiomeCache::Block *getBlockAt(int x, int y);
 	virtual float getTemperature(int x, int y, int z) const;
 	float scaleTemp(float temp, int y ) const;	// 4J - brought forward from 1.2.3
-	virtual floatArray getTemperatureBlock(int x, int z, int w, int h) const;
-    virtual void getTemperatureBlock(floatArray& temperatures, int x, int z, int w, int h) const;
+	virtual doubleArray getTemperatureBlock(int x, int z, int w, int h) const;
+    virtual void getTemperatureBlock(doubleArray& temperatures, int x, int z, int w, int h) const;
 
 	virtual BiomeArray getRawBiomeBlock(int x, int z, int w, int h) const;
 	virtual void getRawBiomeBlock(BiomeArray &biomes, int x, int z, int w, int h) const;

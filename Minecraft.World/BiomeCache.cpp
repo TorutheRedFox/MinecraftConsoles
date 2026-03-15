@@ -7,8 +7,8 @@
 
 BiomeCache::Block::Block(int x, int z, BiomeCache *parent)
 {
- 	temps = floatArray(ZONE_SIZE * ZONE_SIZE, false);		// MGH - added "no clear" flag to arrayWithLength
- 	downfall = floatArray(ZONE_SIZE * ZONE_SIZE, false);
+ 	temps = doubleArray(ZONE_SIZE * ZONE_SIZE, false);		// MGH - added "no clear" flag to arrayWithLength
+ 	downfall = doubleArray(ZONE_SIZE * ZONE_SIZE, false);
  	biomes = BiomeArray(ZONE_SIZE * ZONE_SIZE, false);
 	biomeIndices = byteArray(static_cast<unsigned int>(ZONE_SIZE * ZONE_SIZE), false);
 

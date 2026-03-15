@@ -2034,7 +2034,7 @@ Vec3 *Level::getSkyColor(shared_ptr<Entity> source, float a)
 	int xx = Mth::floor(source->x);
 	int zz = Mth::floor(source->z);
 	Biome *biome = getBiome(xx, zz);
-	float temp = biome->getTemperature();
+	float temp = getBiomeSource()->getTemperature(xx, 1, zz);//biome->getTemperature();
 	int skyColor = biome->getSkyColor(temp);
 
 	float r = ((skyColor >> 16) & 0xff) / 255.0f;

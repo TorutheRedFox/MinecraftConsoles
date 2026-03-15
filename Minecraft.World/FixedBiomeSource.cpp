@@ -35,9 +35,9 @@ void FixedBiomeSource::getTemperatureBlock(floatArray& temperatures, int x, int 
 	Arrays::fill(temperatures, 0, w * h, temperature);
 }
 
-floatArray FixedBiomeSource::getTemperatureBlock(int x, int z, int w, int h) const
+doubleArray FixedBiomeSource::getTemperatureBlock(int x, int z, int w, int h) const
 {
-	floatArray temps(w*h);
+	doubleArray temps(w*h);
 	getTemperatureBlock(temps, x, z, w, h);
 	return temps;
 }
@@ -50,19 +50,19 @@ void FixedBiomeSource::getTemperatureBlock(doubleArray& temperatures, int x, int
 	Arrays::fill(temperatures, 0, w * h, (double)temperature);
 }
 
-void FixedBiomeSource::getDownfallBlock(floatArray &downfalls, int x, int z, int w, int h) const
+void FixedBiomeSource::getDownfallBlock(doubleArray &downfalls, int x, int z, int w, int h) const
 {
 	if (downfalls.data == nullptr || downfalls.length < w * h)
 	{
 		if(downfalls.data != nullptr) delete [] downfalls.data;
-		downfalls = floatArray(w * h);
+		downfalls = doubleArray(w * h);
 	}
 	Arrays::fill(downfalls, 0, w * h, downfall);
 }
 
-floatArray FixedBiomeSource::getDownfallBlock(int x, int z, int w, int h) const
+doubleArray FixedBiomeSource::getDownfallBlock(int x, int z, int w, int h) const
 {
-	floatArray downfalls(w*h);
+	doubleArray downfalls(w*h);
 	getDownfallBlock(downfalls, x, z, w, h);
 	return downfalls;
 }

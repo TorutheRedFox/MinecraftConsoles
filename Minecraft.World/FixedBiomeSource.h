@@ -16,10 +16,10 @@ public:
     virtual Biome *getBiome(int x, int z);
     virtual float getTemperature(int x, int z);
 	virtual void getTemperatureBlock(floatArray& temperatures, int x, int z, int w, int h) const;
-	virtual floatArray getTemperatureBlock(int x, int z, int w, int h) const;
+	virtual doubleArray getTemperatureBlock(int x, int z, int w, int h) const;
     virtual void getTemperatureBlock(doubleArray& temperatures, int x, int z, int w, int h) const;
-	virtual void getDownfallBlock(floatArray &downfalls, int x, int z, int w, int h) const;
-	virtual floatArray getDownfallBlock(int x, int z, int w, int h) const;
+	virtual void getDownfallBlock(doubleArray &downfalls, int x, int z, int w, int h) const;
+	virtual doubleArray getDownfallBlock(int x, int z, int w, int h) const;
 	virtual float getDownfall(int x, int z) const;
 	virtual void getDownfallBlock(doubleArray downfalls, int x, int z, int w, int h);
     virtual void getBiomeBlock(BiomeArray& biomes, int x, int z, int w, int h, bool useCache) const;

@@ -87,14 +87,16 @@ int LeafTile::getColor(LevelSource *level, int x, int y, int z, int data)
 	//
 	//return (((totalRed / 9) & 0xFF) << 16) | (((totalGreen / 9) & 0xFF) << 8) | (((totalBlue / 9) & 0xFF));
 
-	BiomeArray block = level->getBiomeSource()->getBiomeBlock(x, z, 1, 1);
+	doubleArray temperatures = level->getBiomeSource()->getTemperatureBlock(x, z, 1, 1);
+	doubleArray downfalls = level->getBiomeSource()->getDownfallBlock(x, z, 1, 1);
 
-	double temp = level->getBiomeSource()->getTemperature(x, 1, z);
-	double rain = level->getBiomeSource()->getDownfall(x, z);
+	double temperature = temperatures[0];
+	double downfall = downfalls[0];
 
-	delete[] block.data;
+	delete[] temperatures.data;
+	delete[] downfalls.data;
 
-	return FoliageColor::get(temp, rain);
+	return FoliageColor::get(temperature, downfall);
 }
 
 void LeafTile::onRemove(Level *level, int x, int y, int z, int id, int data)
